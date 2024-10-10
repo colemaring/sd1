@@ -7,6 +7,11 @@ npm start in /server (for dev express server) <br>
 npm run build (to create dist) <br>
 upload dist into /server on repo, and server will update to new changes <br>
  - Server is updated on changes to /server/dist <br>
+
+# TODO:
+install postgres and connect to express <br>
+create express api routes for interacting with database <br>
+populate dummy data for testing routes and frontend <br>
  
-# notes:
+# Notes:
 It's ok to expose Maps API because it's restricted to aifsd.xyz <br>
