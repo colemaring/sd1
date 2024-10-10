@@ -9,10 +9,9 @@ const containerStyle = {
 };
 
 const Maps = () => {
-  const [googleMapsApiKey, setGoogleMapsApiKey] = useState(null);
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: googleMapsApiKey,
+    googleMapsApiKey: "AIzaSyD1TG-X57XSAbU9rv1MLH2oThRbGnrPorU",
   });
 
   const mapRef = useRef(null);
@@ -20,25 +19,10 @@ const Maps = () => {
   const [marker, setMarker] = useState(null);
 
   useEffect(() => {
-    // Fetch the API key from the backend
-    const fetchApiKey = async () => {
-      try {
-        const response = await fetch("/api/config");
-        const data = await response.json();
-        setGoogleMapsApiKey(data.googleMapsApiKey);
-      } catch (error) {
-        console.error("Error fetching API key:", error);
-      }
-    };
-
-    fetchApiKey();
-  }, []);
-
-  useEffect(() => {
     if (isLoaded) {
       const myLatlng = new window.google.maps.LatLng(27.363882, -82.044922);
       const mapOptions = {
-        zoom: 14,
+        zoom: 13,
         center: myLatlng,
       };
 
