@@ -3,7 +3,6 @@ const app = express();
 const https = require("https");
 const http = require("http");
 const fs = require("fs");
-require("dotenv").config();
 
 const options = {
   key: fs.readFileSync("/etc/letsencrypt/live/aifsd.xyz/privkey.pem"),
@@ -27,10 +26,10 @@ app.get("*", (req, res) => {
   res.sendFile(__dirname + "/dist/index.html");
 });
 
-// serve maps api key
-app.get("/api/config", (req, res) => {
-  res.json({ googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY });
-});
+// // serve maps api key
+// app.get("/api/config", (req, res) => {
+//   res.json({ googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY });
+// });
 
 httpsServer.listen(443, () => {
   console.log("Server started on port 443");
