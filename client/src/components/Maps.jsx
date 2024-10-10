@@ -9,16 +9,31 @@ const containerStyle = {
 };
 
 const Maps = () => {
+  const [googleMapsApiKey, setGoogleMapsApiKey] = useState(null);
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyCpXgZFps6pD6fIHR-vtK2n-FU9Yx42nmI",
+    googleMapsApiKey: googleMapsApiKey,
   });
 
   const mapRef = useRef(null);
   const [infoWindow, setInfoWindow] = useState(null);
   const [marker, setMarker] = useState(null);
 
-  // most of this was taken from maps api documentation
+  useEffect(() => {
+    // Fetch the API key from the backend
+    const fetchApiKey = async () => {
+      try {
+        const response = await fetch("/api/config");
+        const data = await response.json();
+        setGoogleMapsApiKey(data.googleMapsApiKey);
+      } catch (error) {
+        console.error("Error fetching API key:", error);
+      }
+    };
+
+    fetchApiKey();
+  }, []);
+
   useEffect(() => {
     if (isLoaded) {
       const myLatlng = new window.google.maps.LatLng(27.363882, -82.044922);
@@ -32,7 +47,6 @@ const Maps = () => {
         mapOptions
       );
 
-      // Create a marker
       const marker = new window.google.maps.Marker({
         position: myLatlng,
         icon: {
@@ -41,18 +55,15 @@ const Maps = () => {
         },
       });
 
-      // Set the marker on the map
       marker.setMap(map);
       setMarker(marker);
 
-      // Create an InfoWindow instance with TruckInfo component
       const infoWindowContent = ReactDOMServer.renderToString(<TruckInfo />);
       const infoWindow = new window.google.maps.InfoWindow({
         content: infoWindowContent,
       });
       setInfoWindow(infoWindow);
 
-      // Open TruckInfo component when the marker is clicked
       marker.addListener("click", () => {
         infoWindow.open(map, marker);
       });
