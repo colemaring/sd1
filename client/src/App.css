@@ -1,0 +1,52 @@
+.truck-info {
+  width: 250px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 8px;
+}
+
+.title {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.risk-score-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.circle {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.legend {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.button {
+  flex: 1;
+  font-size: 0.8rem;
+}
+
+.button.cancel {
+  margin-right: 5px;
+}
