@@ -1,0 +1,26 @@
+name: Deploy to DigitalOcean Droplet
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'server/dist/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into DigitalOcean Droplet
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DIGITALOCEAN_DROPLET_IP }}
+          username: ${{ secrets.DIGITALOCEAN_DROPLET_USERNAME }}
+          password: ${{ secrets.DIGITALOCEAN_DROPLET_PASSWORD }}
+          script: |
+            cd
+            rm -r sd1
+            git clone https://github.com/colemaring/sd1.git
+            cd sd1/server
+            pm2 kill
+            pm2 start server.js
