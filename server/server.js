@@ -18,12 +18,12 @@ const httpServer = http.createServer((req, res) => {
   res.end();
 });
 
-// Render built react files
-app.use(express.static("dist"));
+// Serve static files from the dist folder in the client directory
+app.use(express.static("../client/dist"));
 
-// for all routes, return index.html
+// For all routes, return index.html from the dist folder
 app.get("*", (req, res) => {
-  res.sendFile(__dirname + "/dist/index.html");
+  res.sendFile(__dirname + "/../client/dist/index.html");
 });
 
 // // serve maps api key
