@@ -5,8 +5,8 @@ you'll have to change the Maps API to either your own or send me your IPV4 and I
 npm run dev in /client (for dev frontend server) <br>
 npm start in /server (for dev express server) <br>
 npm run build (to create dist) <br>
-upload dist into /server on repo, and server will update to new changes <br>
- - Server is updated on changes to /server/dist <br>
+push new changes to repo <br>
+ - Server is updated on changes to /client/dist <br>
 
 # TODO:
 install postgres and connect to express <br>
