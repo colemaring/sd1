@@ -51,6 +51,8 @@
   margin-right: 5px;
 }
 
+
+/* Will work on making this look better later */
 .nav {
   padding-left: 10px;
 }
@@ -72,4 +74,36 @@
   color: black;
   font-weight: 600;
   background-color: #a7d7c5;
+}
+
+/* Just ignore it for now */
+
+.collapsed .nav-item{
+  display: flex;
+  align-content: flex-start;
+}
+
+.collapse-button {
+  position: fixed;
+  left: 200px;
+  padding: 0;
+  background-color: transparent;
+  border: transparent;
+  color: black;
+}
+
+.collapsed-button {
+  background-color: transparent;
+  border: transparent;
+  color: black;
+}
+
+.collapse-button:hover {
+  background-color: transparent;
+  color: black;
+}
+
+.collapsed-button:hover {
+  background-color: transparent;
+  color: black;
 }
