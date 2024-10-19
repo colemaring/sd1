@@ -23,13 +23,8 @@ app.use(express.static("../client/dist"));
 
 // For all routes, return index.html from the dist folder
 app.get("*", (req, res) => {
-  res.sendFile(__dirname + "/../client/dist/index.html");
+  res.sendFile( "/root/sd1/client/dist/index.html");
 });
-
-// // serve maps api key
-// app.get("/api/config", (req, res) => {
-//   res.json({ googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY });
-// });
 
 httpsServer.listen(443, () => {
   console.log("Server started on port 443");
