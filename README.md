@@ -44,7 +44,6 @@ git commit -m "message"
 
 ## TODO:
 
-allow routing <br>
 install postgres and connect to express <br>
 create express api routes for interacting with database <br>
 populate dummy data for testing routes and frontend <br>
