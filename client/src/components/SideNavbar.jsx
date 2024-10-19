@@ -3,7 +3,7 @@ import { Nav, Button } from "react-bootstrap";
 import { MdOutlineLocationOn, MdCommute } from "react-icons/md";
 import { IoCarOutline } from "react-icons/io5";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, Link } from "react-router-dom";
 import "../App.css";
 
 // TODO: key warning
@@ -24,9 +24,9 @@ const SideNavbar = () => {
   };
 
   const navItems = [
-    { href: "/", icon: <MdOutlineLocationOn size={30} />, label: "Fleet Map" },
-    { href: "/fleet", icon: <MdCommute size={30} />, label: "Fleet" },
-    { href: "/driver", icon: <IoCarOutline size={30} />, label: "Driver" },
+    { to: "/", icon: <MdOutlineLocationOn size={30} />, label: "Fleet Map" },
+    { to: "/fleet", icon: <MdCommute size={30} />, label: "Fleet" },
+    { to: "/driver", icon: <IoCarOutline size={30} />, label: "Driver" },
   ];
 
   return (
@@ -43,22 +43,24 @@ const SideNavbar = () => {
         {/* If the sidebar is not collapsed, display icons with labels */}
         {!collapsed ? (
           <>
-            {navItems.map(({ href, icon, label }) => (
-              <>
-                <Nav.Item key={href}>
-                  <Nav.Link href={href}>
+            {navItems.map(({ to, icon, label }) => (
+              <React.Fragment key={to}>
+                <Nav.Item>
+                  <Nav.Link as={Link} to={to}>
                     {icon} {label}
                   </Nav.Link>
                 </Nav.Item>
                 {label === "Fleet Map" ? (
-                  <Nav.Item className="fw-lighter border-bottom">
-                    {" "}
+                  <Nav.Item
+                    key={`${to}-stats`}
+                    className="fw-lighter border-bottom"
+                  >
                     Statistics
                   </Nav.Item>
                 ) : (
-                  <span></span>
+                  <span key={`${to}-span`}></span>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </>
         ) : (

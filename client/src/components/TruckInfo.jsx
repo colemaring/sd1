@@ -6,7 +6,7 @@ import "../App.css";
 const TruckInfo = () => {
   return (
     <div className="truck-info">
-      <h5 className="title">Driver Info</h5>
+      <h5 className="title">Driver test Info</h5>
       <div className="info-item">
         <span>Millage</span>
         <span>1,744</span>
