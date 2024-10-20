@@ -9,6 +9,7 @@ import "../App.css";
 // TODO: key warning
 const SideNavbar = () => {
   const location = useLocation();
+  const [active, setActive] = useState("default");
   const [collapsed, setCollapsed] = useState(() => {
     // maintains collapsed state when changing pages
     const saved = localStorage.getItem("navbarCollapsed");
@@ -31,7 +32,12 @@ const SideNavbar = () => {
 
   return (
     <>
-      <Nav variant="pills" activeKey={location.pathname}>
+      <Nav
+        className="flex-column "
+        variant="pills"
+        activeKey={location.pathname}
+        onSelect={(selectedKey) => setActive(selectedKey)}
+      >
         {!collapsed && (
           <Nav.Item className="header-ai">
             AI for Safe Driving
@@ -46,7 +52,7 @@ const SideNavbar = () => {
             {navItems.map(({ to, icon, label }) => (
               <React.Fragment key={to}>
                 <Nav.Item>
-                  <Nav.Link as={Link} to={to}>
+                  <Nav.Link as={Link} to={to} eventKey={to}>
                     {icon} {label}
                   </Nav.Link>
                 </Nav.Item>
@@ -58,7 +64,7 @@ const SideNavbar = () => {
                     Statistics
                   </Nav.Item>
                 ) : (
-                  <span key={`${to}-span`}></span>
+                  <span></span>
                 )}
               </React.Fragment>
             ))}
@@ -69,9 +75,11 @@ const SideNavbar = () => {
             <Button className="collapse-button" onClick={handleToggle}>
               <RxHamburgerMenu size={30} />
             </Button>
-            {navItems.map(({ href, icon }) => (
-              <Nav.Item key={href}>
-                <Nav.Link href={href}>{icon}</Nav.Link>
+            {navItems.map(({ to, icon }) => (
+              <Nav.Item key={to}>
+                <Nav.Link as={Link} to={to} eventKey={to}>
+                  {icon}
+                </Nav.Link>
               </Nav.Item>
             ))}
           </>

@@ -98,3 +98,13 @@
   background-color: transparent;
   color: black;
 }
+
+.fleetdash {
+  height: 100vh;
+  background: #A7D7C5;
+}
+
+.realtimewarn {
+  display: flex;
+  align-items: center;
+}
