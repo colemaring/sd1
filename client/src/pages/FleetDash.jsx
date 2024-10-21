@@ -8,7 +8,7 @@ import "../App.css";
 
 export default function FleetDash() {
   return (
-    <div className="fleetdash">
+    <div className="dashboard">
       <Container fluid>
         <Row>
           <Col md="2" className="bg-light">

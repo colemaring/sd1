@@ -99,7 +99,7 @@
   color: black;
 }
 
-.fleetdash {
+.dashboard {
   height: 100vh;
   background: #A7D7C5;
 }
@@ -107,4 +107,8 @@
 .realtimewarn {
   display: flex;
   align-items: center;
+}
+
+.warning-container {
+  line-height: 10px;
 }
