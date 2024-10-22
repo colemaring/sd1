@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, ProgressBar } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { FaCircle } from "react-icons/fa";
 
 export default function DriversScoreTable() {
   const driver = [
@@ -12,7 +13,7 @@ export default function DriversScoreTable() {
   ];
 
   return (
-    <Card style={{ width: "18rem" }} border="secondary" className="rounded-4">
+    <Card style={{ width: "18rem" }} className="rounded-4">
       <Card.Body>
         <Card.Title className="text-center">Driver's Risk Score</Card.Title>
         {driver.map(({ name, insideScore, outsideScore }) => (
@@ -24,7 +25,12 @@ export default function DriversScoreTable() {
                   <ProgressBar variant="success" now={insideScore} />
                   <ProgressBar variant="warning" now={outsideScore} />
                 </ProgressBar>
-                <Card.Text>inside outside</Card.Text>
+                <Card.Text>
+                  <span className="pe-4">
+                    <FaCircle color="green" size={10} /> Inside
+                  </span>
+                  <FaCircle color="orange" size={10} /> Outside
+                </Card.Text>
               </Card.Body>
             </Card>
             <br />

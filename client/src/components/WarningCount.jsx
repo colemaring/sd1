@@ -17,7 +17,7 @@ export default function WarningCount() {
 
   const icons = {
     good: <IoMdCheckmarkCircle color="green" />,
-    alert: <IoAlertCircle color="yellow" />,
+    alert: <IoAlertCircle color="orange" />,
     bad: <IoMdCloseCircle color="red" />,
   };
 
