@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import { Nav, Button } from "react-bootstrap";
-import { MdOutlineLocationOn, MdCommute } from "react-icons/md";
-import { IoCarOutline } from "react-icons/io5";
-import { RxHamburgerMenu } from "react-icons/rx";
+import { Nav, Button, NavDropdown } from "react-bootstrap";
 import { Outlet, useLocation, Link } from "react-router-dom";
-import "../App.css";
+import "./styles/sidebar.css";
+
+// Icons
+import { MdOutlineLocationOn } from "react-icons/md";
+import { PiHouse } from "react-icons/pi";
+import { IoPieChartOutline } from "react-icons/io5";
+import { FaCar } from "react-icons/fa6";
+import { RxHamburgerMenu } from "react-icons/rx";
+import { CiFilter } from "react-icons/ci";
 
 // TODO: key warning
 const SideNavbar = () => {
@@ -25,9 +30,17 @@ const SideNavbar = () => {
   };
 
   const navItems = [
-    { to: "/", icon: <MdOutlineLocationOn size={30} />, label: "Fleet Map" },
-    { to: "/fleet", icon: <MdCommute size={30} />, label: "Fleet" },
-    { to: "/driver", icon: <IoCarOutline size={30} />, label: "Driver" },
+    { to: "/", icon: <PiHouse size={30} />, label: "Dashboard" },
+    {
+      to: "/fleet",
+      icon: <MdOutlineLocationOn size={30} />,
+      label: "Fleet Map",
+    },
+    {
+      to: "/driver",
+      icon: <IoPieChartOutline size={30} />,
+      label: "Driver Analytics",
+    },
   ];
 
   return (
@@ -40,8 +53,12 @@ const SideNavbar = () => {
       >
         {!collapsed && (
           <Nav.Item className="header-ai">
-            AI for Safe Driving
-            <Button className="collapse-button" onClick={handleToggle}>
+            <FaCar size={50} className="ps-1" />
+            <span className="sidebar-header-text">AI for Safe Driving</span>
+            <Button
+              className="collapse-button float-end"
+              onClick={handleToggle}
+            >
               <RxHamburgerMenu size={30} />
             </Button>
           </Nav.Item>
@@ -51,20 +68,30 @@ const SideNavbar = () => {
           <>
             {navItems.map(({ to, icon, label }) => (
               <React.Fragment key={to}>
-                <Nav.Item>
-                  <Nav.Link as={Link} to={to} eventKey={to}>
-                    {icon} {label}
-                  </Nav.Link>
-                </Nav.Item>
-                {label === "Fleet Map" ? (
-                  <Nav.Item
-                    key={`${to}-stats`}
-                    className="fw-lighter border-bottom"
-                  >
-                    Statistics
-                  </Nav.Item>
+                {/* For filtering the Drivers */}
+                {label === "Driver Analytics" ? (
+                  <div className="d-flex align-items-center">
+                    <Nav.Item>
+                      <Nav.Link as={Link} to={to} eventKey={to}>
+                        {icon} <span className="sidebar-label">{label}</span>
+                      </Nav.Link>
+                    </Nav.Item>
+                    <NavDropdown title={<CiFilter />} id="nav-dropdown">
+                      <NavDropdown.Item eventKey="high">
+                        High Risk Score
+                      </NavDropdown.Item>
+                      <NavDropdown.Item eventKey="low">
+                        Low Risk Score
+                      </NavDropdown.Item>
+                    </NavDropdown>
+                  </div>
                 ) : (
-                  <span></span>
+                  <Nav.Item>
+                    <Nav.Link as={Link} to={to} eventKey={to}>
+                      {icon} <span className="sidebar-label">{label}</span>
+                      {/* For filtering the Drivers */}
+                    </Nav.Link>
+                  </Nav.Item>
                 )}
               </React.Fragment>
             ))}
@@ -72,6 +99,7 @@ const SideNavbar = () => {
         ) : (
           // Else display only the icons
           <>
+            <FaCar size={50} className="ps-1" />
             <Button className="collapse-button" onClick={handleToggle}>
               <RxHamburgerMenu size={30} />
             </Button>

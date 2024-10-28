@@ -52,52 +52,6 @@
 }
 
 
-/* Will work on making this look better later */
-.nav {
-  position: absolute;
-  left: 1vw;
-  top: 1vw;
-  height: calc(100% - 2vw);
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  user-select: none;
-  z-index: 10;
-  background-color: white;
-}
-
-.nav-item {
-  font-family: 'Roboto';
-  font-size: 1.2rem;
-  padding: 6px;
-}
-
-.nav-link {
-  padding: 15px;
-  color: #1b1b1b;
-}
-
-.nav-pills .nav-link.active{
-  position: relative;
-  padding: 15px;
-  border-radius: 30px;
-  color: black;
-  font-weight: 600;
-  background-color: #a7d7c5;
-  z-index: 11;
-}
-
-.collapse-button {
-  background-color: transparent;
-  border: transparent;
-  color: black;
-}
-
-.collapse-button:hover {
-  background-color: transparent;
-  color: black;
-}
 
 .dashboard {
   height: 100vh;
