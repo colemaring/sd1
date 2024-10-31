@@ -30,7 +30,7 @@ export default function Home() {
             <div className="col-span-3 row-span-2 row-start-5">
               <Notifications />
             </div>
-            <div className="col-span-5 row-span-2 col-start-4 row-start-5 h-[400px]  p-4 rounded-xl">
+            <div className="col-span-5 row-span-2 col-start-4 row-start-5 h-[500px] bg-slate-100 p-4 rounded-xl">
               <AllStats />
             </div>
             <div className="col-span-8 row-span-1 row-start-8"></div>

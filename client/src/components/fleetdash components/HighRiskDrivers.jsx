@@ -21,7 +21,10 @@ function HighRiskDrivers() {
       </h3>
       <div className="drivers flex justify-around ">
         {drivers.map(({ name, phone, score }) => (
-          <div className="single-driver flex flex-column items-center m-3">
+          <div
+            className="single-driver flex flex-column items-center m-3"
+            key={name}
+          >
             {/* change icon to image eventually */}
             <FaRegCircleUser size={50} />
             <p className="text-center m-0 pt-1">
