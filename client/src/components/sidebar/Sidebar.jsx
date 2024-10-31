@@ -39,7 +39,7 @@ function Sidebar({ children, expanded, handleToggle }) {
                 expanded ? "w-30" : "w-0"
               }`}
             >
-              Group 20
+              AI For Safe Driving
             </h1>
             <div className={`${expanded ? "" : "hidden sm:block"}`}>
               <button
