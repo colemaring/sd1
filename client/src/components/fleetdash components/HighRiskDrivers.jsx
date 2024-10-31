@@ -1,6 +1,6 @@
 import React from "react";
 // import "../components/styles/fleetdash.css";
-import "../styles/highriskdriver.css";
+// import "../styles/highriskdriver.css";
 
 //icons
 import { FaRegCircleUser } from "react-icons/fa6";
@@ -15,20 +15,24 @@ function HighRiskDrivers() {
     { name: "Alice S.", phone: "+1 (123) 123-1234", score: 310 },
   ];
   return (
-    <div className="high-container">
-      <h3>High Risk Score Drivers</h3>
-      <div className="drivers d-flex justify">
+    <div className="high-container shadow-2xl px-5 w-max rounded-xl">
+      <h3 className="text-center py-4 font-bold text-xl">
+        High Risk Score Drivers
+      </h3>
+      <div className="drivers flex justify-around ">
         {drivers.map(({ name, phone, score }) => (
-          <div className="single-driver d-flex flex-column align-items-center p-4">
+          <div className="single-driver flex flex-column items-center m-3">
             {/* change icon to image eventually */}
             <FaRegCircleUser size={50} />
             <p className="text-center m-0 pt-1">
               {name} <br /> {phone}
             </p>
-            <h2 className="p-1">{score}</h2>
+            <h2 className="font-bold text-xl">{score}</h2>
             <PiSpeedometer size={30} />
             Risk score
-            <Button className="details-button">View Details</Button>
+            <Button className="bg-green-400 mt-2 border-none">
+              View Details
+            </Button>
           </div>
         ))}
       </div>
