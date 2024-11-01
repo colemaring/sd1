@@ -18,16 +18,16 @@ function Notifications() {
       alert: "using his phone",
       date: "03 April 2021 | 5:00 pm",
     },
-    {
-      driver: "Robert",
-      alert: "not following the route",
-      date: "04 April 2021 | 6:00 pm",
-    },
-    { driver: "Jack", alert: "smoking", date: "01 April 2021 | 3:00 pm" },
+    // {
+    //   driver: "Robert",
+    //   alert: "not following the route",
+    //   date: "04 April 2021 | 6:00 pm",
+    // },
+    // { driver: "Jack", alert: "smoking", date: "01 April 2021 | 3:00 pm" },
   ];
 
   return (
-    <div className="h-max">
+    <div className="h-full md:max-h-[100px]">
       <div className="flex justify-between">
         <h1 className="text-xl font-bold text-start">Notifications</h1>
         <a href="#" className="text-green-400 text-md font-semibold">

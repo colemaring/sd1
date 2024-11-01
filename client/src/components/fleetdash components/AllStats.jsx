@@ -50,7 +50,6 @@ export const options = {
       borderColor: "rgba(255, 255, 255, 0.5)",
       borderWidth: 1,
       padding: 10,
-      events: ["click"],
     },
   },
   scales: {
@@ -90,11 +89,11 @@ export const data = {
 
 function AllStats() {
   return (
-    <div className="z-10">
+    <div className=" bg-slate-100 rounded-xl">
       <h1 className="text-center text-2xl font-bold py-4 text-gray-800">
         Fleet Risk Score Overview
       </h1>
-      <Line options={options} data={data} className="z-10 relative" />
+      <Line options={options} data={data} className="relative" />
     </div>
   );
 }

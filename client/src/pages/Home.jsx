@@ -13,24 +13,27 @@ export default function Home() {
     <>
       <div className="flex">
         <SideGrid />
-        <div className="w-full ml-20 mr-[30px]">
-          <div className="grid grid-cols-8 grid-rows-8 h-screen gap-3 gap-y-5">
-            <div className="col-span-8">
-              <h1 className="font-bold text-4xl pt-14 ">Fleet Dashboard</h1>
+        <div className="w-full ml-20 mr-[30px] ">
+          <div className="grid grid-cols-10 auto-rows-[100px] h-screen gap-x-5 gap-y-6">
+            <div className="col-span-10">
+              <div className="pt-4">
+                <h3 className="text-sm text-gray-400 mr-2"><PiHouseFill className="inline"/> / Dashboard </h3>
+                <h1 className="font-bold text-2xl ">Fleet Dashboard</h1>
+              </div>
             </div>
-            <div className="col-span-3 row-span-2 row-start-2 w-full">
+            <div className="col-span-5 row-span-3 row-start-2 w-full ">
               <HighRiskDrivers />
             </div>
-            <div className="col-span-2 row-span-2 col-start-5 row-start-">
+            <div className="col-span-2 row-span-3 col-start-6 row-start-2">
               <OverallRiskScore />
             </div>
-            <div className="col-span-2 row-span-2 col-start-7 row-start-2 h-[320px]">
+            <div className="col-span-3 row-span-3 col-start-8 row-start-">
               <ScoreOverview />
             </div>
             <div className="col-span-3 row-span-2 row-start-5">
               <Notifications />
             </div>
-            <div className="col-span-5 row-span-2 col-start-4 row-start-5 h-[500px] bg-slate-100 p-4 rounded-xl">
+            <div className="col-span-7 row-span-2 col-start-4 row-start-5">
               <AllStats />
             </div>
             <div className="col-span-8 row-span-1 row-start-8"></div>

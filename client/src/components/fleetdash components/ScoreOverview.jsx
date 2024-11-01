@@ -78,7 +78,7 @@ function ScoreOverview() {
       <h1 className="text-center text-xl font-bold py-4">
         Fleet Risk Score Overview
       </h1>
-      <Line options={options} data={data} className="p-2" />
+      <Line options={options} data={data} className="" />
     </div>
   );
 }
