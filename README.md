@@ -34,6 +34,12 @@ git add .
 git commit -m "message"
 ```
 
+Running server for development
+
+```bash
+node server.js dev
+```
+
 - Server is updated on changes to /client/dist <br>
 
 ## TODO:
