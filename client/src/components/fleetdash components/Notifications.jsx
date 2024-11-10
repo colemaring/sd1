@@ -36,7 +36,7 @@ function Notifications() {
       </div>
 
       {notifications.map(({ driver, alert, date }) => (
-        <div className=" bg-slate-100 p-2 rounded-xl mt-4" key={driver}>
+        <div className=" bg-[#f0f0f0] p-2 rounded-xl mt-4" key={driver}>
           <div className="">
             <FaRegCircleUser className="float-start pr-2" size={30} /> {driver}{" "}
             is {alert}

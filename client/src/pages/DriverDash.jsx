@@ -1,44 +1,36 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../App.css";
-import SideGrid from "../components/sidebar/SideGrid";
-import Notifications from "../components/fleetdash components/Notifications";
 import WarningCount from "../components/WarningCount";
 import DriverInfo from "../components/DriverInfo";
-import { PiHouseFill } from "react-icons/pi";
 import EventsLog from "../components/EventsLog";
+import NavBar from "../components/NavBar";
 
 export default function DriverDash() {
   return (
-    <div className="flex">
-      <SideGrid />
-      <div className="w-full ml-20 mr-[30px] ">
-        <div className="grid grid-cols-8 auto-rows-[100px] gap-x-[30px] gap-y-[30px] max-h-svh ">
-          <div className="col-span-8 row-span-1 col-start-1 row-start-1 h-1 pt-6">
-            <h3 className="text-sm text-gray-400 mr-2">
-              <PiHouseFill className="inline" /> / Driver Analytics / Driver's
-              Name{" "}
-            </h3>
-            <h1 className="font-bold text-xl ">Driver's Name</h1>
+    <>
+      <div className="flex">
+        <div className="w-full ">
+          <div className="grid grid-cols-12 auto-rows-[100px] h-screen gap-x-5 gap-y-6">
+            <div className="col-span-12 row-span-1 row-start-1 col-start-1 w-screen ">
+              <div className="pt-0">
+                <NavBar />
+              </div>
+            </div>
+            <div className="col-span-5 col-start-1 row-span-2 row-start-2  ml-6 h-full">
+              <DriverInfo />
+            </div>
+            <div className="col-span-3 col-start-6 row-span-2 row-start-2 bg-[#f0f0f0] rounded-xl"></div>
+            <div className="col-span-4 col-start-9 row-span-2 row-start-2 mr-6 bg-[#f0f0f0] rounded-xl"></div>
+            <div className="col-span-3 col-start-1 row-span-4 row-start-4 ml-6 overflow-hidden rounded-xl">
+              <WarningCount />
+            </div>
+            <div className="col-span-9 col-start-4 row-span-4 row-start-4 mr-6 rounded-xl">
+              <EventsLog />
+            </div>
           </div>
-          <div className="col-span-2 row-span-2 col-start-1 row-start-2 rounded-xl border-2 ">
-            <DriverInfo />
-          </div>
-          <div className="col-span-2 row-span-2 col-start-1 row-start-4 overflow-hidden rounded-xl border-2">
-            Driver's risk score
-          </div>
-          <div className="col-span-2 row-span-3 col-start-1 row-start-6">
-            <Notifications />
-          </div>
-          <div className="col-span-4 row-span-3 col-start-3 row-start-2 shadow-xl rounded-xl">
-            <EventsLog />
-          </div>
-          <div className="col-span-2 row-span-3 col-start-7 row-start-2 bg-slate-100 rounded-xl">
-            <WarningCount />
-          </div>
-          <div className="col-span-6 row-span-1 col-start-1 row-start-7 "></div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

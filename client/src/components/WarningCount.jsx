@@ -22,23 +22,26 @@ export default function WarningCount() {
   };
 
   return (
-    <Card border="none" className="rounded-4 bg-slate-100">
+    <Card border="none" className="rounded-4 bg-[#f0f0f0]">
       <Card.Body>
-        <Card.Title className="text-left text-xl font-bold">
+        <Card.Title className="text-left text-xl font-bold pl-5">
           Warning Count
         </Card.Title>
         {warnings.map(({ label, count, index }) => (
           <React.Fragment key={label}>
-            <Card className="text-start border-0 p-0 bg-slate-100">
+            <Card className="text-start border-0 p-0 bg-[#f0f0f0]">
               <Card.Body className="pb-1">
-                <div className="flex justify-between bg-slate-100 ">
-                  {count <= 3
-                    ? icons.good
-                    : count <= 5
-                    ? icons.alert
-                    : icons.bad}{" "}
-                  {label}
-                  <span className="float-end">{count}</span>
+                <div className="flex justify-between bg-[#f0f0f0] flex-nowrap">
+                  <div className="flex p-2">
+                    {count <= 3
+                      ? icons.good
+                      : count <= 5
+                      ? icons.alert
+                      : icons.bad}
+                    <span className="ml-2 leading-3">{label}</span>
+                  </div>
+
+                  <span className="float-right">{count}</span>
                 </div>{" "}
               </Card.Body>
             </Card>

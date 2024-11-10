@@ -11,7 +11,6 @@ import {
   Filler,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-
 import mockData from "../../data/mockdata";
 
 ChartJS.register(
@@ -44,7 +43,7 @@ export const options = {
       },
     },
     tooltip: {
-      backgroundColor: "rgba(0, 0, 0, 0.8)",
+      backgroundColor: "rgb(240 240 240)",
       titleFont: { weight: "bold" },
       bodyFont: { size: 12 },
       borderColor: "rgba(255, 255, 255, 0.5)",
@@ -80,16 +79,12 @@ const labels = Array.from({ length: 30 }, (_, i) => (i + 1).toString());
 
 export const data = {
   labels,
-  datasets: mockData.map((dataset, index) => ({
-    ...dataset,
-    borderColor: `hsl(${index * 50}, 70%, 50%)`, // Dynamic color based on index
-    backgroundColor: `rgba(${index * 50}, 100, 255, 0.2)`, // Lightened background color
-  })),
+  datasets: mockData,
 };
 
 function AllStats() {
   return (
-    <div className=" bg-slate-100 rounded-xl">
+    <div className=" bg-[#f0f0f0] rounded-xl">
       <h1 className="text-center text-2xl font-bold py-4 text-gray-800">
         Fleet Risk Score Overview
       </h1>

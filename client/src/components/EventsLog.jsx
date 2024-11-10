@@ -2,10 +2,10 @@ import React from "react";
 
 function EventsLog() {
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold pt-2 pb-4">Event Log</h2>
+    <div className="px-4 py-3 bg-[#f0f0f0] h-full rounded-xl">
+      <h2 className="text-xl font-bold  pb-4">Event Log</h2>
       <table class="table table-striped">
-        <thead className="text-sm">
+        <thead className="text-md">
           <tr>
             <th scope="col" className="text-gray-500 font-thin">
               DATE
@@ -21,7 +21,7 @@ function EventsLog() {
             </th>
           </tr>
         </thead>
-        <tbody className="text-sm">
+        <tbody className="text-md">
           <tr>
             <td>03/10/24</td>
             <td>Speeding</td>
