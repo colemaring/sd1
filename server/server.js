@@ -37,7 +37,6 @@ if (!isDev) {
   let wss = new WebSocket.Server({ server: httpsServer });
 
   wss.on("connection", (ws) => {
-    I;
     console.log("New client connected");
 
     ws.on("message", (message) => {
