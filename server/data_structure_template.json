@@ -1,14 +1,16 @@
 {
-  "timestamp": "2024-11-09T12:34:56Z",
+  "timestamp": "2024-11-13T16:05:44.847355Z",
   "driver": "John Doe",
-  "var1": true,
-  "var2": false,
-  "var3": true,
+  "var1": false,
+  "var2": true,
+  "var3": false,
   "var4": false,
-  "var5": true,
-  "var6": false,
-  "var7": true,
+  "var5": false,
+  "var6": true,
+  "var7": false,
   "var8": false,
   "var9": true,
-  "var10": false
+  "var10": true,
+  "handsOnWheel": "11165ms",
+  "handsOffWheel": "621ms"
 }
