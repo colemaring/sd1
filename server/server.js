@@ -3,6 +3,8 @@ const app = express();
 const https = require("https");
 const http = require("http");
 const fs = require("fs");
+const WebSocket = require("ws");
+const path = require("path");
 
 const isDev = process.argv.includes("dev");
 
@@ -31,6 +33,36 @@ if (!isDev) {
   httpServer.listen(80, () => {
     console.log("HTTP redirect server started on port 80");
   });
+
+  let wss = new WebSocket.Server({ server: httpsServer });
+
+  wss.on("connection", (ws) => {
+    I;
+    console.log("New client connected");
+
+    ws.on("message", (message) => {
+      console.log(`Received message => ${message}`);
+      let jsonMessage;
+      try {
+        jsonMessage = JSON.parse(message);
+      } catch (e) {
+        console.error("Invalid JSON received:", message);
+        return;
+      }
+
+      const jsonString = JSON.stringify(jsonMessage);
+
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(jsonString);
+        }
+      });
+    });
+
+    ws.on("close", () => {
+      console.log("Client disconnected");
+    });
+  });
 } else {
   // dev server
   httpServer = http.createServer(app);
@@ -45,5 +77,5 @@ app.use(express.static("../client/dist"));
 
 // For all routes, return index.html from the dist folder
 app.get("*", (req, res) => {
-  res.sendFile("/root/sd1/client/dist/index.html");
+  res.sendFile(path.resolve(__dirname, "../client/dist/index.html"));
 });
