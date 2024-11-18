@@ -6,6 +6,9 @@ const fs = require("fs");
 const WebSocket = require("ws");
 const path = require("path");
 
+const db = require('./db');
+const api = require("./api");
+
 const isDev = process.argv.includes("dev");
 
 let httpsServer, httpServer;
@@ -70,6 +73,10 @@ if (!isDev) {
     console.log("Development server started on port 8080");
   });
 }
+
+app.use(express.json());
+
+app.use("/api", api);
 
 // Serve static files from the dist folder in the client directory
 app.use(express.static("../client/dist"));
