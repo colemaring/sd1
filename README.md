@@ -43,7 +43,4 @@ node server.js dev
 - Server is updated on changes to /client/dist <br>
 
 ## TODO:
-
-install postgres and connect to express <br>
-create express api routes for interacting with database <br>
-populate dummy data for testing routes and frontend <br>
+connect APIs for fetching user data and historical data when loading page
