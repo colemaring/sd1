@@ -1,5 +1,5 @@
 # This file serves as an example of how to connect to the WebSockets endpoint
-# as of 1/14/24, the data is just rendered at https://aifsd.xyz/wstest
+# as of 1/14/25, the data is just rendered at https://aifsd.xyz/wstest
 
 import asyncio
 import websockets
