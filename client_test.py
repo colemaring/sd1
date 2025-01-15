@@ -1,5 +1,5 @@
 # This file serves as an example of how to connect to the WebSockets endpoint
-# as of 1/14/25, the data is just rendered at https://aifsd.xyz/wstest
+# as of 1/14/24, the data is just rendered at https://aifsd.xyz/wstest
 
 import asyncio
 import websockets
@@ -25,7 +25,7 @@ async def connect():
                 "SeatbeltOff": random.choices([True, False], weights=[1, 50])[0],
                 "Sleeping": random.choices([True, False], weights=[1, 50])[0],
                 "Smoking": random.choices([True, False], weights=[1, 30])[0],
-                "handsOnWheel": random.choices([2, 1, 0], weights=[90, 8, 1])[0], # very high for 2, highish for 1, low for 0
+                "handsOnWheel": random.choices([2, 1, 0], weights=[90, 8, 1])[0], 
             }
 
             # Convert the data to JSON string
@@ -35,8 +35,8 @@ async def connect():
             await websocket.send(json_data)
             print("Sent message to server")
 
-            # for debugging, not needed
-            # response = await websocket.recv()
+            # needed to serve as a ping mechanism
+            await websocket.recv()
             # print(f"Received from server: {response}")
 
             await asyncio.sleep(timeoutSeconds)
