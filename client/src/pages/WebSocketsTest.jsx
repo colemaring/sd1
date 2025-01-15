@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import NavBar from "../components/NavBar";
 
 const WebSocketsTest = () => {
-  const [message, setMessage] = useState([]);
+  const [messages, setMessages] = useState({});
 
   useEffect(() => {
     const ws = new WebSocket("wss://aifsd.xyz");
@@ -11,8 +11,14 @@ const WebSocketsTest = () => {
       console.log("Connected to the server");
     };
 
+    // each unique driver will have its own message rendered
+    // implies that driver names are unique
     ws.onmessage = (event) => {
-      setMessage(JSON.parse(event.data));
+      const newMessage = JSON.parse(event.data);
+      setMessages((prevMessages) => ({
+        ...prevMessages,
+        [newMessage.Driver]: newMessage,
+      }));
     };
 
     ws.onclose = () => {
@@ -31,8 +37,13 @@ const WebSocketsTest = () => {
   return (
     <div>
       <NavBar />
-      <h1>WebSocket Message</h1>
-      {message && <pre>{JSON.stringify(message, null, 2)}</pre>}
+      <h1>WebSocket Messages</h1>
+      {Object.keys(messages).map((driver, index) => (
+        <div key={index}>
+          <h2>Driver: {driver}</h2>
+          <pre>{JSON.stringify(messages[driver], null, 2)}</pre>
+        </div>
+      ))}
     </div>
   );
 };
