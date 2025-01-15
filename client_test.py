@@ -18,12 +18,12 @@ async def connect():
             # Generate dummy data
             data = {
                 "Timestamp": datetime.utcnow().isoformat() + "Z",
-                "Driver": "John Doe",
-                "Drinking": random.choices([True, False], weights=[1, 30])[0],
-                "Eating": random.choices([True, False], weights=[1, 30])[0],
-                "Phone": random.choices([True, False], weights=[1, 30])[0],
-                "SeatbeltOn": random.choices([True, False], weights=[40, 1])[0],
-                "Sleeping": random.choices([True, False], weights=[1, 30])[0],
+                "Driver": "Johnsdf Doe",
+                "Drinking": random.choices([True, False], weights=[1, 15])[0],
+                "Eating": random.choices([True, False], weights=[1, 15])[0],
+                "Phone": random.choices([True, False], weights=[1, 5])[0],
+                "SeatbeltOff": random.choices([True, False], weights=[1, 50])[0],
+                "Sleeping": random.choices([True, False], weights=[1, 50])[0],
                 "Smoking": random.choices([True, False], weights=[1, 30])[0],
                 "handsOnWheel": random.choices([2, 1, 0], weights=[90, 8, 1])[0], # very high for 2, highish for 1, low for 0
             }
