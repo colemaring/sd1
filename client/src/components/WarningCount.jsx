@@ -11,6 +11,10 @@ const WarningCount = ({ driverData }) => {
     SeatbeltOff: 0,
     Sleeping: 0,
     Smoking: 0,
+    OutOfLane: 0,
+    RiskyDrivers: 0,
+    UnsafeDistance: 0,
+    HandsOnWheel: 0,
   });
 
   const warnings = [
@@ -20,6 +24,10 @@ const WarningCount = ({ driverData }) => {
     { label: "Seatbelt Off", key: "SeatbeltOff" },
     { label: "Sleeping", key: "Sleeping" },
     { label: "Smoking", key: "Smoking" },
+    { label: "Out of Lane", key: "OutOfLane" },
+    { label: "Risky Drivers", key: "RiskyDrivers" },
+    { label: "Unsafe Distance", key: "UnsafeDistance" },
+    { label: "Hands on Wheel", key: "HandsOnWheel" },
   ];
 
   const icons = {

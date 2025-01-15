@@ -9,16 +9,18 @@ import EventsLog from "../components/EventsLog";
 import NavBar from "../components/NavBar";
 import { WebSocketsContext } from "../context/WebSocketsContext";
 
+// TODO
+// add a useeffect hook and call api to grab users info like phone, risk score, etc
+// also an api call to populate event log & warning count with previous events stored in db, then websockets will handle the addition of new events, also streaming them to the db for future calls
+// maybe add some sort of filter to only show the events from the last week or so?
+// fix warning count going off screen and align the countainers
+// remove large white space below navbar, remove overflow-y IMO
+
 export default function DriverDash() {
   const { driverName } = useParams();
   const messages = useContext(WebSocketsContext);
 
-  const driverData = messages[driverName];
-  console.log(driverData);
-
-  if (!driverData) {
-    return <div>Loading...</div>;
-  }
+  const driverData = messages[driverName] || {}; // Provide default empty object if driverData is not available
 
   return (
     <>

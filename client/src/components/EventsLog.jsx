@@ -41,7 +41,7 @@ const EventsLog = ({ driverData }) => {
         style={{ maxHeight: "300px", overflowY: "auto" }}
       >
         <table className="table table-striped">
-          <thead className="text-md">
+          <thead className="text-md sticky-header">
             <tr>
               <th scope="col" className="text-gray-500 font-thin">
                 DATE

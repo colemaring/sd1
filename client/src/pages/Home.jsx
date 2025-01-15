@@ -8,6 +8,11 @@ import ScoreOverview from "../components/fleetdash components/ScoreOverview";
 import AllStats from "../components/fleetdash components/AllStats";
 import NavBar from "../components/NavBar";
 
+// TODO
+// Implement dark/light toggle (store the state in localstorage for subsequent visits) <- also needs its own context to be accessed by all components, similar to what I'm donig with websockets context
+// remove space below navbar
+// api calls to populate data on page load (useeffect hook)
+
 export default function Home() {
   return (
     <>

@@ -2,7 +2,6 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* Global style to prevent horizontal overflow */
 body {
   overflow-x: hidden;
 }
@@ -61,12 +60,20 @@ body {
 }
 
 .sub-menu {
-  transition: height 0.3s ease; /* Smooth transition for height */
-  overflow: hidden; /* Hide overflow when not expanded */
+  transition: height 0.3s ease; 
+  overflow: hidden; 
 }
 
-/* Add styles for the events log table container */
+
 .events-log-table-container {
   max-height: 100%;
   overflow-y: auto;
+}
+
+/* Make the table header sticky */
+.sticky-header th {
+  position: sticky;
+  top: 0;
+  background-color: #f0f0f0; 
+  z-index: 1; 
 }
