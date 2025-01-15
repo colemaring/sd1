@@ -7,7 +7,7 @@ import random
 import json
 from datetime import datetime
 
-timeoutSeconds = 0.5
+timeoutSeconds = 1
 
 async def connect():
     uri = "wss://aifsd.xyz"
@@ -19,13 +19,13 @@ async def connect():
             data = {
                 "Timestamp": datetime.utcnow().isoformat() + "Z",
                 "Driver": "John Doe",
-                "Drinking": random.choice([True, False]),
-                "Eating": random.choice([True, False]),
-                "Phone": random.choice([True, False]),
-                "SeatbeltOn": random.choice([True, False]),
-                "Sleeping": random.choice([True, False]),
-                "Smoking": random.choice([True, False]),
-                "handsOnWheel": random.choice([0, 1, 2]), # how many hands are currently on the wheel
+                "Drinking": random.choices([True, False], weights=[1, 30])[0],
+                "Eating": random.choices([True, False], weights=[1, 30])[0],
+                "Phone": random.choices([True, False], weights=[1, 30])[0],
+                "SeatbeltOn": random.choices([True, False], weights=[40, 1])[0],
+                "Sleeping": random.choices([True, False], weights=[1, 30])[0],
+                "Smoking": random.choices([True, False], weights=[1, 30])[0],
+                "handsOnWheel": random.choices([2, 1, 0], weights=[90, 8, 1])[0], # very high for 2, highish for 1, low for 0
             }
 
             # Convert the data to JSON string
