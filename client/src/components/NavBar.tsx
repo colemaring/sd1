@@ -5,6 +5,7 @@ import { WebSocketsContext } from "../context/WebSocketsContext";
 
 function NavBar() {
   const messages = useContext(WebSocketsContext);
+  const drivers = Object.keys(messages);
 
   return (
     <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
@@ -16,11 +17,17 @@ function NavBar() {
             <Nav.Link href="/">Fleet</Nav.Link>
             
             <NavDropdown title="Drivers" id="collapsible-nav-dropdown">
-              {Object.keys(messages).map((driver) => (
-                <NavDropdown.Item key={driver} href={`/driver/${driver}`}>
-                  {driver}
+              {drivers.length > 0 ? (
+                drivers.map((driver) => (
+                  <NavDropdown.Item key={driver} href={`/driver/${driver}`}>
+                    {driver}
+                  </NavDropdown.Item>
+                ))
+              ) : (
+                <NavDropdown.Item disabled style={{ color: 'grey' }}>
+                  No drivers
                 </NavDropdown.Item>
-              ))}
+              )}
             </NavDropdown>
             <Nav.Link href="/wstest">WebSockets testing</Nav.Link>
           </Nav>
