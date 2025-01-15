@@ -1,8 +1,11 @@
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import React from "react";
+import React, { useContext } from "react";
+import { WebSocketsContext } from "../context/WebSocketsContext";
 
 function NavBar() {
+  const messages = useContext(WebSocketsContext);
+
   return (
     <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
       <Container>
@@ -13,14 +16,11 @@ function NavBar() {
             <Nav.Link href="/">Fleet</Nav.Link>
             
             <NavDropdown title="Drivers" id="collapsible-nav-dropdown">
-              <NavDropdown.Item href="/driver">Jane Doe</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">John Doe</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Alice S.</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Bob K.</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">
-                David Smith
-              </NavDropdown.Item>
-              
+              {Object.keys(messages).map((driver) => (
+                <NavDropdown.Item key={driver} href={`/driver/${driver}`}>
+                  {driver}
+                </NavDropdown.Item>
+              ))}
             </NavDropdown>
             <Nav.Link href="/wstest">WebSockets testing</Nav.Link>
           </Nav>

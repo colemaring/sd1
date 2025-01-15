@@ -1,38 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import NavBar from "../components/NavBar";
+import { WebSocketsContext } from "../context/WebSocketsContext";
 
 const WebSocketsTest = () => {
-  const [messages, setMessages] = useState({});
+  const messages = useContext(WebSocketsContext);
 
-  useEffect(() => {
-    const ws = new WebSocket("wss://aifsd.xyz");
-
-    ws.onopen = () => {
-      console.log("Connected to the server");
-    };
-
-    // each unique driver will have its own message rendered
-    // implies that driver names are unique
-    ws.onmessage = (event) => {
-      const newMessage = JSON.parse(event.data);
-      setMessages((prevMessages) => ({
-        ...prevMessages,
-        [newMessage.Driver]: newMessage,
-      }));
-    };
-
-    ws.onclose = () => {
-      console.log("Disconnected from the server");
-    };
-
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
-    return () => {
-      ws.close();
-    };
-  }, []);
+  if (!messages) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>

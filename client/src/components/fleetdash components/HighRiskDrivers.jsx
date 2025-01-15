@@ -18,7 +18,10 @@ function HighRiskDrivers() {
   return (
     <div className="flex h-full">
       {drivers.map(({ name, phone, score }) => (
-        <div className="flex rounded-xl bg-[#f0f0f0] w-2/5 mx-4 p-4 overflow-hidden">
+        <div
+          key={name}
+          className="flex rounded-xl bg-[#f0f0f0] w-2/5 mx-4 p-4 overflow-hidden"
+        >
           <div className="flex flex-col">
             <div className="rounded-full bg-[#d9d9d9] w-20 h-20 text-center"></div>
             <button className="rounded-xl bg-[#B8D8BE] relative top-14 p-2 hover:bg-green-500 text-gray-600">
@@ -43,28 +46,3 @@ function HighRiskDrivers() {
 }
 
 export default HighRiskDrivers;
-
-/* <div className="shadow-2xl rounded-xl overflow-hidden mr-2 h-full">
-  <h3 className="text-center py-4 font-bold text-xl">
-    High Risk Score Drivers
-  </h3>
-  <div className="drivers flex justify-around ">
-    {drivers.map(({ name, phone, score }) => (
-      <div
-        className=" flex flex-column items-center m-3"
-        key={name}
-      >
-        <FaRegCircleUser size={30} />
-        <p className="text-center m-0 pt-1 md:text-small">
-          {name} <br /> {phone}
-        </p>
-        <h2 className="font-bold text-xl md:text-md">{score}</h2>
-        <PiSpeedometer size={30} />
-        Risk score
-        <Button className="bg-green-400 mt-2 border-none">
-          View Details
-        </Button>
-      </div>
-    ))}
-  </div>
-</div> */
