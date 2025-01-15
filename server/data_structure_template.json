@@ -1,16 +1,14 @@
 {
-  "timestamp": "2024-11-13T16:05:44.847355Z",
-  "driver": "John Doe",
-  "var1": false,
-  "var2": true,
-  "var3": false,
-  "var4": false,
-  "var5": false,
-  "var6": true,
-  "var7": false,
-  "var8": false,
-  "var9": true,
-  "var10": true,
-  "handsOnWheel": "11165ms",
-  "handsOffWheel": "621ms"
+  "Timestamp": "2025-01-15T21:28:33.212293Z",
+  "Driver": "John Doe",
+  "Drinking": false,
+  "Eating": false,
+  "Phone": false,
+  "SeatbeltOff": false,
+  "Sleeping": true,
+  "Smoking": false,
+  "OutOfLane": true,
+  "RiskyDrivers": 0,
+  "UnsafeDistance": false,
+  "HandsOnWheel": 2
 }
