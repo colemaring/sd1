@@ -14,7 +14,7 @@ git clone https://github.com/colemaring/sd1.git
 npm install
 ```
 
-3. In the server folder (recommend using nodemon)
+3. In the server folder (recommend using nodemon for hot reloads)
 
 ```bash
 npm start
@@ -38,6 +38,12 @@ Running server for development
 
 ```bash
 node server.js dev
+```
+
+Running the websockets client test script (to simulate a connected vehicle)
+
+```bash
+python client_test.py
 ```
 
 - Server is updated on changes to /client/dist <br>
