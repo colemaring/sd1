@@ -17,28 +17,26 @@ async def connect():
         while True:
             # Generate dummy data
             data = {
-                "Timestamp": datetime.utcnow().isoformat() + "Z",
-                "Driver": "Johnsdf Doe",
+                "Timestamp": datetime.utcnow().isoformat() + "Z", 
+                "Driver": "John Doe",
                 "Drinking": random.choices([True, False], weights=[1, 15])[0],
                 "Eating": random.choices([True, False], weights=[1, 15])[0],
                 "Phone": random.choices([True, False], weights=[1, 5])[0],
                 "SeatbeltOff": random.choices([True, False], weights=[1, 50])[0],
                 "Sleeping": random.choices([True, False], weights=[1, 50])[0],
                 "Smoking": random.choices([True, False], weights=[1, 30])[0],
-                "handsOnWheel": random.choices([2, 1, 0], weights=[90, 8, 1])[0], 
+                "OutOfLane": random.choices([True, False], weights=[1, 30])[0],
+                "RiskyDrivers": random.choices([3, 2, 1, 0], weights=[5, 5, 5, 85])[0],
+                "UnsafeDistance": random.choices([True, False], weights=[1, 30])[0],
+                "handsOnWheel": random.choices([2, 1, 0], weights=[90, 8, 1])[0],
             }
 
-            # Convert the data to JSON string
             json_data = json.dumps(data)
-
-            # Send the JSON data to the server
             await websocket.send(json_data)
             print("Sent message to server")
 
             # needed to serve as a ping mechanism
             await websocket.recv()
-            # print(f"Received from server: {response}")
-
             await asyncio.sleep(timeoutSeconds)
 
 # Run the connect function
