@@ -7,6 +7,7 @@ import Notifications from "../components/fleetdash components/Notifications";
 import ScoreOverview from "../components/fleetdash components/ScoreOverview";
 import AllStats from "../components/fleetdash components/AllStats";
 import NavBar from "../components/NavBar";
+import Filter from "../components/fleetdash components/Filter";
 
 // TODO
 // Implement dark/light toggle (store the state in localstorage for subsequent visits) <- also needs its own context to be accessed by all components, similar to what I'm donig with websockets context
@@ -19,18 +20,28 @@ export default function Home() {
       <div className="flex">
         <div className="w-full ">
           <div className="grid grid-cols-12 auto-rows-[100px] h-screen gap-x-5 gap-y-6">
+            {/* Nav Bar - takes 1 row of space */}
             <div className="col-span-12 row-span-1 row-start-1 col-start-1 w-screen ">
               <div className="pt-0">
                 <NavBar />
               </div>
             </div>
-            <div className="col-span-12 col-start-1 row-span-2 row-start-2 ">
+            {/* Filter Component */}
+            <div className="col-span-12 row-span-1 row-start-2 col-start-1 w-screen">
+              <Filter />
+            </div>
+            {/* 3 drivers display - takes 2 rows of span */}
+            {/* Will change col span later to fit current online drivers display */}
+            <div className="col-span-12 col-start-1 row-span-2 row-start-3 ">
               <HighRiskDrivers />
             </div>
-            <div className="col-span-3 col-start-1 row-span-6 row-start-4 ml-6">
+            {/* Start of "fourth" row */}
+            {/* Most recent notification display */}
+            <div className="col-span-3 col-start-1 row-span-6 row-start-5 ml-6">
               <Notifications />
             </div>
-            <div className="col-span-9 col-start-4 row-span-6 row-start-4  mr-6 rounded-xl">
+            {/* Chart Prototype - WIP */}
+            <div className="col-span-9 col-start-4 row-span-6 row-start-5 mr-6 rounded-xl">
               <AllStats />
             </div>
           </div>
