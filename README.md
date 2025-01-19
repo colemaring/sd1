@@ -50,4 +50,3 @@ python client_test.py
 
 ## TODO:
 connect APIs for fetching user data and historical data when loading page <br>
-weird bug where the client_test.py freezes after 20 seconds
