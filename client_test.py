@@ -102,7 +102,7 @@ async def connect():
             }
 
             # Print generated event (for debugging)
-            print(f"Generated Event: {data}")
+            # print(f"Generated Event: {data}")
 
             # Update event frequencies
             for key, value in data.items():
