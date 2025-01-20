@@ -3,14 +3,14 @@ const router = express.Router();
 const db = require("./db");
 
 // CREATE
-// Create a vehicle
-router.post("/vehicles", async (req, res) => {
-    const { driver_name, driver_phone_number, risk_score, fleet_id } = req.body;
+// Create a driver
+router.post("/driver", async (req, res) => {
+    const { name, phone_number, risk_score, fleet_id } = req.body;
     try {
         const result = await db.query(
-            `INSERT INTO vehicles (driver_name, driver_phone_number, risk_score, fleet_id) 
+            `INSERT INTO driver (name, phone_number, risk_score, fleet_id) 
             VALUES ($1, $2, $3, $4) RETURNING *`,
-            [driver_name, driver_phone_number, risk_score, fleet_id]
+            [name, phone_number, risk_score, fleet_id]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
