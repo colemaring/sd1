@@ -2,6 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../bootstrap-overrides.css"; // Custom overrides
 import "../App.css";
 import WarningCount from "../components/WarningCount";
 import DriverInfo from "../components/DriverInfo";

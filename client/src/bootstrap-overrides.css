@@ -1,0 +1,43 @@
+:root {
+  --bs-body-bg: hsl(var(--background));
+  --bs-body-color: hsl(var(--foreground));
+  --bs-primary: hsl(var(--primary));
+  --bs-primary-rgb: var(--primary);
+  --bs-secondary: hsl(var(--secondary));
+  --bs-secondary-rgb: var(--secondary);
+  --bs-success: hsl(var(--accent));
+  --bs-success-rgb: var(--accent);
+  --bs-info: hsl(var(--accent));
+  --bs-info-rgb: var(--accent);
+  --bs-warning: hsl(var(--muted));
+  --bs-warning-rgb: var(--muted);
+  --bs-danger: hsl(var(--destructive));
+  --bs-danger-rgb: var(--destructive);
+  --bs-light: hsl(var(--background));
+  --bs-light-rgb: var(--background);
+  --bs-dark: hsl(var(--foreground));
+  --bs-dark-rgb: var(--foreground);
+  --bs-border-color: hsl(var(--border));
+}
+
+.dropdown-toggle {
+  color: hsl(var(--foreground)) !important;
+}
+
+.navbar {
+  margin: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.container-fluid {
+  padding: 0 !important;
+}
+
+.filter {
+  margin-top: 0 !important; /* Remove unwanted top spacing */
+}
+
+.pt-0, .m-0 { 
+  padding-top: 0 !important; 
+  margin: 0 !important; 
+}
