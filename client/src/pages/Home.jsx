@@ -6,6 +6,7 @@ import Filter from "../components/fleetdash components/Filter";
 import HighRiskDrivers from "../components/fleetdash components/HighRiskDrivers";
 import Notifications from "../components/fleetdash components/Notifications";
 import AllStats from "../components/fleetdash components/AllStats";
+import CurrentActive from "../components/fleetdash components/CurrentActive";
 
 // TODO: Add API calls for data
 
@@ -24,10 +25,15 @@ export default function Home() {
             <Filter />
           </div>
 
-          {/* High Risk Drivers */}
-          <div className="col-span-12">
-            <HighRiskDrivers />
+          {/* High Risk Drivers and Current Active in the same row */}
+          <div className="col-span-12 md:col-span-8 lg:col-span-9 ">
+              <HighRiskDrivers />
           </div>
+            <div className="col-span-12 md:col-span-4 lg:col-span-3">
+              <div className="">
+                <CurrentActive />
+              </div>
+            </div>
 
           {/* Notifications and Stats/Chart */}
           <div className="col-span-12 md:col-span-4 lg:col-span-3">

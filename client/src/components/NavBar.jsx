@@ -50,7 +50,7 @@ function NavBar() {
         <Nav className="me-auto">
           <Nav.Link
             as={Link}
-            to="/"
+            to="/fleet"
             style={{
               color: `hsl(var(--foreground))`,
             }}

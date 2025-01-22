@@ -6,6 +6,7 @@ import DriverDash from "./pages/DriverDash.jsx";
 import WebSocketsTest from "./pages/WebSocketsTest.jsx";
 import { WebSocketsProvider } from "./context/WebSocketsContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
+import FleetDash from "./pages/FleetDash.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ThemeProvider>
@@ -13,6 +14,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />} />
+          <Route path="/fleet" element={<FleetDash />} />
           <Route path="/driver/:driverName" element={<DriverDash />} />
           <Route path="/wstest" element={<WebSocketsTest />} />
         </Routes>

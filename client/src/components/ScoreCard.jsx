@@ -1,24 +1,16 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'; // Import useState
 
-function HighRiskDrivers() {
-  const drivers = [
-    { name: "Jane Doe", phone: "+1 (123) 123-1234", score: 50, change: "-3.2%" },
-    { name: "John Doe", phone: "+1 (123) 313-3227", score: 67, change: "-1.8%" },
-    { name: "Alice Smith", phone: "+1 (123) 987-6543", score: 45, change: "-2.5%" },
-    // { name: "Bob Johnson", phone: "+1 (123) 111-2222", score: 52, change: "+1.4%" },
-    // { name: "Charlie Brown", phone: "+1 (123) 555-6666", score: 38, change: "-4.1%" },
-  ];
+function ScoreCard({ name, phone, score, change }) { // Use destructuring to access props
 
-  const [activeDropdown, setActiveDropdown] = useState(null); // State to track the active dropdown
+    const [activeDropdown, setActiveDropdown] = useState(null); // State to track the active dropdown
 
-  const toggleDropdown = (name) => {
-    // If the clicked dropdown is already open, close it. Otherwise, open the new one.
-    setActiveDropdown((prev) => (prev === name ? null : name));
-  };
+    const toggleDropdown = (name) => {
+        // If the clicked dropdown is already open, close it. Otherwise, open the new one.
+        setActiveDropdown((prev) => (prev === name ? null : name));
+    };
 
   return (
     <div className="flex flex-wrap justify-center gap-4 w-full">
-      {drivers.map(({ name, phone, score, change }) => (
         <div
           key={name}
           className="relative flex rounded-xl w-72 p-4 bg-card text-foreground shadow-md"
@@ -73,9 +65,8 @@ function HighRiskDrivers() {
             )}
           </div>
         </div>
-      ))}
     </div>
   );
 }
 
-export default HighRiskDrivers;
+export default ScoreCard;
