@@ -26,6 +26,7 @@ ChartJS.register(
 
 export const options = {
   responsive: true,
+  maintainAspectRatio: false,
   interaction: {
     mode: "index",
     intersect: false,
@@ -34,21 +35,21 @@ export const options = {
     legend: {
       position: "bottom",
       labels: {
-        boxWidth: 12,
+        boxWidth: 10,
         font: {
-          size: 14,
+          size: 12,
           family: "'Arial', sans-serif",
           weight: "bold",
         },
       },
     },
     tooltip: {
-      backgroundColor: "bg-primary",
+      backgroundColor: "hsl(var(--primary))",
       titleFont: { weight: "bold" },
-      bodyFont: { size: 12 },
+      bodyFont: { size: 10 },
       borderColor: "rgba(255, 255, 255, 0.5)",
       borderWidth: 1,
-      padding: 10,
+      padding: 8,
     },
   },
   scales: {
@@ -56,7 +57,7 @@ export const options = {
       title: {
         display: true,
         text: "Days",
-        font: { size: 16 },
+        font: { size: 12 },
       },
       grid: {
         display: false,
@@ -65,8 +66,8 @@ export const options = {
     y: {
       title: {
         display: true,
-        text: "Occurences",
-        font: { size: 16 },
+        text: "Occurrences",
+        font: { size: 12 },
       },
       grid: {
         color: "rgba(200, 200, 200, 0.3)",
@@ -84,11 +85,13 @@ export const data = {
 
 function AllStats() {
   return (
-    <div className="bg-card rounded-xl">
-      <h1 className="text-center text-2xl font-bold py-4 text-primary">
+    <div className="bg-card rounded-xl p-4">
+      <h1 className="text-center text-xl font-bold pb-4 text-primary">
         Fleet Risk Score Overview
       </h1>
-      <Line options={options} data={data} className="relative" />
+      <div className="relative h-64 sm:h-80">
+        <Line options={options} data={data} />
+      </div>
     </div>
   );
 }
