@@ -17,7 +17,7 @@ import Filter from "../components/fleetdash components/Filter";
 export default function Home() {
   return (
     <>
-      <div className="flex">
+      <div className="flex bg-background">
         <div className="w-full">
           <div className="grid grid-cols-12 auto-rows-min gap-x-5 gap-y-6">
             {/* Nav Bar - takes 1 row of space */}

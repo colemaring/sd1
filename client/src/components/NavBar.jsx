@@ -4,6 +4,7 @@ import "../bootstrap-overrides.css"; // Bootstrap overrides for Tailwind colors
 import React, { useContext } from "react";
 import { WebSocketsContext } from "../context/WebSocketsContext";
 import { useTheme } from "../context/ThemeContext";
+import { FaBars } from "react-icons/fa"; // Import the hamburger menu icon
 
 function NavBar() {
   const messages = useContext(WebSocketsContext);
@@ -30,7 +31,22 @@ function NavBar() {
         >
           Green Saver
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        {/* Custom Hamburger Menu */}
+        <Navbar.Toggle
+          aria-controls="responsive-navbar-nav"
+          style={{
+            border: "none",
+            backgroundColor: "transparent",
+            outline: "none", 
+            boxShadow: "none",
+          }}
+          className="focus:outline-none"
+        >
+          <FaBars
+            size={24}
+            color={`hsl(var(--foreground))`}
+          />
+        </Navbar.Toggle>
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link
@@ -44,7 +60,6 @@ function NavBar() {
             <NavDropdown
               title="Drivers"
               id="collapsible-nav-dropdown"
-              menuVariant={theme === "light" ? "light" : "dark"} // Adjusts dropdown background
               className="custom-dropdown"
             >
               {drivers.length > 0 ? (

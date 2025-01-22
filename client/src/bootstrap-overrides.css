@@ -21,23 +21,19 @@
 }
 
 .dropdown-toggle {
-  color: hsl(var(--foreground)) !important;
+  color: hsl(var(--foreground));
 }
 
-.navbar {
-  margin: 0 !important;
-  margin-bottom: 0 !important;
+.navbar-toggler:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 .container-fluid {
-  padding: 0 !important;
-}
-
-.filter {
-  margin-top: 0 !important; /* Remove unwanted top spacing */
+  padding: 0;
 }
 
 .pt-0, .m-0 { 
-  padding-top: 0 !important; 
-  margin: 0 !important; 
+  padding-top: 0; 
+  margin: 0; 
 }

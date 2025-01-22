@@ -18,30 +18,39 @@ function Notifications() {
       alert: "using his phone",
       date: "03 April 2021 | 5:00 pm",
     },
-    // {
-    //   driver: "Robert",
-    //   alert: "not following the route",
-    //   date: "04 April 2021 | 6:00 pm",
-    // },
-    // { driver: "Jack", alert: "smoking", date: "01 April 2021 | 3:00 pm" },
   ];
 
   return (
-    <div className="h-full md:max-h-[100px]">
+    <div className="h-full">
+      {/* Header */}
       <div className="flex justify-between">
-        <h1 className="text-xl font-bold text-start">Notifications</h1>
-        <a href="#" className="text-green-400 text-md font-semibold">
+        <h1 className="text-xl font-bold text-start text-foreground">
+          Notifications
+        </h1>
+        <a
+          href="#"
+          className="text-md font-semibold hover:underline"
+          style={{
+            color: `hsl(var(--primary))`,
+          }}
+        >
           View All
         </a>
       </div>
 
+      {/* Notifications List */}
       {notifications.map(({ driver, alert, date }) => (
-        <div className=" bg-[#f0f0f0] p-2 rounded-xl mt-4" key={driver}>
-          <div className="">
-            <FaRegCircleUser className="float-start pr-2" size={30} /> {driver}{" "}
-            is {alert}
+        <div
+          className="bg-muted text-foreground p-2 rounded-xl mt-3 text-sm"
+          key={driver}
+        >
+          <div className="flex items-center">
+            <FaRegCircleUser className="pr-2" size={24} />
+            <span className="font-medium">
+              {driver} is {alert}
+            </span>
           </div>
-          <div className="text-md text-gray-400">{date}</div>
+          <div className="text-xs text-muted-foreground">{date}</div>
         </div>
       ))}
     </div>
