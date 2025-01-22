@@ -48,7 +48,7 @@ function HighRiskDrivers() {
           {/* Dropdown */}
           <div className="relative">
             <button
-              className="relative left-24 text-2xl rounded-full bg-background h-8 w-10 pb-12"
+              className="relative left-24 text-2xl rounded-full bg-muted h-8 w-10 pb-12"
               onClick={toggleDropdown}
             >
               ...

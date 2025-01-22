@@ -43,7 +43,7 @@ export const options = {
       },
     },
     tooltip: {
-      backgroundColor: "rgb(240 240 240)",
+      backgroundColor: "bg-primary",
       titleFont: { weight: "bold" },
       bodyFont: { size: 12 },
       borderColor: "rgba(255, 255, 255, 0.5)",
@@ -85,7 +85,7 @@ export const data = {
 function AllStats() {
   return (
     <div className="bg-card rounded-xl">
-      <h1 className="text-center text-2xl font-bold py-4 text-gray-800">
+      <h1 className="text-center text-2xl font-bold py-4 text-primary">
         Fleet Risk Score Overview
       </h1>
       <Line options={options} data={data} className="relative" />
