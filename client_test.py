@@ -98,7 +98,7 @@ async def connect():
                 "OutOfLane": random.choices([True, False], weights=[1, 30])[0],
                 "RiskyDrivers": random.choices([3, 2, 1, 0], weights=[5, 5, 5, 85])[0],
                 "UnsafeDistance": random.choices([True, False], weights=[1, 30])[0],
-                "HandsOnWheel": random.choices([2, 1, 0], weights=[90, 8, 1])[0],
+                "HandsOffWheel": random.choices([True, False], weights=[1, 30])[0],
             }
 
             # Print generated event (for debugging)
