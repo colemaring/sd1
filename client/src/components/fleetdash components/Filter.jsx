@@ -1,66 +1,140 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { IoFilter } from "react-icons/io5";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../../bootstrap-overrides.css"; // Custom overrides
 
-// WIP - will work on proper display later this week
-
-// Filter feature for the main page
-// Has three separated columns, 1st risk filter, 2nd current selected filters, 3rd filter selection
 function Filter() {
-  // Set 'high' as the default active risk
   const [activeRisk, setActiveRisk] = useState("high");
+  const [selectedFilters, setSelectedFilters] = useState(["Active", "Increasing"]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false); // For small screen toggle
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 768);
 
-  // Function to handle click and set active risk
-  const handleClick = (risk) => {
-    setActiveRisk(risk);
+  const risks = ["High", "Medium", "Low"];
+  const filters = ["Active", "Increasing", "Decreasing"];
+
+  const toggleFilterOpen = () => {
+    setIsFilterOpen(!isFilterOpen);
   };
 
-  // Maybe change it to use a grid so that it is easier to organize everything
+  const toggleSelectedFilter = (filter) => {
+    setSelectedFilters((prev) =>
+      prev.includes(filter)
+        ? prev.filter((item) => item !== filter)
+        : [...prev, filter]
+    );
+  };
+
+  const applyFilters = () => {
+    if (!isLargeScreen) {
+      setIsFilterOpen(false); // Close the filter menu on small screens
+    }
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth >= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (isLargeScreen) {
+      setIsFilterOpen(true);
+    }
+  }, [isLargeScreen]);
 
   return (
-    <div className="flex flex-row w-screen border-2">
-      {/* Main risk choice */}
-      <div className="flex flex-row bg-[#f0f0f0] rounded-xl w-[25%] p-2 text-center justify-evenly items-center">
-        <div
-          onClick={() => handleClick("high")}
-          className={`${
-            activeRisk === "high" ? "rounded-xl bg-white font-semibold" : ""
-          } p-2 text-xl cursor-pointer`}
+    <div className="w-full border-t border-b" style={{ borderColor: "hsl(var(--border))" }}>
+      {/* Compact Filter Button for Small Screens */}
+      <div className="flex justify-between items-center md:hidden p-2">
+        <h1 className="font-bold text-primary text-lg">Filters</h1>
+        <button
+          className="flex items-center px-3 py-2 rounded"
+          style={{
+            backgroundColor: `hsl(var(--primary))`,
+            color: `hsl(var(--primary-foreground))`,
+          }}
+          onClick={toggleFilterOpen}
         >
-          High Risk
-        </div>
+          <IoFilter className="mr-2" size={18} />
+          <span>{isFilterOpen ? "Close" : "Open"}</span>
+        </button>
+      </div>
+
+      {/* Full Filter Layout */}
+      {(isFilterOpen || isLargeScreen) && (
         <div
-          onClick={() => handleClick("medium")}
-          className={`${
-            activeRisk === "medium" ? "rounded-xl bg-white font-semibold" : ""
-          } p-2 text-xl cursor-pointer`}
+          className="flex flex-wrap items-center gap-4 p-3 rounded-xl border"
+          style={{
+            backgroundColor: "hsl(var(--muted))",
+            borderColor: "hsl(var(--border))",
+          }}
         >
-          Medium Risk
+          {/* Risk Selection */}
+          <div className="flex flex-wrap gap-2">
+            {risks.map((risk) => (
+              <div
+                key={risk}
+                onClick={() => setActiveRisk(risk.toLowerCase())}
+                className={`px-4 py-1 text-sm cursor-pointer rounded-lg ${
+                  activeRisk === risk.toLowerCase()
+                    ? "bg-card text-card-foreground font-semibold"
+                    : "bg-muted text-muted-foreground hover:bg-card hover:text-card-foreground"
+                }`}
+              >
+                {risk} Risk
+              </div>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <span
+            className="border-l h-6"
+            style={{
+              borderColor: "hsl(var(--foreground))",
+            }}
+          ></span>
+
+          {/* Filters */}
+          <div className="flex flex-wrap gap-2">
+            {filters.map((filter) => (
+              <div
+                key={filter}
+                onClick={() => toggleSelectedFilter(filter)}
+                className={`px-4 py-1 text-sm cursor-pointer rounded-lg ${
+                  selectedFilters.includes(filter)
+                    ? "bg-card text-card-foreground font-semibold"
+                    : "bg-muted text-muted-foreground hover:bg-card hover:text-card-foreground"
+                }`}
+              >
+                {filter}
+              </div>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <span
+            className="border-l h-6"
+            style={{
+              borderColor: "hsl(var(--foreground))",
+            }}
+          ></span>
+
+          {/* Apply Filters Button */}
+          <button
+            className="px-3 py-2 rounded"
+            style={{
+              backgroundColor: `hsl(var(--primary))`,
+              color: `hsl(var(--primary-foreground))`,
+            }}
+            onClick={applyFilters}
+          >
+            Apply Filters
+          </button>
         </div>
-        <div
-          onClick={() => handleClick("low")}
-          className={`${
-            activeRisk === "low" ? "rounded-xl bg-white font-semibold" : ""
-          } p-2 text-xl cursor-pointer`}
-        >
-          Low Risk
-        </div>
-      </div>
-      {/* Work on this later - line between cols */}
-      <span className="border-2 h-14 border-black"></span>
-      {/* Selected filters */}
-      <div className="flex flex-row pl-2">
-        <div className="bg-[#f0f0f0] rounded-xl flex justify-center items-center text-xl p-3 font-semibold">
-          Active X
-        </div>
-        <div className="bg-[#f0f0f0] rounded-xl flex justify-center items-center text-xl p-3 font-semibold ml-2">
-          Increasing X
-        </div>
-      </div>
-      {/* Work on this later - line between cols */}
-      <span className="relative border-2 h-14 border-black float-end left-32"></span>
-      {/* Filter Button */}
-      <div className="bg-[#f0f0f0] rounded-xl flex justify-center items-center text-xl p-3 font-semibold ml-2 relative left-32">
-        Filter
-      </div>
+      )}
     </div>
   );
 }

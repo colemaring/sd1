@@ -57,14 +57,14 @@ export const data = {
   datasets: [
     {
       label: "Inside Score",
-      data: [200, 400, 300, 500, 340, 540, 430], // Sample data for Dataset 1
+      data: [200, 400, 300, 500, 340, 540, 430],
       borderColor: "rgb(255, 99, 132)",
       backgroundColor: "rgba(255, 99, 132, 0.5)",
       yAxisID: "y",
     },
     {
       label: "Outside Score",
-      data: [320, 200, 234, 300, 233, 434, 300], // Sample data for Dataset 2
+      data: [320, 200, 234, 300, 233, 434, 300],
       borderColor: "rgb(53, 162, 235)",
       backgroundColor: "rgba(53, 162, 235, 0.5)",
       yAxisID: "y1",
@@ -74,11 +74,11 @@ export const data = {
 
 function ScoreOverview() {
   return (
-    <div className="h-full shadow-xl rounded-xl">
-      <h1 className="text-center text-xl font-bold py-4">
+    <div className="h-full shadow-xl rounded-xl bg-card text-primary">
+      <h1 className="text-primary text-center text-xl font-bold py-4">
         Fleet Risk Score Overview
       </h1>
-      <Line options={options} data={data} className="" />
+      <Line options={options} data={data} />
     </div>
   );
 }

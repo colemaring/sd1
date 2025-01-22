@@ -1,30 +1,27 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useTheme } from "../context/ThemeContext";
 
 const EventsLog = ({ driverData }) => {
+  const { theme } = useTheme();
   const [events, setEvents] = useState([]);
   const eventsEndRef = useRef(null);
 
   useEffect(() => {
     const newEvents = [];
-
-    // Check each property in driverData and log events if true
     for (const [key, value] of Object.entries(driverData)) {
       if (value === true) {
         newEvents.push({
-          date: new Date(driverData.Timestamp).toLocaleString(), // Include both date and time
+          date: new Date(driverData.Timestamp).toLocaleString(),
           eventType: key,
           durationOrLocation: "...",
           aiType: "Inside",
         });
       }
     }
-
-    // Append new events to the existing events
     setEvents((prevEvents) => [...prevEvents, ...newEvents]);
   }, [driverData]);
 
   useEffect(() => {
-    // Scroll to the bottom of the events log
     if (eventsEndRef.current) {
       eventsEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
@@ -32,38 +29,35 @@ const EventsLog = ({ driverData }) => {
 
   return (
     <div
-      className="px-4 py-4 bg-[#f0f0f0] rounded-xl"
+      className={`px-4 py-4 rounded-xl bg-card text-primary`}
       style={{ height: "400px" }}
     >
       <h2 className="text-xl font-bold pb-4">Event Log</h2>
       <div
-        className="events-log-table-container"
-        style={{ maxHeight: "300px", overflowY: "auto" }}
+        className={`rounded-md`}
+        style={{ maxHeight: "300px", overflowY: "auto", padding: "8px" }}
       >
-        <table className="table table-striped">
-          <thead className="text-md sticky-header">
+        <table className="table w-full text-sm bg-card">
+          <thead
+            className={`sticky top-0 bg-card text-primary`}
+          >
             <tr>
-              <th scope="col" className="text-gray-500 font-thin">
-                DATE
-              </th>
-              <th scope="col" className="text-gray-500 font-thin">
-                EVENT TYPE
-              </th>
-              <th scope="col" className="text-gray-500 font-thin">
-                DURATION/LOCATION
-              </th>
-              <th scope="col" className="text-gray-500 font-thin">
-                AI TYPE
-              </th>
+              <th className="font-thin px-2 py-2 text-left text-primary">DATE</th>
+              <th className="font-thin px-2 py-2 text-left text-primary">EVENT TYPE</th>
+              <th className="font-thin px-2 py-2 text-left text-primary">DURATION/LOCATION</th>
+              <th className="font-thin px-2 py-2 text-left text-primary">AI TYPE</th>
             </tr>
           </thead>
-          <tbody className="text-md">
+          <tbody>
             {events.map((event, index) => (
-              <tr key={index}>
-                <td>{event.date}</td>
-                <td>{event.eventType}</td>
-                <td>{event.durationOrLocation}</td>
-                <td>{event.aiType}</td>
+              <tr
+                key={index}
+                className={`bg-card`}
+              >
+                <td className="px-2 py-2 text-primary">{event.date}</td>
+                <td className="px-2 py-2 text-primary">{event.eventType}</td>
+                <td className="px-2 py-2 text-primary">{event.durationOrLocation}</td>
+                <td className="px-2 py-2 text-primary">{event.aiType}</td>
               </tr>
             ))}
             <tr ref={eventsEndRef} />

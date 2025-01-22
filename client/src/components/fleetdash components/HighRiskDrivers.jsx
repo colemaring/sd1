@@ -1,74 +1,73 @@
 import React, { useState } from "react";
-// import "../components/styles/fleetdash.css";
-// import "../styles/highriskdriver.css";
 
-//icons
-import { FaRegCircleUser } from "react-icons/fa6";
-import { CiCircleAlert } from "react-icons/ci";
-import { PiSpeedometer } from "react-icons/pi";
-import { Badge, Button, Dropdown } from "react-bootstrap";
-
-// This component displays three drivers' main information based on the main page
-// The drivers change depending on the filter selection
 function HighRiskDrivers() {
   const drivers = [
-    { name: "Jane Doe", phone: "+1 (123) 123-1234", score: 540 },
-    { name: "John Doe", phone: "+1 (123) 123-1234", score: 320 },
+    { name: "Jane Doe", phone: "+1 (123) 123-1234", score: 50, change: "-3.2%" },
+    { name: "John Doe", phone: "+1 (123) 313-3227", score: 67, change: "-1.8%" },
+    { name: "Alice Smith", phone: "+1 (123) 987-6543", score: 45, change: "-2.5%" },
+    { name: "Bob Johnson", phone: "+1 (123) 111-2222", score: 52, change: "+1.4%" },
+    { name: "Charlie Brown", phone: "+1 (123) 555-6666", score: 38, change: "-4.1%" },
   ];
 
-  // WIP - Make it appear only in the index that it was clicked on
-  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null); // State to track the active dropdown
 
-  const toggleDropdown = () => {
-    setDropdownVisible(!dropdownVisible);
+  const toggleDropdown = (name) => {
+    // If the clicked dropdown is already open, close it. Otherwise, open the new one.
+    setActiveDropdown((prev) => (prev === name ? null : name));
   };
 
   return (
-    // row container
-    <div className="flex h-full w-[70%]">
-      {drivers.map(({ name, phone, score }) => (
-        // individual driver container
+    <div className="flex flex-wrap justify-center gap-4 w-full">
+      {drivers.map(({ name, phone, score, change }) => (
         <div
           key={name}
-          className="flex rounded-xl bg-[#f0f0f0] w-2/6 mx-4 p-4 overflow-hidden"
+          className="relative flex rounded-xl w-72 p-4 bg-card text-foreground shadow-md"
         >
-          <div className="relative flex flex-col">
-            {/* Profile Picture */}
-            <div className="rounded-full bg-[#d9d9d9] w-20 h-20 text-center"></div>
-            {/* On/off signal */}
-            <span className="absolute rounded-full bg-green-500 w-6 h-6 bottom-0 left-2 inline-flex animate-ping"></span>
-            <span className="relative top-[4.5rem] left-2 inline-flex rounded-full h-6 w-6 bg-green-700"></span>
+          {/* Profile Picture */}
+          <div className="flex flex-col items-center">
+            <div className="rounded-full bg-muted w-16 h-16"></div>
           </div>
-          {/* Driver information - left side */}
-          <div className="flex flex-col relative pl-2">
-            <div className="pt-1">
-              <h3 className="text-md">High Risk</h3>
-              <h1 className="text-2xl font-semibold">{name}</h1>
+
+          {/* On/off signal */}
+          <div className="absolute top-[65%] left-[12%] transform">
+            <span className="absolute rounded-full bg-green-500 w-6 h-6 inline-flex animate-ping"></span>
+            <span className="absolute rounded-full bg-green-700 w-6 h-6"></span>
+          </div>
+
+          {/* Driver Info */}
+          <div className="flex flex-col pl-4 w-full">
+            <div className="text-center">
+              <h3 className="text-sm text-muted-foreground">High Risk</h3>
+              <h1 className="text-lg font-semibold">{name}</h1>
               <h3 className="text-sm">{phone}</h3>
-              <h1 className="text-6xl font-normal pt-4">{score}</h1>
-              <h3 className="text-center">Risk Score</h3>
             </div>
-            {/* Risk score percentage inc/dec */}
-            <div className="relative bottom-16 left-28">
-              <h3 className="text-2xl text-red-500 font-medium">+3.2%</h3>
+
+            {/* Risk Score and Percentage Change */}
+            <div className="flex flex-col items-center pt-4">
+              <div className="flex items-baseline">
+                <h1 className="text-4xl font-bold">{score}</h1>
+                <h3 className="text-sm text-destructive font-medium pl-2">
+                  {change}
+                </h3>
+              </div>
+              <h3 className="text-xs text-muted-foreground">Safety Score</h3>
             </div>
           </div>
-          {/* Button to toggle the dropdown */}
-          <div className="relative">
+
+          {/* Dropdown */}
+          <div className="absolute top-2 right-2">
             <button
-              className="relative left-24 text-2xl rounded-full bg-white h-8 w-10 pb-12"
-              onClick={toggleDropdown}
+              className="text-xl rounded-full bg-muted p-2"
+              onClick={() => toggleDropdown(name)}
             >
               ...
             </button>
-
-            {/* Dropdown menu */}
-            {dropdownVisible && (
-              <div className="absolute left-[-2em] mt-4 w-40 bg-white shadow-lg rounded-lg">
+            {activeDropdown === name && (
+              <div className="absolute right-0 mt-2 w-40 bg-card shadow-lg rounded-lg">
                 <ul>
-                  <li className="p-2 hover:bg-gray-100">Option 1</li>
-                  <li className="p-2 hover:bg-gray-100">Option 2</li>
-                  <li className="p-2 hover:bg-gray-100">Option 3</li>
+                  <li className="p-2 hover:bg-muted">Option 1</li>
+                  <li className="p-2 hover:bg-muted">Option 2</li>
+                  <li className="p-2 hover:bg-muted">Option 3</li>
                 </ul>
               </div>
             )}
