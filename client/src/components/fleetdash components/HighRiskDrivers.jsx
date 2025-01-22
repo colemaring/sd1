@@ -3,7 +3,11 @@ import React, { useState } from "react";
 function HighRiskDrivers() {
   const drivers = [
     { name: "Jane Doe", phone: "+1 (123) 123-1234", score: 50, change: "-3.2%" },
-    { name: "John Doe", phone: "+1 (123) 123-1234", score: 67, change: "-1.8%" },
+    { name: "John Doe", phone: "+1 (123) 313-3227", score: 67, change: "-1.8%" },
+    { name: "Alice Smith", phone: "+1 (123) 987-6543", score: 45, change: "-2.5%" },
+    { name: "Bob Johnson", phone: "+1 (123) 111-2222", score: 52, change: "+1.4%" },
+    { name: "Charlie Brown", phone: "+1 (123) 555-6666", score: 38, change: "-4.1%" },
+    // { name: "Dana White", phone: "+1 (123) 777-8888", score: 62, change: "-0.9%" },
   ];
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
