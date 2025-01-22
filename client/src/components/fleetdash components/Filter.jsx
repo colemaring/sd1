@@ -1,50 +1,140 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { IoFilter } from "react-icons/io5";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../bootstrap-overrides.css"; // Custom overrides
-import { useTheme } from "../../context/ThemeContext";
 
 function Filter() {
   const [activeRisk, setActiveRisk] = useState("high");
+  const [selectedFilters, setSelectedFilters] = useState(["Active", "Increasing"]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false); // For small screen toggle
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 768);
 
-  const handleClick = (risk) => {
-    setActiveRisk(risk);
+  const risks = ["High", "Medium", "Low"];
+  const filters = ["Active", "Increasing", "Decreasing"];
+
+  const toggleFilterOpen = () => {
+    setIsFilterOpen(!isFilterOpen);
   };
 
+  const toggleSelectedFilter = (filter) => {
+    setSelectedFilters((prev) =>
+      prev.includes(filter)
+        ? prev.filter((item) => item !== filter)
+        : [...prev, filter]
+    );
+  };
+
+  const applyFilters = () => {
+    if (!isLargeScreen) {
+      setIsFilterOpen(false); // Close the filter menu on small screens
+    }
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth >= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (isLargeScreen) {
+      setIsFilterOpen(true);
+    }
+  }, [isLargeScreen]);
+
   return (
-    <div className="flex flex-row w-full border-2 border-border text-foreground">
-      {/* Main risk choice */}
-      <div className="flex flex-row bg-muted rounded-xl w-[25%] p-2 text-center justify-evenly items-center">
-        {["high", "medium", "low"].map((risk) => (
-          <div
-            key={risk}
-            onClick={() => handleClick(risk)}
-            className={`p-2 text-xl cursor-pointer ${
-              activeRisk === risk ? "rounded-xl bg-card font-semibold" : ""
-            }`}
-          >
-            {risk.charAt(0).toUpperCase() + risk.slice(1)} Risk
+    <div className="w-full border-t border-b" style={{ borderColor: "hsl(var(--border))" }}>
+      {/* Compact Filter Button for Small Screens */}
+      <div className="flex justify-between items-center md:hidden p-2">
+        <h1 className="font-bold text-primary text-lg">Filters</h1>
+        <button
+          className="flex items-center px-3 py-2 rounded"
+          style={{
+            backgroundColor: `hsl(var(--primary))`,
+            color: `hsl(var(--primary-foreground))`,
+          }}
+          onClick={toggleFilterOpen}
+        >
+          <IoFilter className="mr-2" size={18} />
+          <span>{isFilterOpen ? "Close" : "Open"}</span>
+        </button>
+      </div>
+
+      {/* Full Filter Layout */}
+      {(isFilterOpen || isLargeScreen) && (
+        <div
+          className="flex flex-wrap items-center gap-4 p-3 rounded-xl border"
+          style={{
+            backgroundColor: "hsl(var(--muted))",
+            borderColor: "hsl(var(--border))",
+          }}
+        >
+          {/* Risk Selection */}
+          <div className="flex flex-wrap gap-2">
+            {risks.map((risk) => (
+              <div
+                key={risk}
+                onClick={() => setActiveRisk(risk.toLowerCase())}
+                className={`px-4 py-1 text-sm cursor-pointer rounded-lg ${
+                  activeRisk === risk.toLowerCase()
+                    ? "bg-card text-card-foreground font-semibold"
+                    : "bg-muted text-muted-foreground hover:bg-card hover:text-card-foreground"
+                }`}
+              >
+                {risk} Risk
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      {/* Line between columns */}
-      <span className="border-2 h-14 border-border bg-primary"></span>
-      {/* Selected filters */}
-      <div className="flex flex-row pl-2 bg-primary">
-        {["Active X", "Increasing X"].map((filter) => (
-          <div
-            key={filter}
-            className="bg-primary rounded-xl flex justify-center items-center text-xl p-3 font-semibold ml-2"
-          >
-            {filter}
+
+          {/* Divider */}
+          <span
+            className="border-l h-6"
+            style={{
+              borderColor: "hsl(var(--foreground))",
+            }}
+          ></span>
+
+          {/* Filters */}
+          <div className="flex flex-wrap gap-2">
+            {filters.map((filter) => (
+              <div
+                key={filter}
+                onClick={() => toggleSelectedFilter(filter)}
+                className={`px-4 py-1 text-sm cursor-pointer rounded-lg ${
+                  selectedFilters.includes(filter)
+                    ? "bg-card text-card-foreground font-semibold"
+                    : "bg-muted text-muted-foreground hover:bg-card hover:text-card-foreground"
+                }`}
+              >
+                {filter}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      {/* Line between columns */}
-      <span className="relative border-2 h-14 border-border float-end left-32"></span>
-      {/* Filter Button */}
-      <div className="bg-primary rounded-xl flex justify-center items-center text-xl p-3 font-semibold ml-2 relative left-32">
-        Filter
-      </div>
+
+          {/* Divider */}
+          <span
+            className="border-l h-6"
+            style={{
+              borderColor: "hsl(var(--foreground))",
+            }}
+          ></span>
+
+          {/* Apply Filters Button */}
+          <button
+            className="px-3 py-2 rounded"
+            style={{
+              backgroundColor: `hsl(var(--primary))`,
+              color: `hsl(var(--primary-foreground))`,
+            }}
+            onClick={applyFilters}
+          >
+            Apply Filters
+          </button>
+        </div>
+      )}
     </div>
   );
 }

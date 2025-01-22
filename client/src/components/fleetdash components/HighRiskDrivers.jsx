@@ -7,13 +7,13 @@ function HighRiskDrivers() {
     { name: "Alice Smith", phone: "+1 (123) 987-6543", score: 45, change: "-2.5%" },
     { name: "Bob Johnson", phone: "+1 (123) 111-2222", score: 52, change: "+1.4%" },
     { name: "Charlie Brown", phone: "+1 (123) 555-6666", score: 38, change: "-4.1%" },
-    // { name: "Dana White", phone: "+1 (123) 777-8888", score: 62, change: "-0.9%" },
   ];
 
-  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null); // State to track the active dropdown
 
-  const toggleDropdown = () => {
-    setDropdownVisible(!dropdownVisible);
+  const toggleDropdown = (name) => {
+    // If the clicked dropdown is already open, close it. Otherwise, open the new one.
+    setActiveDropdown((prev) => (prev === name ? null : name));
   };
 
   return (
@@ -58,11 +58,11 @@ function HighRiskDrivers() {
           <div className="absolute top-2 right-2">
             <button
               className="text-xl rounded-full bg-muted p-2"
-              onClick={toggleDropdown}
+              onClick={() => toggleDropdown(name)}
             >
               ...
             </button>
-            {dropdownVisible && (
+            {activeDropdown === name && (
               <div className="absolute right-0 mt-2 w-40 bg-card shadow-lg rounded-lg">
                 <ul>
                   <li className="p-2 hover:bg-muted">Option 1</li>
