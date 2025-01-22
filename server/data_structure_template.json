@@ -10,5 +10,5 @@
   "OutOfLane": true,
   "RiskyDrivers": 0,
   "UnsafeDistance": false,
-  "HandsOnWheel": 2
+  "HandsOffWheel": false,
 }
