@@ -17,12 +17,12 @@ function HighRiskDrivers() {
       {drivers.map(({ name, phone, score }) => (
         <div
           key={name}
-          className="relative flex rounded-xl w-2/6 mx-4 p-4 overflow-hidden text-foreground bg-muted"
+          className="relative flex rounded-xl w-2/6 mx-4 p-4 overflow-hidden text-foreground bg-card"
         >
           {/* Card Content */}
           <div className="flex flex-col">
             {/* Profile Picture */}
-            <div className="rounded-full bg-background w-20 h-20 text-center"></div>
+            <div className="rounded-full bg-muted w-20 h-20 text-center"></div>
           </div>
 
           {/* On/off signal */}

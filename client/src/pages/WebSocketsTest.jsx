@@ -10,7 +10,7 @@ const WebSocketsTest = () => {
   }
 
   return (
-    <div>
+    <div className='bg-muted'>
       <NavBar />
       <h1>WebSocket Messages</h1>
       {Object.keys(messages).map((driver, index) => (

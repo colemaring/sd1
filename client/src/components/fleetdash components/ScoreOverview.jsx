@@ -74,8 +74,8 @@ export const data = {
 
 function ScoreOverview() {
   return (
-    <div className="h-full shadow-xl rounded-xl bg-card text-foreground">
-      <h1 className="text-center text-xl font-bold py-4">
+    <div className="h-full shadow-xl rounded-xl bg-card text-primary">
+      <h1 className="text-primary text-center text-xl font-bold py-4">
         Fleet Risk Score Overview
       </h1>
       <Line options={options} data={data} />

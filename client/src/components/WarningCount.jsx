@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Card } from "react-bootstrap";
 import { IoMdCheckmarkCircle, IoMdCloseCircle } from "react-icons/io";
 import { IoAlertCircle } from "react-icons/io5";
+import { useTheme } from "../context/ThemeContext";
 
 const WarningCount = ({ driverData }) => {
+  const { theme } = useTheme();
   const [warningCounts, setWarningCounts] = useState({
     Drinking: 0,
     Eating: 0,
@@ -31,15 +33,26 @@ const WarningCount = ({ driverData }) => {
   ];
 
   const icons = {
-    good: <IoMdCheckmarkCircle color="green" />,
-    alert: <IoAlertCircle color="orange" />,
-    bad: <IoMdCloseCircle color="red" />,
+    good: (
+      <IoMdCheckmarkCircle
+        className={theme === "light" ? "text-green-500" : "text-green-400"}
+      />
+    ),
+    alert: (
+      <IoAlertCircle
+        className={theme === "light" ? "text-yellow-500" : "text-yellow-400"}
+      />
+    ),
+    bad: (
+      <IoMdCloseCircle
+        className={theme === "light" ? "text-red-500" : "text-red-400"}
+      />
+    ),
   };
 
   useEffect(() => {
     const newCounts = { ...warningCounts };
 
-    // Check each property in driverData and increment counts if true
     for (const [key, value] of Object.entries(driverData)) {
       if (value === true && newCounts[key] !== undefined) {
         newCounts[key] += 1;
@@ -50,34 +63,36 @@ const WarningCount = ({ driverData }) => {
   }, [driverData]);
 
   return (
-    <Card border="none" className="rounded-4 bg-[#f0f0f0]">
+    <Card
+      border="none"
+      className={`rounded-4 bg-card text-card-foreground`}
+    >
       <Card.Body>
-        <Card.Title className="text-left text-xl font-bold pl-5">
+        <Card.Title className="text-left text-xl font-bold pl-5 mb-3">
           Warning Count
         </Card.Title>
-        {warnings.map(({ label, key }) => {
-          const count =
-            warningCounts[key] !== undefined ? warningCounts[key] : "...";
-          return (
-            <React.Fragment key={label}>
-              <Card className="text-start border-0 p-0 bg-[#f0f0f0]">
-                <Card.Body className="pb-1">
-                  <div className="flex justify-between bg-[#f0f0f0] flex-nowrap">
-                    <div className="flex p-2">
-                      {count <= 3
-                        ? icons.good
-                        : count <= 5
-                        ? icons.alert
-                        : icons.bad}
-                      <span className="ml-2 leading-3">{label}</span>
-                    </div>
-                    <span className="float-right">{count}</span>
-                  </div>
-                </Card.Body>
-              </Card>
-            </React.Fragment>
-          );
-        })}
+        <div className="space-y-1">
+          {warnings.map(({ label, key }) => {
+            const count =
+              warningCounts[key] !== undefined ? warningCounts[key] : "...";
+            return (
+              <div
+                key={label}
+                className={`flex justify-between items-center px-3 py-2 rounded-md bg-secondary`}
+              >
+                <div className="flex items-center">
+                  {count <= 3
+                    ? icons.good
+                    : count <= 5
+                    ? icons.alert
+                    : icons.bad}
+                  <span className="ml-2 text-sm">{label}</span>
+                </div>
+                <span className="text-sm">{count}</span>
+              </div>
+            );
+          })}
+        </div>
       </Card.Body>
     </Card>
   );

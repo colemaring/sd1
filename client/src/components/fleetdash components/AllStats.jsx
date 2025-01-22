@@ -84,7 +84,7 @@ export const data = {
 
 function AllStats() {
   return (
-    <div className=" bg-[#f0f0f0] rounded-xl">
+    <div className="bg-card rounded-xl">
       <h1 className="text-center text-2xl font-bold py-4 text-gray-800">
         Fleet Risk Score Overview
       </h1>

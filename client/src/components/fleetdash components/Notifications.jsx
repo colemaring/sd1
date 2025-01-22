@@ -41,7 +41,7 @@ function Notifications() {
       {/* Notifications List */}
       {notifications.map(({ driver, alert, date }) => (
         <div
-          className="bg-muted text-foreground p-2 rounded-xl mt-3 text-sm"
+          className="bg-card text-foreground p-2 rounded-xl mt-3 text-sm"
           key={driver}
         >
           <div className="flex items-center">
