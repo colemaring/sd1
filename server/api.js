@@ -65,9 +65,9 @@ router.get("/fleets/dispatcher/:dispatcher_id", async (req, res) => {
 });
 
 // Read all vehicles
-router.get("/vehicles", async (req, res) => {
+router.get("/drivers", async (req, res) => {
     try {
-        const result = await db.query(`SELECT * FROM vehicles`);
+        const result = await db.query(`SELECT * FROM driver`);
         res.json(result.rows);
     } catch (err) {
         res.status(400).json({ error: err.message });
