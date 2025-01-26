@@ -4,8 +4,8 @@ import random
 import json
 from datetime import datetime
 
-timeoutSeconds = 100 # Number of messages to send (exists to simulate first/last flags)
-numMessages = 1 # Time to wait between generating new data
+numMessages = 10 # Number of messages to send (exists to simulate first/last flags)
+timeoutSec = 1 # Time to wait between generating new data
 
 eventsPerTrip = 10 # Simulating Trip based off events
 eventCount = 0
@@ -78,8 +78,8 @@ def calculate_safety_score(pcf):
 async def generate_data():
     return {
         "Timestamp": datetime.utcnow().isoformat() + "Z", 
-        "Driver": "John Doe",
-        "Phone": "1234561234",
+        "Driver": "John Cole",
+        "Phone": "2211514290",
         "Drinking": random.choices([True, False], weights=[1, 15])[0],
         "Eating": random.choices([True, False], weights=[1, 15])[0],
         "OnPhone": random.choices([True, False], weights=[1, 5])[0],
@@ -97,7 +97,7 @@ async def generate_data():
 async def connect():
     # use ws://localhost:8080 if local
     # wss://aifsd.xyz for deployed
-    uri = "ws://localhost:8080"
+    uri = "wss://aifsd.xyz"
     global eventCount, eventFrequencies
 
     async with websockets.connect(uri) as websocket:
@@ -105,7 +105,7 @@ async def connect():
         messageCount = 0
         prevData = {}
         
-        while messageCount < timeoutSeconds:
+        while messageCount < numMessages:
             data = await generate_data()
 
             # Exclude Timestamp from comparison
@@ -116,7 +116,7 @@ async def connect():
                 messageCount += 1
                 prevData = dataExcludeTimestamp
                 data["FirstFlag"] = messageCount == 1
-                data["LastFlag"] = messageCount == timeoutSeconds
+                data["LastFlag"] = messageCount == numMessages
 
                 # Send data to server   
                 await websocket.send(json.dumps(data))
@@ -155,10 +155,10 @@ async def connect():
                 eventCount = 0
                 eventFrequencies = {}
 
-            await asyncio.sleep(numMessages)
+            await asyncio.sleep(timeoutSec)
         
         print ("Sent " + str(messageCount) + " messages, ending program.")
 
 # Run the connect function
-print("Running emulator script for " + str(timeoutSeconds) + " messages.")
+print("Running emulator script for " + str(numMessages) + " messages.")
 asyncio.get_event_loop().run_until_complete(connect())
