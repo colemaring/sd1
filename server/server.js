@@ -11,7 +11,7 @@ const api = require("./api");
 
 const isDev = process.argv.includes("dev");
 
-let httpsServer, httpServer; 
+let httpsServer, httpServer; // test
 
 if (!isDev) {
   const options = {
