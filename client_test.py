@@ -1,13 +1,11 @@
-# This file serves as an example of how to connect to the WebSockets endpoint
-# as of 1/14/24, the data is just rendered at https://aifsd.xyz/wstest
-
 import asyncio
 import websockets
 import random
 import json
 from datetime import datetime
 
-timeoutSeconds = 1
+timeoutSeconds = 100 # Number of messages to send (exists to simulate first/last flags)
+numMessages = 1 # Time to wait between generating new data
 
 eventsPerTrip = 10 # Simulating Trip based off events
 eventCount = 0
@@ -77,33 +75,55 @@ def calculate_safety_score(pcf):
     score = SAFETY_SCORE_BASE - (SAFETY_SCORE_SCALING * pcf)
     return max(0, min(score, 100))  # Clamp the score between 0 and 100
 
+async def generate_data():
+    return {
+        "Timestamp": datetime.utcnow().isoformat() + "Z", 
+        "Driver": "John Doe",
+        "Phone": "1234561234",
+        "Drinking": random.choices([True, False], weights=[1, 15])[0],
+        "Eating": random.choices([True, False], weights=[1, 15])[0],
+        "Phone": random.choices([True, False], weights=[1, 5])[0],
+        "SeatbeltOff": random.choices([True, False], weights=[1, 50])[0],
+        "Sleeping": random.choices([True, False], weights=[1, 50])[0],
+        "Smoking": random.choices([True, False], weights=[1, 30])[0],
+        "OutOfLane": random.choices([True, False], weights=[1, 30])[0],
+        "RiskyDrivers": random.choices([3, 2, 1, 0], weights=[5, 5, 5, 85])[0],
+        "UnsafeDistance": random.choices([True, False], weights=[1, 30])[0],
+        "HandsOffWheel": random.choices([True, False], weights=[1, 30])[0],
+        "FirstFlag": False,
+        "LastFlag": False,
+    }
+
 async def connect():
     uri = "wss://aifsd.xyz"
     global eventCount, eventFrequencies
 
     async with websockets.connect(uri) as websocket:
         print("Connected to the server")
+        messageCount = 0
+        prevData = {}
+        
+        while messageCount < timeoutSeconds:
+            data = await generate_data()
 
-        while True:
-            # Generate dummy data
-            data = {
-                "Timestamp": datetime.utcnow().isoformat() + "Z", 
-                "Driver": "John Doe",
-                "Drinking": random.choices([True, False], weights=[1, 15])[0],
-                "Eating": random.choices([True, False], weights=[1, 15])[0],
-                "Phone": random.choices([True, False], weights=[1, 5])[0],
-                "SeatbeltOff": random.choices([True, False], weights=[1, 50])[0],
-                "Sleeping": random.choices([True, False], weights=[1, 50])[0],
-                "Smoking": random.choices([True, False], weights=[1, 30])[0],
-                "OutOfLane": random.choices([True, False], weights=[1, 30])[0],
-                "RiskyDrivers": random.choices([3, 2, 1, 0], weights=[5, 5, 5, 85])[0],
-                "UnsafeDistance": random.choices([True, False], weights=[1, 30])[0],
-                "HandsOffWheel": random.choices([True, False], weights=[1, 30])[0],
-            }
+            # Exclude Timestamp from comparison
+            dataExcludeTimestamp = {k: v for k, v in data.items() if k != "Timestamp"}
 
-            # Print generated event (for debugging)
-            # print(f"Generated Event: {data}")
+            # Only send data if it has changed
+            if (prevData != dataExcludeTimestamp): 
+                messageCount += 1
+                prevData = dataExcludeTimestamp
+                data["FirstFlag"] = messageCount == 1
+                data["LastFlag"] = messageCount == timeoutSeconds
 
+                # Send data to server   
+                await websocket.send(json.dumps(data))
+                print("Sent message to server")
+                await websocket.recv() # Tells ws server we still exist
+
+            # Note that the event log as of 1/25/25 doesn't render all events therefore it might 
+            # look like we're sending unchaged data
+                
             # Update event frequencies
             for key, value in data.items():
                 if key == "HandsOnWheel":
@@ -132,15 +152,11 @@ async def connect():
                 # Reset counters for the next trip
                 eventCount = 0
                 eventFrequencies = {}
-            
-            # Send data to server   
-            json_data = json.dumps(data)
-            await websocket.send(json_data)
-            print("Sent message to server")
 
-            # needed to serve as a ping mechanism
-            await websocket.recv()
-            await asyncio.sleep(timeoutSeconds)
+            await asyncio.sleep(numMessages)
+        
+        print ("Sent " + str(messageCount) + " messages, ending program.")
 
 # Run the connect function
+print("Running emulator script for " + str(timeoutSeconds) + " messages.")
 asyncio.get_event_loop().run_until_complete(connect())
