@@ -11,7 +11,7 @@ app.use(cors());
 const db = require("./db");
 const api = require("./api");
 
-const isDev = process.argv.includes("dev"); //test
+const isDev = process.argv.includes("dev");
 
 let httpsServer, httpServer;
 
@@ -119,9 +119,10 @@ async function handleWebSocketsMessage(message) {
   }
   // Get driverId of messages coming in
   const driverId = await checkIfDriverExistsElseCreate(parsedMessage);
-
+  //console.log("Driver ID:", driverId);
   // Get tripId of messages coming in and update driver's activity
   const tripId = await checkIfTripExistsElseCreate(driverId, parsedMessage);
+  //console.log("Trip ID:", tripId);
 
   // Add risk events to trip while trip is active
   await addRiskEvents(tripId, parsedMessage);
@@ -236,9 +237,12 @@ async function checkIfTripExistsElseCreate(driverId, parsedMessage) {
   // Check if driverId has a current trip
   const response = await fetch("https://aifsd.xyz/api/trips");
   const trips = await response.json();
-  const currentTrip = trips.find((trip) => trip.driver_id === driverId);
+  const currentTrip = trips
+    .filter((trip) => trip.driver_id === driverId)
+    .sort((a, b) => new Date(b.start_time) - new Date(a.start_time))[0];
+  //console.log("Current trip:", currentTrip);
 
-  if (!currentTrip && parsedMessage.FirstFlag) {
+  if (parsedMessage.FirstFlag) {
     // not specifying risk_score will default it to 0
     // end_time will be null as we just started a trip
     const newTrip = {
