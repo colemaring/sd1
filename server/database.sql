@@ -15,6 +15,7 @@ create table fleet (
 create table driver (
     id serial primary key,
     name varchar(100) not null,
+    active boolean default false,
     phone_number varchar(15) unique not null,
     risk_score integer default 0,
     fleet_id integer not null,
