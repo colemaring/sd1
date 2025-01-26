@@ -25,7 +25,7 @@ create table trip (
 	id serial primary key,
 	risk_score integer default 0,
 	start_time timestamp with time zone not null,
-	end_time timestamp with time zone not null,
+	end_time timestamp with time zone,
 	driver_id integer not null,
 	foreign key (driver_id) references driver(id) on delete cascade
 );
