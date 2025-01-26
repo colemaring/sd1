@@ -20,15 +20,58 @@ router.post("/driver", async (req, res) => {
 
 // Create a risk event
 router.post("/risk-events", async (req, res) => {
-  const { vehicle_id, timestamp, ...riskDetails } = req.body;
-  const columns = ["vehicle_id", "timestamp", ...Object.keys(riskDetails)];
-  const values = [vehicle_id, timestamp, ...Object.values(riskDetails)];
+  // Verbose mapping for debugging purposes
+  const {
+    trip_id,
+    timestamp,
+    drinking,
+    eating,
+    phone,
+    seatbelt_off,
+    sleeping,
+    smoking,
+    out_of_lane,
+    risky_drivers,
+    unsafe_distance,
+    hands_off_wheel,
+  } = req.body;
+
+  const columns = [
+    "trip_id",
+    "timestamp",
+    "drinking",
+    "eating",
+    "phone",
+    "seatbelt_off",
+    "sleeping",
+    "smoking",
+    "out_of_lane",
+    "risky_drivers",
+    "unsafe_distance",
+    "hands_off_wheel",
+  ];
+
+  const values = [
+    trip_id,
+    timestamp,
+    drinking,
+    eating,
+    phone,
+    seatbelt_off,
+    sleeping,
+    smoking,
+    out_of_lane,
+    risky_drivers,
+    unsafe_distance,
+    hands_off_wheel,
+  ];
+
   const placeholders = columns.map((_, i) => `$${i + 1}`);
 
   try {
     const result = await db.query(
-      `INSERT INTO risk_events (${columns.join(", ")}) 
-            VALUES (${placeholders.join(", ")}) RETURNING *`,
+      `INSERT INTO risk_event (${columns.join(", ")}) 
+              VALUES (${placeholders.join(", ")}) RETURNING *`,
       values
     );
     res.status(201).json(result.rows[0]);
