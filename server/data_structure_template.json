@@ -4,7 +4,7 @@
   "Phone": 1234561234,
   "Drinking": false,
   "Eating": false,
-  "Phone": false,
+  "OnPhone": false,
   "SeatbeltOff": false,
   "Sleeping": false,
   "Smoking": false,
