@@ -6,6 +6,8 @@ export const WebSocketsProvider = ({ children }) => {
   const [messages, setMessages] = useState({});
 
   useEffect(() => {
+    // use ws://localhost:8080 if local
+    // wss://aifsd.xyz for deployed
     const ws = new WebSocket("wss://aifsd.xyz");
 
     ws.onopen = () => {

@@ -9,7 +9,7 @@ const WarningCount = ({ driverData }) => {
   const [warningCounts, setWarningCounts] = useState({
     Drinking: 0,
     Eating: 0,
-    Phone: 0,
+    OnPhone: 0,
     SeatbeltOff: 0,
     Sleeping: 0,
     Smoking: 0,
@@ -22,7 +22,7 @@ const WarningCount = ({ driverData }) => {
   const warnings = [
     { label: "Drinking", key: "Drinking" },
     { label: "Eating", key: "Eating" },
-    { label: "Cell Phone Usage", key: "Phone" },
+    { label: "Cell Phone Usage", key: "OnPhone" },
     { label: "Seatbelt Off", key: "SeatbeltOff" },
     { label: "Sleeping", key: "Sleeping" },
     { label: "Smoking", key: "Smoking" },
@@ -63,10 +63,7 @@ const WarningCount = ({ driverData }) => {
   }, [driverData]);
 
   return (
-    <Card
-      border="none"
-      className={`rounded-4 bg-card text-card-foreground`}
-    >
+    <Card border="none" className={`rounded-4 bg-card text-card-foreground`}>
       <Card.Body>
         <Card.Title className="text-left text-xl font-bold pl-5 mb-3">
           Warning Count
