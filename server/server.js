@@ -5,6 +5,8 @@ const http = require("http");
 const fs = require("fs");
 const WebSocket = require("ws");
 const path = require("path");
+const cors = require("cors");
+app.use(cors());
 
 const db = require("./db");
 const api = require("./api");
