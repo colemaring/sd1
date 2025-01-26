@@ -8,7 +8,7 @@ export const WebSocketsProvider = ({ children }) => {
   useEffect(() => {
     // use ws://localhost:8080 if local
     // wss://aifsd.xyz for deployed
-    const ws = new WebSocket("wss://aifsd.xyz");
+    const ws = new WebSocket("ws://localhost:8080");
 
     ws.onopen = () => {
       console.log("Connected to the server");
