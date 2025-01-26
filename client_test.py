@@ -82,7 +82,7 @@ async def generate_data():
         "Phone": "1234561234",
         "Drinking": random.choices([True, False], weights=[1, 15])[0],
         "Eating": random.choices([True, False], weights=[1, 15])[0],
-        "Phone": random.choices([True, False], weights=[1, 5])[0],
+        "OnPhone": random.choices([True, False], weights=[1, 5])[0],
         "SeatbeltOff": random.choices([True, False], weights=[1, 50])[0],
         "Sleeping": random.choices([True, False], weights=[1, 50])[0],
         "Smoking": random.choices([True, False], weights=[1, 30])[0],
@@ -95,7 +95,9 @@ async def generate_data():
     }
 
 async def connect():
-    uri = "wss://aifsd.xyz"
+    # use ws://localhost:8080 if local
+    # wss://aifsd.xyz for deployed
+    uri = "ws://localhost:8080"
     global eventCount, eventFrequencies
 
     async with websockets.connect(uri) as websocket:
