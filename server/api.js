@@ -52,6 +52,43 @@ router.post("/trip", async (req, res) => {
   }
 });
 
+// PATCH
+// Update a driver's active status
+router.patch("/driver/:id/active", async (req, res) => {
+  const { id } = req.params;
+  const { active } = req.body;
+  try {
+    const result = await db.query(
+      `UPDATE driver SET active = $1 WHERE id = $2 RETURNING *`,
+      [active, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Driver not found" });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Update a trip's end time
+router.patch("/trip/:id/end", async (req, res) => {
+  const { id } = req.params;
+  const { end_time } = req.body;
+  try {
+    const result = await db.query(
+      `UPDATE trip SET end_time = $1 WHERE id = $2 RETURNING *`,
+      [end_time, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Trip not found" });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // READ
 // Read dispatcher by phone number
 router.get("/dispatchers/phone/:phone_number", async (req, res) => {
