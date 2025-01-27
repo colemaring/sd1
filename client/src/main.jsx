@@ -15,7 +15,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/fleet" element={<FleetDash />} />
-          <Route path="/driver/:driverName" element={<DriverDash />} />
+          <Route path="/driver/:driverPhone" element={<DriverDash />} />
           <Route path="/wstest" element={<WebSocketsTest />} />
         </Routes>
       </BrowserRouter>

@@ -11,10 +11,11 @@ import NavBar from "../components/NavBar";
 import { WebSocketsContext } from "../context/WebSocketsContext";
 
 export default function DriverDash() {
-  const { driverName } = useParams();
+  const { driverPhone } = useParams();
   const messages = useContext(WebSocketsContext);
-
-  const driverData = messages[driverName] || {};
+  //console.log(messages);
+  const driverData = messages[driverPhone] || {};
+  //console.log(driverData);
 
   return (
     <>

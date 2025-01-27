@@ -1,7 +1,7 @@
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../bootstrap-overrides.css"; // Bootstrap overrides for Tailwind colors
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { WebSocketsContext } from "../context/WebSocketsContext";
 import { useTheme } from "../context/ThemeContext";
@@ -9,10 +9,26 @@ import { FaBars } from "react-icons/fa";
 
 function NavBar() {
   const messages = useContext(WebSocketsContext) || {};
-  const drivers = Object.keys(messages);
-
-  // Access theme and toggleTheme from ThemeContext
   const { theme, toggleTheme } = useTheme();
+  const [drivers, setDrivers] = useState([]);
+
+  useEffect(() => {
+    // Fetch drivers from the API
+    const fetchDrivers = async () => {
+      try {
+        const response = await fetch("https://aifsd.xyz/api/drivers");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setDrivers(data);
+      } catch (error) {
+        console.error("Error fetching drivers:", error);
+      }
+    };
+
+    fetchDrivers();
+  }, []);
 
   return (
     <Navbar
@@ -66,14 +82,14 @@ function NavBar() {
               drivers.map((driver) => (
                 <NavDropdown.Item
                   as={Link}
-                  key={driver}
-                  to={`/driver/${driver}`}
+                  key={driver.phone_number} // Use driver.phone_number as the key
+                  to={`/driver/${driver.phone_number}`} // Use driver.phone_number in the URL
                   style={{
                     color: `hsl(var(--foreground))`,
                     backgroundColor: `hsl(var(--background))`,
                   }}
                 >
-                  {driver}
+                  {driver.name}
                 </NavDropdown.Item>
               ))
             ) : (
@@ -108,7 +124,9 @@ function NavBar() {
                 color: `hsl(var(--primary-foreground))`,
               }}
             >
-              {theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+              {theme === "light"
+                ? "Switch to Dark Mode"
+                : "Switch to Light Mode"}
             </button>
           </Nav.Item>
         </Nav>
