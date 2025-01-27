@@ -240,6 +240,7 @@ router.get("/risk-events", async (req, res) => {
 // Read risk events for a given tripId
 router.post("/risk-events", async (req, res) => {
   const { tripIds } = req.body;
+  console.log(tripIds);
   try {
     const result = await db.query(
       `SELECT * FROM risk_event WHERE trip_id = ANY($1::int[])`,
