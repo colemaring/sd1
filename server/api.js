@@ -179,6 +179,28 @@ router.get("/trips", async (req, res) => {
   }
 });
 
+// Read trips for a given driver
+router.get("/trips/:phone", async (req, res) => {
+  const { phone } = req.params;
+  try {
+    const driverResult = await db.query(
+      `SELECT id FROM driver WHERE phone = $1`,
+      [phone]
+    );
+    if (driverResult.rows.length === 0) {
+      return res.status(404).json({ error: "Driver not found" });
+    }
+    const driverId = driverResult.rows[0].id;
+    const tripResult = await db.query(
+      `SELECT * FROM trip WHERE driver_id = $1`,
+      [driverId]
+    );
+    res.json(tripResult.rows);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // Read all vehicles with a risk score of x or higher
 router.get("/vehicles/risk-score/:threshold", async (req, res) => {
   try {
@@ -209,6 +231,20 @@ router.get("/vehicles/phone/:phone_number", async (req, res) => {
 router.get("/risk-events", async (req, res) => {
   try {
     const result = await db.query(`SELECT * FROM risk_events`);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Read risk events for a given tripId
+router.post("/risk-events", async (req, res) => {
+  const { tripIds } = req.body;
+  try {
+    const result = await db.query(
+      `SELECT * FROM risk_event WHERE trip_id = ANY($1::int[])`,
+      [tripIds]
+    );
     res.json(result.rows);
   } catch (err) {
     res.status(400).json({ error: err.message });
