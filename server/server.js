@@ -6,6 +6,7 @@ const fs = require("fs");
 const WebSocket = require("ws");
 const path = require("path");
 const cors = require("cors");
+const routes = require('./routes/main.js');
 app.use(cors());
 
 const db = require("./db");
@@ -71,8 +72,8 @@ if (!isDev) {
   // dev server
   httpServer = http.createServer(app);
 
-  httpServer.listen(8080, () => {
-    console.log("Development server started on port 8080");
+  httpServer.listen(5000, () => {
+    console.log("Development server started on port 5000");
   });
 
   let wss = new WebSocket.Server({ server: httpServer });
@@ -342,7 +343,7 @@ async function checkIfDriverExistsElseCreate(message) {
 
 app.use(express.json());
 
-app.use("/api", api);
+app.use("/api", routes);
 
 // Serve static files from the dist folder in the client directory
 app.use(express.static("../client/dist"));

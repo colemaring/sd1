@@ -1,30 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import truck from "../../assets/truck.png";
 import { useTheme } from "../../context/ThemeContext";
+import { useDrivers } from "../../context/DriverContext";
 
 // WIP - fix height and position on different viewports
 function CurrentActive() {
-  const [activeCount, setActiveCount] = useState(0);
   const { theme } = useTheme();
+  const { data: drivers, isLoading, error } = useDrivers();
 
-  useEffect(() => {
-    // Fetch drivers from the API
-    const fetchDrivers = async () => {
-      try {
-        const response = await fetch("https://aifsd.xyz/api/drivers"); // Use the proxy URL if needed
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        const activeDrivers = data.filter((driver) => driver.active).length;
-        setActiveCount(activeDrivers);
-      } catch (error) {
-        console.error("Error fetching drivers:", error);
-      }
-    };
+  if (isLoading) {
+    return (
+      <div
+        className={`relative flex rounded-xl w-72 p-4 h-[196px] shadow-md overflow-hidden ${
+          theme === "dark" ? "bg-card text-white" : "bg-white text-black"
+        }`}
+      >
+        <h1>Loading...</h1>
+      </div>
+    );
+  }
 
-    fetchDrivers();
-  }, []);
+  if (error) {
+    return (
+      <div
+        className={`relative flex rounded-xl w-72 p-4 h-[196px] shadow-md overflow-hidden ${
+          theme === "dark" ? "bg-card text-white" : "bg-white text-black"
+        }`}
+      >
+        <h1>Error fetching drivers</h1>
+      </div>
+    );
+  }
+
+  // Calculate active drivers count
+  const activeCount = drivers
+    ? drivers.filter((driver) => driver.active).length
+    : 0;
 
   return (
     <div

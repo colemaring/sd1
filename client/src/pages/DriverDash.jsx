@@ -1,6 +1,5 @@
-import React from "react";
 import { useParams } from "react-router-dom";
-import { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../bootstrap-overrides.css"; // Custom overrides
 import "../App.css";
@@ -10,7 +9,7 @@ import EventsLog from "../components/EventsLog";
 import NavBar from "../components/NavBar";
 import { WebSocketsContext } from "../context/WebSocketsContext";
 
-export default function DriverDash() {
+export default function DriverDash({}) {
   const { driverPhone } = useParams();
   const messages = useContext(WebSocketsContext);
   //console.log(messages);
@@ -29,7 +28,7 @@ export default function DriverDash() {
 
             {/* Driver Info */}
             <div className="col-span-12 md:col-span-6 lg:col-span-5">
-              <DriverInfo driverData={driverData} />
+              <DriverInfo driverPhone={driverPhone} />
             </div>
 
             {/* Empty Placeholder 1 */}
@@ -45,7 +44,7 @@ export default function DriverDash() {
 
             {/* Events Log */}
             <div className="col-span-12 md:col-span-6 lg:col-span-9">
-              <EventsLog driverData={driverData} />
+              <EventsLog driverData={driverPhone} />
             </div>
           </div>
         </div>
