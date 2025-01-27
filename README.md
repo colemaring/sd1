@@ -49,4 +49,4 @@ python client_test.py
 - Server is updated on changes to /client/dist <br>
 
 ## TODO:
-connect APIs for fetching user data and historical data when loading page <br>
+Fix different drivers pages sharing ws state?
