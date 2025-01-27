@@ -180,12 +180,12 @@ router.get("/trips", async (req, res) => {
 });
 
 // Read trips for a given driver
-router.get("/trips/:phone", async (req, res) => {
-  const { phone } = req.params;
+router.get("/trips/:driverPhone", async (req, res) => {
+  const { driverPhone } = req.params;
   try {
     const driverResult = await db.query(
-      `SELECT id FROM driver WHERE phone = $1`,
-      [phone]
+      `SELECT id FROM driver WHERE driverPhone = $1`,
+      [driverPhone]
     );
     if (driverResult.rows.length === 0) {
       return res.status(404).json({ error: "Driver not found" });
