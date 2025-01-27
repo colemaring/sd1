@@ -11,7 +11,7 @@ app.use(cors());
 const db = require("./db");
 const api = require("./api");
 
-const isDev = process.argv.includes("dev"); 
+const isDev = process.argv.includes("dev"); // test
 
 let httpsServer, httpServer;
 
