@@ -1,8 +1,8 @@
-import React, { useState } from "react"; // Import useState
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 function ScoreCard({ name, phone, score, change, active }) {
-  // Use destructuring to access props
-
+  const navigate = useNavigate(); // Initialize useNavigate
   const [activeDropdown, setActiveDropdown] = useState(null); // State to track the active dropdown
 
   const toggleDropdown = (name) => {
@@ -10,11 +10,16 @@ function ScoreCard({ name, phone, score, change, active }) {
     setActiveDropdown((prev) => (prev === name ? null : name));
   };
 
+  const handleCardClick = () => {
+    navigate(`/driver/${phone}`); // Navigate to /driver/phonenumber
+  };
+
   return (
     <div className="flex flex-wrap justify-center gap-4 w-full">
       <div
         key={name}
-        className="relative flex rounded-xl w-72 p-4 bg-card text-foreground shadow-md"
+        className="relative flex rounded-xl w-72 p-4 bg-card text-foreground shadow-md cursor-pointer"
+        onClick={handleCardClick} // Add onClick handler
       >
         {/* Profile Picture */}
         <div className="flex flex-col items-center">
@@ -57,7 +62,10 @@ function ScoreCard({ name, phone, score, change, active }) {
         <div className="absolute top-2 right-2">
           <button
             className="text-xl rounded-full bg-muted p-2"
-            onClick={() => toggleDropdown(name)}
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent card click
+              toggleDropdown(name);
+            }}
           >
             ...
           </button>

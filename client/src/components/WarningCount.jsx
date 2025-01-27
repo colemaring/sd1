@@ -59,14 +59,17 @@ const WarningCount = ({ driverData }) => {
       }
     }
 
-    setWarningCounts(newCounts);
+    setWarningCounts((prevCounts) => ({
+      ...prevCounts,
+      [driverData.Phone]: newCounts,
+    }));
   }, [driverData]);
 
   return (
     <Card border="none" className={`rounded-4 bg-card text-card-foreground`}>
       <Card.Body>
         <Card.Title className="text-left text-xl font-bold pl-5 mb-3">
-          Warning Count
+          Warning Count (last trip)
         </Card.Title>
         <div className="space-y-1">
           {warnings.map(({ label, key }) => {
