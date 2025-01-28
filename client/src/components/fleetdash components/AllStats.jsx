@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,7 +11,6 @@ import {
   Filler,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import mockData from "../../data/mockdata";
 
 ChartJS.register(
   CategoryScale,
@@ -46,54 +45,79 @@ export const options = {
     tooltip: {
       backgroundColor: "hsl(var(--primary))",
       titleFont: { weight: "bold" },
-      bodyFont: { size: 10 },
-      borderColor: "rgba(255, 255, 255, 0.5)",
-      borderWidth: 1,
-      padding: 8,
     },
   },
   scales: {
     x: {
       title: {
         display: true,
-        text: "Days",
-        font: { size: 12 },
-      },
-      grid: {
-        display: false,
+        text: "Event Type",
       },
     },
     y: {
       title: {
         display: true,
-        text: "Occurrences",
-        font: { size: 12 },
-      },
-      grid: {
-        color: "rgba(200, 200, 200, 0.3)",
+        text: "Frequency",
       },
     },
   },
 };
 
-const labels = Array.from({ length: 30 }, (_, i) => (i + 1).toString());
+const AllStats = () => {
+  const [chartData, setChartData] = useState(null);
 
-export const data = {
-  labels,
-  datasets: mockData,
-};
+  useEffect(() => {
+    const fetchRiskEvents = async () => {
+      try {
+        const response = await fetch("https://aifsd.xyz/api/risk-events");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
 
-function AllStats() {
+        // Process data to get frequency of each event type
+        const eventFrequency = data.reduce((acc, event) => {
+          Object.keys(event).forEach((key) => {
+            if (event[key] === true) {
+              acc[key] = (acc[key] || 0) + 1;
+            }
+          });
+          return acc;
+        }, {});
+
+        const labels = Object.keys(eventFrequency);
+        const frequencies = Object.values(eventFrequency);
+
+        setChartData({
+          labels,
+          datasets: [
+            {
+              label: "Event Frequency",
+              data: frequencies,
+              fill: true,
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error fetching risk events:", error);
+      }
+    };
+
+    fetchRiskEvents();
+  }, []);
+
+  if (!chartData) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div className="bg-card rounded-xl p-4">
-      <h1 className="text-center text-xl font-bold pb-4 text-primary">
-        Fleet Risk Score Overview
-      </h1>
-      <div className="relative h-64 sm:h-80">
-        <Line options={options} data={data} />
-      </div>
+    <div style={{ height: "400px" }}>
+      <Line options={options} data={chartData} />
     </div>
   );
-}
+};
 
 export default AllStats;

@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import NavBar from "../components/NavBar";
 import Filter from "../components/fleetdash components/Filter";
 import ScoreCard from "../components/ScoreCard";
+import { WebSocketsContext } from "../context/WebSocketsContext";
+import { useContext } from "react";
 
 function FleetDash() {
   const [drivers, setDrivers] = useState([]);
+  const messages = useContext(WebSocketsContext);
 
   useEffect(() => {
     // Fetch drivers from the API
@@ -15,7 +18,7 @@ function FleetDash() {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        console.log(data);
+        //console.log(data);
         setDrivers(data);
       } catch (error) {
         console.error("Error fetching drivers:", error);
@@ -23,6 +26,10 @@ function FleetDash() {
     };
 
     fetchDrivers();
+    // Update status every x seconds
+    const intervalId = setInterval(fetchDrivers, 3000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   return (

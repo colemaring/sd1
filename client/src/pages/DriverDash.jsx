@@ -32,7 +32,7 @@ export default function DriverDash() {
 
             {/* Driver Info */}
             <div className="col-span-12 md:col-span-6 lg:col-span-5">
-              <DriverInfo driverData={driverData} />
+              <DriverInfo />
             </div>
 
             {/* Empty Placeholder 1 */}

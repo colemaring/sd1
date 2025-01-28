@@ -104,7 +104,7 @@ function NavBar() {
               </NavDropdown.Item>
             )}
           </NavDropdown>
-          <Nav.Link
+          {/* <Nav.Link
             as={Link}
             to="/wstest"
             style={{
@@ -112,7 +112,7 @@ function NavBar() {
             }}
           >
             WebSockets testing
-          </Nav.Link>
+          </Nav.Link> */}
         </Nav>
         <Nav>
           <Nav.Item className="d-flex align-items-center">
