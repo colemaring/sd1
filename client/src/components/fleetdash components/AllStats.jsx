@@ -114,8 +114,10 @@ const AllStats = () => {
   }
 
   return (
-    <div style={{ height: "400px" }}>
-      <Line options={options} data={chartData} />
+    <div className="relative w-full md:max-w-6xl p-4 border bg-card text-card-foreground shadow rounded-xl overflow-hidden">
+      <div style={{ height: "400px" }}>
+        <Line options={options} data={chartData} />
+      </div>
     </div>
   );
 };

@@ -12,11 +12,11 @@ import CurrentActive from "../components/fleetdash components/CurrentActive";
 
 export default function Home() {
   return (
-    <div className="flex bg-secondary min-h-screen">
+    <div className="flex bg-background min-h-screen">
       <div className="w-full">
-        <div className="grid grid-cols-12 gap-x-4 gap-y-6 auto-rows-min">
+        <div className="grid grid-cols-12 auto-rows-min items-start">
           {/* Nav Bar */}
-          <div className="col-span-12">
+          <div className="col-span-12 border">
             <NavBar />
           </div>
 
@@ -26,13 +26,11 @@ export default function Home() {
           </div>
 
           {/* High Risk Drivers and Current Active in the same row */}
-          <div className="col-span-12 md:col-span-8 lg:col-span-9 ">
+          <div className="col-span-12 md:col-span-8 lg:col-span-9 mt-2 mb-4 md:mb-0">
             <HighRiskDrivers />
           </div>
-          <div className="col-span-12 md:col-span-4 lg:col-span-3">
-            <div className="">
-              <CurrentActive />
-            </div>
+          <div className="col-span-12 md:col-span-4 lg:col-span-3 mt-2">
+            <CurrentActive />
           </div>
 
           {/* Notifications and Stats/Chart */}

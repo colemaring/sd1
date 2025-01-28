@@ -9,10 +9,9 @@ function HighRiskDrivers() {
     // { name: "Charlie Brown", phone: "+1 (123) 555-6666", score: 38, change: "-4.1%" },
   ];
 
-  const [activeDropdown, setActiveDropdown] = useState(null); // State to track the active dropdown
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   const toggleDropdown = (name) => {
-    // If the clicked dropdown is already open, close it. Otherwise, open the new one.
     setActiveDropdown((prev) => (prev === name ? null : name));
   };
 
@@ -21,7 +20,7 @@ function HighRiskDrivers() {
       {drivers.map(({ name, phone, score, change }) => (
         <div
           key={name}
-          className="relative flex rounded-xl w-72 p-4 bg-card text-foreground shadow-md"
+          className="relative flex rounded-xl w-72 p-4 border bg-card text-card-foreground shadow"
         >
           {/* Profile Picture */}
           <div className="flex flex-col items-center">
@@ -57,13 +56,13 @@ function HighRiskDrivers() {
           {/* Dropdown */}
           <div className="absolute top-2 right-2">
             <button
-              className="text-xl rounded-full bg-muted p-2"
+              className="text-sm rounded-full bg-muted p-2"
               onClick={() => toggleDropdown(name)}
             >
               ...
             </button>
             {activeDropdown === name && (
-              <div className="absolute right-0 mt-2 w-40 bg-card shadow-lg rounded-lg">
+              <div className="absolute right-0 mt-2 w-40 bg-card shadow-lg rounded-xl">
                 <ul>
                   <li className="p-2 hover:bg-muted">Option 1</li>
                   <li className="p-2 hover:bg-muted">Option 2</li>

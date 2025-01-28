@@ -20,6 +20,10 @@
   --bs-border-color: hsl(var(--border));
 }
 
+.dark .logo {
+  filter: invert(1);
+}
+
 .dropdown-toggle {
   color: hsl(var(--foreground));
 }
