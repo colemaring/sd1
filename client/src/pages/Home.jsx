@@ -30,9 +30,7 @@ export default function Home() {
             <HighRiskDrivers />
           </div>
           <div className="col-span-12 md:col-span-4 lg:col-span-3">
-            <div className="">
-              <CurrentActive />
-            </div>
+            <CurrentActive />
           </div>
 
           {/* Notifications and Stats/Chart */}
