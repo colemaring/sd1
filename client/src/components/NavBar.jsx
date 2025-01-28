@@ -34,9 +34,9 @@ function NavBar() {
     <Navbar
       collapseOnSelect
       expand="lg"
-      className="shadow px-4"
+      className="px-4"
       style={{
-        backgroundColor: `hsl(var(--secondary))`,
+        backgroundColor: `hsl(var(--background))`,
         color: `hsl(var(--foreground))`,
       }}
     >
@@ -60,7 +60,7 @@ function NavBar() {
         }}
         className="focus:outline-none"
       >
-        <FaBars size={24} color={`hsl(var(--foreground))`} />
+        <FaBars size={24} color={`hsl(var(--primary))`} />
       </Navbar.Toggle>
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="me-auto">
@@ -104,15 +104,6 @@ function NavBar() {
               </NavDropdown.Item>
             )}
           </NavDropdown>
-          {/* <Nav.Link
-            as={Link}
-            to="/wstest"
-            style={{
-              color: `hsl(var(--foreground))`,
-            }}
-          >
-            WebSockets testing
-          </Nav.Link> */}
         </Nav>
         <Nav>
           <Nav.Item className="d-flex align-items-center">
@@ -125,8 +116,8 @@ function NavBar() {
               }}
             >
               {theme === "light"
-                ? "Switch to Dark Mode"
-                : "Switch to Light Mode"}
+                ? "Dark Mode"
+                : "Light Mode"}
             </button>
           </Nav.Item>
         </Nav>

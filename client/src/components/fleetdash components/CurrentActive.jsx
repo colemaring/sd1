@@ -25,8 +25,8 @@ function CurrentActive() {
   }, []);
 
   return (
-    <div className="flex flex-wrap justify-center gap-4 w-full">
-      <div className="relative flex flex-wrap rounded-xl w-72 p-4 h-[196px] shadow-md overflow-hidden text-foreground bg-card">
+    <div className="flex justify-center">
+      <div className="relative flex rounded-xl w-72 p-4 h-[196px] shadow overflow-hidden text-foreground bg-card border">
         <div className="z-10">
           <h1 className="text-xl font-semibold">Active vehicles</h1>
           <h2 className="font-light">Vehicles operating on the road</h2>
