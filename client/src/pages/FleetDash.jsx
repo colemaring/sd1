@@ -37,8 +37,8 @@ function FleetDash() {
   return (
     <div className="flex min-h-screen bg-primary">
       <div className="w-full">
-        <div className="grid grid-cols-12 auto-rows-min">
-          <div className="col-span-12">
+        <div className="grid grid-cols-12 auto-rows-min items-start">
+          <div className="col-span-12 border">
             <NavBar />
           </div>
           <div className="col-span-12">

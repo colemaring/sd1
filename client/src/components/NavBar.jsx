@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { WebSocketsContext } from "../context/WebSocketsContext";
 import { useTheme } from "../context/ThemeContext";
 import { FaBars } from "react-icons/fa";
+import logo from "../assets/AIFSD_Logo.svg"
 
 function NavBar() {
   const messages = useContext(WebSocketsContext) || {};
@@ -40,14 +41,15 @@ function NavBar() {
         color: `hsl(var(--foreground))`,
       }}
     >
-      <Navbar.Brand
-        as={Link}
-        to="/"
-        style={{
-          color: `hsl(var(--primary))`,
-        }}
-      >
-        Green Saver
+      <Navbar.Brand as={Link} to="/" className="flex items-center">
+        <img src={logo} alt="AIFSD Logo" className="logo"
+          style={{
+            height: "40px",
+            transform: "scale(1.3)",
+            transformOrigin: "left center",
+            marginLeft: "-10px"
+          }} 
+        />
       </Navbar.Brand>
       {/* Custom Hamburger Menu */}
       <Navbar.Toggle

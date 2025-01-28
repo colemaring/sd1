@@ -24,9 +24,9 @@ export default function DriverDash() {
     <>
       <div className="flex bg-muted min-h-screen">
         <div className="w-full">
-          <div className="grid grid-cols-12 auto-rows-min">
+          <div className="grid grid-cols-12 auto-rows-min items-start">
             {/* Navbar */}
-            <div className="col-span-12">
+            <div className="col-span-12 border">
               <NavBar />
             </div>
 
