@@ -49,4 +49,3 @@ python client_test.py
 - Server is updated on changes to /client/dist <br>
 
 ## TODO:
-Fix different drivers pages sharing ws state?
