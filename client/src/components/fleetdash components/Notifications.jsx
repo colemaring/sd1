@@ -23,7 +23,7 @@ function Notifications() {
   return (
     <div className="h-full">
       {/* Header */}
-      <div className="flex justify-between">
+      <div className="flex justify-between mb-2">
         <h1 className="text-xl font-bold text-start text-foreground">
           Notifications
         </h1>
@@ -41,16 +41,22 @@ function Notifications() {
       {/* Notifications List */}
       {notifications.map(({ driver, alert, date }) => (
         <div
-          className="bg-card text-card-foreground shadow p-2 rounded-xl mt-3 text-sm border"
+          className="bg-card text-card-foreground shadow p-3 rounded-xl mt-3 text-sm border"
           key={driver}
         >
-          <div className="flex items-center">
-            <FaRegCircleUser className="pr-2" size={24} />
-            <span className="font-medium">
-              {driver} is {alert}
-            </span>
+          <div className="flex items-start gap-3">
+            <div className="text-muted-foreground text-3xl flex-shrink-0">
+              <FaRegCircleUser size={36} />
+            </div>
+
+            {/* Right Text */}
+            <div className="flex flex-col">
+              <span className="font-medium">
+                {driver} is {alert}
+              </span>
+              <span className="text-xs text-muted-foreground">{date}</span>
+            </div>
           </div>
-          <div className="text-xs text-muted-foreground">{date}</div>
         </div>
       ))}
     </div>
