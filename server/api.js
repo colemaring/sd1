@@ -240,7 +240,10 @@ router.get("/risk-events", async (req, res) => {
 // Read risk events for a given tripId
 router.post("/risk-events", async (req, res) => {
   const { tripIds } = req.body;
-  console.log(tripIds);
+  if (!tripIds || !Array.isArray(tripIds) || tripIds.length === 0) {
+    return res.status(400).json({ error: "Invalid or missing tripIds" });
+  }
+
   try {
     const result = await db.query(
       `SELECT * FROM risk_event WHERE trip_id = ANY($1::int[])`,
@@ -248,7 +251,13 @@ router.post("/risk-events", async (req, res) => {
     );
     res.json(result.rows);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error("Error fetching risk events:", err.message);
+    res
+      .status(500)
+      .json({
+        error: "Internal server error while fetching risk events",
+        details: err.message,
+      });
   }
 });
 
