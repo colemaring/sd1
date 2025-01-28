@@ -230,7 +230,7 @@ router.get("/vehicles/phone/:phone_number", async (req, res) => {
 // Read all risk events
 router.get("/risk-events", async (req, res) => {
   try {
-    const result = await db.query(`SELECT * FROM risk_events`);
+    const result = await db.query(`SELECT * FROM risk_event`);
     res.json(result.rows);
   } catch (err) {
     res.status(400).json({ error: err.message });
