@@ -66,12 +66,12 @@ const WarningCount = ({ driverData }) => {
   }, [driverData]);
 
   return (
-    <Card border="none" className={`rounded-4 bg-card text-card-foreground`}>
+    <Card className={`py-2 rounded-xl bg-card text-card-foreground shadow border`}>
       <Card.Body>
-        <Card.Title className="text-left text-xl font-bold pl-5 mb-3">
+        <Card.Title className="text-left text-xl font-bold pl-5 ">
           Warning Count (last trip)
         </Card.Title>
-        <div className="space-y-1">
+        <div className="">
           {warnings.map(({ label, key }) => {
             const count =
               warningCounts[key] !== undefined ? warningCounts[key] : "...";

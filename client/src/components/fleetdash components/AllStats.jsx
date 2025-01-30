@@ -115,7 +115,7 @@ const AllStats = () => {
 
   return (
     <div className="relative w-full md:max-w-6xl p-4 border bg-card text-card-foreground shadow rounded-xl overflow-hidden">
-      <div style={{ height: "400px" }}>
+      <div style={{ height: "380px" }}>
         <Line options={options} data={chartData} />
       </div>
     </div>

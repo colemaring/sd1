@@ -47,9 +47,10 @@ function FleetDash() {
           </div>
           <div className="col-span-12">
             {/* Driver cards in rows */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 ">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
               {drivers.map((driver) => (
                 <ScoreCard
+                  className="bg-card border shadow"
                   key={driver.id}
                   name={driver.name}
                   phone={driver.phone_number}
