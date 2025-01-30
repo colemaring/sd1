@@ -22,7 +22,7 @@ export default function DriverDash() {
 
   return (
     <>
-      <div className="flex bg-muted min-h-screen">
+      <div className="flex bg-background min-h-screen">
         <div className="w-full">
           <div className="grid grid-cols-12 auto-rows-min items-start">
             {/* Navbar */}
@@ -31,22 +31,22 @@ export default function DriverDash() {
             </div>
 
             {/* Driver Info */}
-            <div className="col-span-12 md:col-span-6 lg:col-span-5">
+            <div className="col-span-12 md:col-span-6 lg:col-span-5 p-4">
               <DriverInfo />
             </div>
 
             {/* Empty Placeholder 1 */}
-            <div className="col-span-12 md:col-span-6 lg:col-span-3 bg-card rounded-xl h-full"></div>
+            <div className="h-full col-span-12 md:col-span-6 lg:col-span-3 bg-card shadow rounded-xl p-4"></div>
 
             {/* Empty Placeholder 2 */}
-            <div className="col-span-12 lg:col-span-4 bg-card rounded-xl h-full"></div>
+            <div className="h-full col-span-12 lg:col-span-4 bg-card shadow rounded-xl p-4"></div>
 
             {/* Warning Count */}
-            <div className="col-span-12 md:col-span-6 lg:col-span-3">
+            <div className="col-span-12 md:col-span-6 lg:col-span-3 p-4">
               <WarningCount driverData={driverData} />
             </div>
             {/* Events Log */}
-            <div className="col-span-12 md:col-span-6 lg:col-span-9">
+            <div className="col-span-12 md:col-span-6 lg:col-span-9 p-4">
               <EventsLog driverData={driverData} />
             </div>
           </div>

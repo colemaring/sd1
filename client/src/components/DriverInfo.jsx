@@ -38,14 +38,14 @@ const DriverInfo = () => {
 
   return (
     <div
-      className={`flex rounded-xl w-full h-full p-4 bg-card text-card-foreground`}
+      className={`flex rounded-xl w-full h-full p-4 bg-chart-4 text-card-foreground shadow border`}
     >
       <div className="flex flex-col pl-2">
         <div className="rounded-full bg-muted-foreground w-20 h-20 text-center"></div>
-        <h1 className="text-5xl font-semibold mt-4">
+        <h1 className="text-3xl font-semibold mt-8">
           {driverData.risk_score || "N/A"}
         </h1>
-        <h2 className="text-center">Risk Score</h2>
+        <h2 className="text-center">Safety Score</h2>
       </div>
 
       <div className="flex flex-col relative">
@@ -66,7 +66,7 @@ const DriverInfo = () => {
           )}
         </div>
         <div className="relative top-9 left-20">
-          <h1 className="text-4xl font-bold">{driverData.phone_number}</h1>
+          <h1 className="text-3xl font-bold">{driverData.phone_number}</h1>
           <h2 className="text-md text-center">Contact Information</h2>
         </div>
       </div>
