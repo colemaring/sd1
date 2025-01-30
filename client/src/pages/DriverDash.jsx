@@ -36,10 +36,10 @@ export default function DriverDash() {
             </div>
 
             {/* Empty Placeholder 1 */}
-            <div className="h-full col-span-12 md:col-span-6 lg:col-span-3 bg-card shadow rounded-xl p-4"></div>
+            <div className="col-span-12 md:col-span-6 lg:col-span-3 bg-card shadow rounded-xl p-24 m-4"></div>
 
             {/* Empty Placeholder 2 */}
-            <div className="h-full col-span-12 lg:col-span-4 bg-card shadow rounded-xl p-4"></div>
+            <div className="col-span-12 lg:col-span-4 bg-card shadow rounded-xl p-24 m-4"></div>
 
             {/* Warning Count */}
             <div className="col-span-12 md:col-span-6 lg:col-span-3 p-4">
