@@ -1,39 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { BsTelephone } from "react-icons/bs";
 import { CiMail } from "react-icons/ci";
 import { RiUserLocationLine } from "react-icons/ri";
 import { useTheme } from "../context/ThemeContext";
 import { useParams } from "react-router-dom";
-import truck from "../assets/truck.png"
+import truck from "../assets/truck.png";
+import { DriversContext } from "../context/DriversContext";
 
 const DriverInfo = () => {
-  const { theme } = useTheme()
-  const { driverPhone } = useParams()
-  const [driverData, setDriverData] = useState(null)
+  const { theme } = useTheme();
+  const { driverPhone } = useParams();
+  const drivers = useContext(DriversContext);
+  const [driverData, setDriverData] = useState(null);
 
   useEffect(() => {
-    const fetchDriverData = async () => {
-      try {
-        const response = await fetch("https://aifsd.xyz/api/drivers")
-        if (!response.ok) {
-          throw new Error("Network response was not ok")
-        }
-        const data = await response.json()
-        const driver = data.find((d) => d.phone_number === driverPhone)
-        setDriverData(driver)
-      } catch (error) {
-        console.error("Error fetching driver data:", error)
-      }
-    }
-
-    fetchDriverData()
-    // Keep activity updated by fetching every 3 seconds
-    const intervalId = setInterval(fetchDriverData, 3000)
-    return () => clearInterval(intervalId)
-  }, [driverPhone])
+    const driver = drivers.find((d) => d.phone_number === driverPhone);
+    setDriverData(driver);
+  }, [driverPhone]);
 
   if (!driverData) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   return (
@@ -55,15 +41,11 @@ const DriverInfo = () => {
 
       {/* Middle: Driver Name & Phone */}
       <div className="flex flex-col w-3/5 pl-4">
-        <span className="text-sm text-primary">
-          Selected Driver
-        </span>
+        <span className="text-sm text-primary">Selected Driver</span>
         <h1 className="text-3xl font-bold mb-12">{driverData.name}</h1>
 
         <h1 className="text-xl font-semibold">{driverData.phone_number}</h1>
-        <h2 className="text-sm text-primary">
-          Contact Information
-        </h2>
+        <h2 className="text-sm text-primary">Contact Information</h2>
       </div>
 
       {/* Right: Activity + Truck */}
@@ -82,7 +64,7 @@ const DriverInfo = () => {
         <img src={truck} alt="Truck" className="mt-20" />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DriverInfo
+export default DriverInfo;

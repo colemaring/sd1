@@ -5,31 +5,13 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { WebSocketsContext } from "../context/WebSocketsContext";
 import { useTheme } from "../context/ThemeContext";
+import { DriversContext } from "../context/DriversContext"; // Import DriversContext
 import { FaBars } from "react-icons/fa";
-import logo from "../assets/AIFSD_Logo.svg"
+import logo from "../assets/AIFSD_Logo.svg";
 
 function NavBar() {
-  const messages = useContext(WebSocketsContext) || {};
   const { theme, toggleTheme } = useTheme();
-  const [drivers, setDrivers] = useState([]);
-
-  useEffect(() => {
-    // Fetch drivers from the API
-    const fetchDrivers = async () => {
-      try {
-        const response = await fetch("https://aifsd.xyz/api/drivers");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setDrivers(data);
-      } catch (error) {
-        console.error("Error fetching drivers:", error);
-      }
-    };
-
-    fetchDrivers();
-  }, []);
+  const drivers = useContext(DriversContext); // Use DriversContext
 
   return (
     <Navbar
@@ -42,13 +24,16 @@ function NavBar() {
       }}
     >
       <Navbar.Brand as={Link} to="/" className="flex items-center">
-        <img src={logo} alt="AIFSD Logo" className="logo"
+        <img
+          src={logo}
+          alt="AIFSD Logo"
+          className="logo"
           style={{
             height: "40px",
             transform: "scale(1.3)",
             transformOrigin: "left center",
-            marginLeft: "-10px"
-          }} 
+            marginLeft: "-10px",
+          }}
         />
       </Navbar.Brand>
       {/* Custom Hamburger Menu */}
@@ -117,9 +102,7 @@ function NavBar() {
                 color: `hsl(var(--primary-foreground))`,
               }}
             >
-              {theme === "light"
-                ? "Dark Mode"
-                : "Light Mode"}
+              {theme === "light" ? "Dark Mode" : "Light Mode"}
             </button>
           </Nav.Item>
         </Nav>

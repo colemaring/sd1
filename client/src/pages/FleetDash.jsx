@@ -1,38 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../bootstrap-overrides.css"; // Custom overrides
 import NavBar from "../components/NavBar";
 import Filter from "../components/fleetdash components/Filter";
 import ScoreCard from "../components/ScoreCard";
-import { WebSocketsContext } from "../context/WebSocketsContext";
-import { useContext } from "react";
+import { DriversContext } from "../context/DriversContext"; // Import DriversContext
 
 function FleetDash() {
-  const [drivers, setDrivers] = useState([]);
-  const messages = useContext(WebSocketsContext);
+  const drivers = useContext(DriversContext);
+  const [activeRisk, setActiveRisk] = useState("low");
+  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [update, setUpdate] = useState(false);
+  const [filteredDrivers, setFilteredDrivers] = useState([]);
 
   useEffect(() => {
-    // Fetch drivers from the API
-    const fetchDrivers = async () => {
-      try {
-        const response = await fetch("https://aifsd.xyz/api/drivers");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        //console.log(data);
-        setDrivers(data);
-      } catch (error) {
-        console.error("Error fetching drivers:", error);
-      }
+    const getRiskLevel = (score) => {
+      if (score > 80) return "low";
+      if (score > 60) return "medium";
+      return "high";
     };
 
-    fetchDrivers();
-    // Update status every x seconds
-    const intervalId = setInterval(fetchDrivers, 3000);
+    const filtered = drivers.filter((driver) => {
+      const riskLevel = getRiskLevel(driver.risk_score);
+      const isActive = selectedFilters.includes("Active")
+        ? driver.active
+        : true;
+      const isIncreasing = selectedFilters.includes("Increasing")
+        ? driver.change > 0
+        : true;
+      const isDecreasing = selectedFilters.includes("Decreasing")
+        ? driver.change < 0
+        : true;
 
-    return () => clearInterval(intervalId);
-  }, []);
+      return (
+        riskLevel === activeRisk && isActive && (isIncreasing || isDecreasing)
+      );
+    });
+
+    setFilteredDrivers(filtered);
+  }, [update, drivers]);
 
   return (
     <div className="flex min-h-screen bg-primary">
@@ -42,20 +48,25 @@ function FleetDash() {
             <NavBar />
           </div>
           <div className="col-span-12">
-            {/* Filter - WIP */}
-            <Filter />
+            <Filter
+              setActiveRisk={setActiveRisk}
+              setSelectedFilters={setSelectedFilters}
+              setUpdate={setUpdate}
+              update={update}
+              activeRisk={activeRisk}
+              selectedFilters={selectedFilters}
+            />
           </div>
           <div className="col-span-12">
-            {/* Driver cards in rows */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-              {drivers.map((driver) => (
+              {filteredDrivers.map((driver) => (
                 <ScoreCard
                   className="bg-card border shadow"
                   key={driver.id}
                   name={driver.name}
                   phone={driver.phone_number}
                   score={driver.risk_score}
-                  change={"% change"}
+                  change={driver.change}
                   active={driver.active}
                 />
               ))}

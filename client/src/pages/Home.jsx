@@ -20,11 +20,6 @@ export default function Home() {
             <NavBar />
           </div>
 
-          {/* Filter */}
-          <div className="col-span-12">
-            <Filter />
-          </div>
-
           {/* High Risk Drivers and Current Active in the same row */}
           <div className="col-span-12 md:col-span-8 lg:col-span-9 mt-2 mb-4 md:mb-0">
             <HighRiskDrivers />

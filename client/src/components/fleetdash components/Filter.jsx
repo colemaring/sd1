@@ -3,9 +3,14 @@ import { IoFilter } from "react-icons/io5";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../bootstrap-overrides.css"; // Custom overrides
 
-function Filter() {
-  const [activeRisk, setActiveRisk] = useState("high");
-  const [selectedFilters, setSelectedFilters] = useState(["Active", "Increasing"]);
+function Filter({
+  setActiveRisk,
+  setSelectedFilters,
+  setUpdate,
+  update,
+  activeRisk,
+  selectedFilters,
+}) {
   const [isFilterOpen, setIsFilterOpen] = useState(false); // For small screen toggle
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 768);
 
@@ -27,6 +32,7 @@ function Filter() {
     if (!isLargeScreen) {
       setIsFilterOpen(false);
     }
+    setUpdate(!update);
   };
 
   // Watch for screen resize

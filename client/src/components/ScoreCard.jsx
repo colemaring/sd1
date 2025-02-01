@@ -14,6 +14,12 @@ function ScoreCard({ name, phone, score, change, active }) {
     navigate(`/driver/${phone}`); // Navigate to /driver/phonenumber
   };
 
+  const getRiskLevel = (score) => {
+    if (score > 80) return "Low Risk";
+    if (score > 60) return "Medium Risk";
+    return "High Risk";
+  };
+
   return (
     <div className="flex flex-wrap justify-center gap-4 w-full">
       <div
@@ -41,7 +47,9 @@ function ScoreCard({ name, phone, score, change, active }) {
         {/* Driver Info */}
         <div className="flex flex-col pl-4 w-full">
           <div className="text-center">
-            <h3 className="text-sm text-muted-foreground">High Risk</h3>
+            <h3 className="text-sm text-muted-foreground">
+              {getRiskLevel(score)}
+            </h3>
             <h1 className="text-lg font-semibold">{name}</h1>
             <h3 className="text-sm">{phone}</h3>
           </div>
