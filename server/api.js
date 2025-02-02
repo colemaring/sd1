@@ -148,20 +148,40 @@ router.get("/dispatchers/phone/:phone_number", async (req, res) => {
   }
 });
 
-// Read the 100 most recent risk events and generate a summary
+// Read the 100 most recent risk events and generate a summary using Google's Gemini API
 router.get("/risk-events-summary/:driverPhone", async (req, res) => {
   const { driverPhone } = req.params;
 
   try {
-    // Fetch the 100 most recent risk events for the given driver
-    const result = await db.query(
-      `SELECT * FROM risk_event WHERE driver_phone = $1 ORDER BY timestamp DESC LIMIT 100`,
+    // Fetch the driver ID using the phone number
+    const driverResult = await db.query(
+      `SELECT id FROM driver WHERE phone_number = $1`,
       [driverPhone]
     );
+    if (driverResult.rows.length === 0) {
+      return res.status(404).json({ error: "Driver not found" });
+    }
+    const driverId = driverResult.rows[0].id;
 
-    const riskEvents = result.rows;
+    // Fetch the trip IDs for the driver
+    const tripResult = await db.query(
+      `SELECT id FROM trip WHERE driver_id = $1`,
+      [driverId]
+    );
+    const tripIds = tripResult.rows.map((row) => row.id);
 
-    // Generate a summary using Gemini 1.5 flash
+    if (tripIds.length === 0) {
+      return res.status(404).json({ error: "No trips found for the driver" });
+    }
+
+    // Fetch the risk events for the trip IDs
+    const riskEventsResult = await db.query(
+      `SELECT * FROM risk_event WHERE trip_id = ANY($1::int[]) ORDER BY timestamp DESC LIMIT 100`,
+      [tripIds]
+    );
+    const riskEvents = riskEventsResult.rows;
+
+    // Generate a summary using Google's Gemini API
     const response = await fetch(
       "https://gemini.googleapis.com/v1/models/gemini-1.5:generateText",
       {
