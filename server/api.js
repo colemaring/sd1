@@ -200,8 +200,8 @@ router.get("/risk-events-summary/:driverPhone", async (req, res) => {
       }
     );
     console.log(response);
-    console.log(data);
     const data = await response.json();
+    console.log(data);
     const aiSummary = data.choices[0].text.trim();
 
     res.json({ summary: aiSummary });
