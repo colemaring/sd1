@@ -180,20 +180,22 @@ router.get("/risk-events-summary/:driverPhone", async (req, res) => {
       [tripIds]
     );
     const riskEvents = riskEventsResult.rows;
+    console.log("Risk events:", riskEvents);
 
     // Generate a summary using Google's Gemini API
     const response = await fetch(
-      "https://gemini.googleapis.com/v1/models/gemini-1.5:generateText",
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GOOGLE_GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.GOOGLE_GEMINI_API_KEY}`,
         },
         body: JSON.stringify({
-          prompt: generatePrompt(riskEvents),
-          max_tokens: 150,
-          temperature: 0.4,
+          contents: [
+            {
+              parts: [{ text: generatePrompt(riskEvents) }],
+            },
+          ],
         }),
       }
     );
