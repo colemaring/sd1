@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 const db = require("./db");
 require("dotenv").config();
-const fetch = require("node-fetch");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 // CREATE
 // Create a driver
@@ -183,26 +185,9 @@ router.get("/risk-events-summary/:driverPhone", async (req, res) => {
     console.log("Risk events:", riskEvents);
 
     // Generate a summary using Google's Gemini API
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GOOGLE_GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: generatePrompt(riskEvents) }],
-            },
-          ],
-        }),
-      }
-    );
-    console.log(response);
-    const data = await response.json();
-    console.log(data);
-    const aiSummary = data.choices[0].text.trim();
+    const prompt = generatePrompt(riskEvents);
+    const result = await model.generateContent(prompt);
+    const aiSummary = result.response.text().trim();
 
     res.json({ summary: aiSummary });
   } catch (err) {
