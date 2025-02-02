@@ -155,15 +155,16 @@ router.get("/risk-events-summary/:driverPhone", async (req, res) => {
   const { driverPhone } = req.params;
 
   try {
-    // Fetch the driver ID using the phone number
+    // Fetch the driver ID and name using the phone number
     const driverResult = await db.query(
-      `SELECT id FROM driver WHERE phone_number = $1`,
+      `SELECT id, name FROM driver WHERE phone_number = $1`,
       [driverPhone]
     );
     if (driverResult.rows.length === 0) {
       return res.status(404).json({ error: "Driver not found" });
     }
     const driverId = driverResult.rows[0].id;
+    const driverName = driverResult.rows[0].name;
 
     // Fetch the trip IDs for the driver
     const tripResult = await db.query(
@@ -182,10 +183,9 @@ router.get("/risk-events-summary/:driverPhone", async (req, res) => {
       [tripIds]
     );
     const riskEvents = riskEventsResult.rows;
-    console.log("Risk events:", riskEvents);
 
     // Generate a summary using Google's Gemini API
-    const prompt = generatePrompt(riskEvents);
+    const prompt = generatePrompt(driverName, riskEvents);
     const result = await model.generateContent(prompt);
     const aiSummary = result.response.text().trim();
 
@@ -203,9 +203,9 @@ router.get("/risk-events-summary/:driverPhone", async (req, res) => {
   }
 });
 
-const generatePrompt = (riskEvents) => {
+const generatePrompt = (driverName, riskEvents) => {
   return `
-    Generate a short 2 sentence summary for the following risk events. These risk events are from a system which provides fleet managers with insights into how their drivers are driving. The response should include some information about their tendencies and behaviors. You response should be brief and be able to quickly tell the reader the tendencies of this driver. Respond only with the short 2 sentence summary, and nothing else.:
+    Generate a short 2 sentence summary for the following risk events for the driver ${driverName}. These risk events are from a system which provides fleet managers with insights into how their drivers are driving. The response should include some information about their tendencies and behaviors. Your response should be brief and be able to quickly tell the reader the tendencies of this driver. Respond only with the short 2 sentence summary, and nothing else.:
 
     Risk Events:
     ${JSON.stringify(riskEvents, null, 2)}
