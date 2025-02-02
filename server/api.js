@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const db = require("./db");
+require("dotenv").config();
+const fetch = require("node-fetch");
 
 // CREATE
 // Create a driver
@@ -145,6 +147,62 @@ router.get("/dispatchers/phone/:phone_number", async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
+
+// Read the 100 most recent risk events and generate a summary
+router.get("/risk-events-summary/:driverPhone", async (req, res) => {
+  const { driverPhone } = req.params;
+
+  try {
+    // Fetch the 100 most recent risk events for the given driver
+    const result = await db.query(
+      `SELECT * FROM risk_event WHERE driver_phone = $1 ORDER BY timestamp DESC LIMIT 100`,
+      [driverPhone]
+    );
+
+    const riskEvents = result.rows;
+
+    // Generate a summary using Gemini 1.5 flash
+    const response = await fetch(
+      "https://gemini.googleapis.com/v1/models/gemini-1.5:generateText",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.GOOGLE_GEMINI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          prompt: generatePrompt(riskEvents),
+          max_tokens: 150,
+          temperature: 0.4,
+        }),
+      }
+    );
+
+    const data = await response.json();
+    const aiSummary = data.choices[0].text.trim();
+
+    res.json({ summary: aiSummary });
+  } catch (err) {
+    console.error(
+      "Error fetching risk events or generating summary:",
+      err.message
+    );
+    res.status(500).json({
+      error:
+        "Internal server error while fetching risk events or generating summary",
+      details: err.message,
+    });
+  }
+});
+
+const generatePrompt = (riskEvents) => {
+  return `
+    Generate a short 2 sentence summary for the following risk events. These risk events are from a system which provides fleet managers with insights into how their drivers are driving. The response should include some information about their tendencies and behaviors. You response should be brief and be able to quickly tell the reader the tendencies of this driver. Respond only with the short 2 sentence summary, and nothing else.:
+
+    Risk Events:
+    ${JSON.stringify(riskEvents, null, 2)}
+  `;
+};
 
 // Read fleet by dispatcher ID
 router.get("/fleets/dispatcher/:dispatcher_id", async (req, res) => {
