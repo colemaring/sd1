@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // Import useParams
+import { useParams } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 
 const EventsLog = ({ driverData }) => {
@@ -23,6 +23,7 @@ const EventsLog = ({ driverData }) => {
           eventType: key,
           durationOrLocation: "...",
           aiType: "Inside",
+          tripId: driverData.tripId,
         });
       }
     }
@@ -33,6 +34,9 @@ const EventsLog = ({ driverData }) => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
+        setEvents([]);
+        setPageInputValue("1");
+        setCurrentPage(1);
         // Fetch trips for the driver
         const tripsResponse = await fetch(
           `https://aifsd.xyz/api/trips/${driverPhone}`
@@ -63,6 +67,7 @@ const EventsLog = ({ driverData }) => {
                 eventType: key,
                 durationOrLocation: event.durationOrLocation || "...",
                 aiType: event.aiType || "Inside",
+                tripId: event.trip_id,
               });
             }
           }
@@ -170,12 +175,15 @@ const EventsLog = ({ driverData }) => {
         <table className="table w-full text-sm bg-card">
           <thead className="sticky top-0 bg-card text-card-foreground">
             <tr>
-              <th className="font-thin text-left text-primary">DATE OF EVENT</th>
+              <th className="font-thin text-left text-primary">
+                DATE OF EVENT
+              </th>
               <th className="font-thin text-left text-primary">EVENT TYPE</th>
               <th className="font-thin text-left text-primary">
                 DURATION/LOCATION
               </th>
               <th className="font-thin text-left text-primary">AI TYPE</th>
+              <th className="font-thin text-left text-primary">TRIP ID</th>
             </tr>
           </thead>
           <tbody>
@@ -185,6 +193,7 @@ const EventsLog = ({ driverData }) => {
                 <td className="text-primary">{event.eventType}</td>
                 <td className="text-primary">{event.durationOrLocation}</td>
                 <td className="text-primary">{event.aiType}</td>
+                <td className="text-primary">{event.tripId}</td>
               </tr>
             ))}
           </tbody>
