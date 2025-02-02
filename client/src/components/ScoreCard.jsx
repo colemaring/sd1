@@ -24,7 +24,7 @@ function ScoreCard({ name, phone, score, change, active }) {
     <div className="flex flex-wrap justify-center gap-4 w-full">
       <div
         key={name}
-        className="relative flex rounded-xl w-72 p-4 bg-card text-foreground shadow-md cursor-pointer"
+        className="relative cardBorder flex rounded-xl w-72 p-4 bg-card text-foreground shadow-md cursor-pointer"
         onClick={handleCardClick} // Add onClick handler
       >
         {/* Profile Picture */}

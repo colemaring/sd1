@@ -15,7 +15,7 @@ function CurrentActive() {
 
   return (
     <div className="ml-5 mr-2 flex justify-center">
-      <div className="relative flex rounded-xl w-72 p-4 h-[210px] shadow overflow-hidden text-foreground bg-card border">
+      <div className="relative cardBorder flex w-72 p-4 overflow-hidden text-foreground">
         <div className="z-10">
           <h1 className="text-xl font-semibold">Active vehicles</h1>
           <h2 className="font-light">Vehicles operating on the road</h2>

@@ -66,14 +66,20 @@ body {
 }
 
 .activeContainer {
-  width: 95%;
-  height: 24.8vh;
+  width: 85%;
+  height: 22.8vh;
   margin-left: 2rem;
   margin-right: 2rem;
-  margin-top: 0.1rem;
-  border: 1px solid #ccc; /* Add border */
-  border-radius: 10px; /* Make edges curved */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add drop shadow */
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cardBorder{
+  box-shadow: 0 0px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+  height: 22.8vh;
+  border-radius: 10px;
 }
 
 .truck-info {

@@ -14,12 +14,18 @@ const DriverInfo = () => {
   const [driverData, setDriverData] = useState(null);
 
   useEffect(() => {
-    const driver = drivers.find((d) => d.phone_number === driverPhone);
-    setDriverData(driver);
-  }, [driverPhone]);
+    if (drivers && drivers.length > 0) {
+      const driver = drivers.find((d) => d.phone_number === driverPhone);
+      setDriverData(driver);
+    }
+  }, [driverPhone, drivers]);
+
+  if (!drivers || drivers.length === 0) {
+    return <div>Loading...</div>;
+  }
 
   if (!driverData) {
-    return <div>Loading...</div>;
+    return <div>Driver not found</div>;
   }
 
   return (

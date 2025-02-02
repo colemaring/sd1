@@ -3,10 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../bootstrap-overrides.css"; // Bootstrap overrides for Tailwind colors
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { WebSocketsContext } from "../context/WebSocketsContext";
 import { useTheme } from "../context/ThemeContext";
 import { DriversContext } from "../context/DriversContext"; // Import DriversContext
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaSun, FaMoon } from "react-icons/fa";
 import logo from "../assets/AIFSD_Logo.svg";
 
 function NavBar() {
@@ -94,16 +93,16 @@ function NavBar() {
         </Nav>
         <Nav>
           <Nav.Item className="d-flex align-items-center">
-            <button
+            <div
               onClick={toggleTheme}
-              className="btn px-3 py-2 rounded"
+              className="cursor-pointer"
               style={{
-                backgroundColor: `hsl(var(--primary))`,
-                color: `hsl(var(--primary-foreground))`,
+                color: theme === "light" ? "black" : "white", // Set icon color based on theme
               }}
             >
-              {theme === "light" ? "Dark Mode" : "Light Mode"}
-            </button>
+              {theme === "light" ? <FaMoon size={24} /> : <FaSun size={24} />}{" "}
+              {/* Toggle icon */}
+            </div>
           </Nav.Item>
         </Nav>
       </Navbar.Collapse>
