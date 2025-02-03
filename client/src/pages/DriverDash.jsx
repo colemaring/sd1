@@ -6,6 +6,7 @@ import "../App.css";
 import WarningCount from "../components/WarningCount";
 import DriverInfo from "../components/DriverInfo";
 import EventsLog from "../components/EventsLog";
+import EventsLogNew from "../components/EventsLogNew";
 import NavBar from "../components/NavBar";
 import { WebSocketsContext } from "../context/WebSocketsContext";
 import DashFilters from "../components/fleetdash components/DashFilters";
@@ -46,7 +47,7 @@ export default function DriverDash() {
             </div>
             {/* Events Log */}
             <div className="col-span-12 md:col-span-6 lg:col-span-9 p-4">
-              <EventsLog driverData={driverData} />
+              <EventsLogNew driverData={driverData} />
             </div>
           </div>
         </div>
