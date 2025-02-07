@@ -33,7 +33,13 @@ const DriverInfo = () => {
       {/* Left: Avatar + Risk Score */}
       <div className="flex flex-col items-center w-1/5 pr-4">
         {/* Avatar Placeholder */}
-        <div className="rounded-full bg-muted w-20 h-20 overflow-hidden flex items-center justify-center"></div>
+        <div className="rounded-full bg-muted w-20 h-20 overflow-hidden flex items-center justify-center">
+          <img
+            src={`https://api.dicebear.com/9.x/micah/svg?seed=${driverData.phone_number}&mouth=laughing,smile,smirk`}
+            alt="Profile"
+            className="w-full h-full object-cover"
+          />
+        </div>
         <div className="pt-4 text-center mb-1">
           <h1 className="text-3xl font-bold">
             {driverData.risk_score || "N/A"}
