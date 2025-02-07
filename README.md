@@ -39,13 +39,12 @@ Running server for development
 ```bash
 node server.js dev
 ```
-
+dont forget .env <br>
 Running the websockets client test script (to simulate a connected vehicle)
 
 ```bash
 python client_test.py
 ```
 
-- Server is updated on changes to /client/dist <br>
 
 ## TODO:
