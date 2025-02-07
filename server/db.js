@@ -1,14 +1,22 @@
-const { Pool } = require('pg');
+const { Pool } = require("pg");
+require("dotenv").config();
+
+const user = process.env.DB_USER;
+const host = process.env.DB_HOST;
+const database = process.env.DB_DATABASE;
+const password = process.env.DB_PASSWORD;
+const port = process.env.DB_PORT;
 
 const pool = new Pool({
-  user: 'aiforsafedriving',
-  host: 'greensaver.llasreip.com',
-  database: 'aisafety',
-  password: 'DbLogin2024!',
-  port: 15432,
+  user: user,
+  host: host,
+  database: database,
+  password: password,
+  port: port,
 });
 
-pool.connect()
+pool
+  .connect()
   .then(() => {
     console.log("Connected to the PostgreSQL database");
   })
