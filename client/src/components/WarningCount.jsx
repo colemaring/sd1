@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Card } from "react-bootstrap";
+import { Card, Dropdown, DropdownButton } from "react-bootstrap";
 import { IoMdCheckmarkCircle, IoMdCloseCircle } from "react-icons/io";
 import { IoAlertCircle } from "react-icons/io5";
 import { useTheme } from "../context/ThemeContext";
-
+import { useParams } from "react-router-dom";
 const WarningCount = ({ driverData }) => {
   const { theme } = useTheme();
+  const { driverPhone } = useParams();
+  const [selectedFilter, setSelectedFilter] = useState("7 Day");
   const [warningCounts, setWarningCounts] = useState({
     Drinking: 0,
     Eating: 0,
@@ -65,14 +67,34 @@ const WarningCount = ({ driverData }) => {
     }));
   }, [driverData]);
 
+  const handleFilterClick = (filter) => {
+    setSelectedFilter(filter);
+    if (filter == "7 Day") {
+      console.log("calling 7 day api");
+    } else {
+      console.log("calling 30 day api");
+    }
+  };
+
   return (
     <Card
       className={`py-2 rounded-xl bg-card text-card-foreground shadow border`}
     >
       <Card.Body>
-        <Card.Title className="text-left text-xl font-bold pl-5 ">
-          Warning Count
-        </Card.Title>
+        <div className="flex justify-between items-center">
+          <Card.Title className="text-left text-xl font-bold">
+            Warning Count
+          </Card.Title>
+          <DropdownButton variant="success" title={selectedFilter}>
+            <Dropdown.Item onClick={() => handleFilterClick("7 Day")}>
+              7 Day
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => handleFilterClick("30 Day")}>
+              30 Day
+            </Dropdown.Item>
+          </DropdownButton>
+        </div>
+
         <div className="">
           {warnings.map(({ label, key }) => {
             const count =
