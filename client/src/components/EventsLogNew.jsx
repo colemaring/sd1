@@ -2,6 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 
+// TODO
+// FIX BUG WHERE PAGINATION RESETS WHEN driverData CHANGES
+
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -28,7 +31,7 @@ const EventsLogNew = ({ driverData }) => {
           eventType: key,
           durationOrLocation: "...",
           aiType: "Inside",
-          tripId: driverData.tripId,
+          tripId: driverData.tripId || "Current Trip",
         });
       }
     }
@@ -36,80 +39,62 @@ const EventsLogNew = ({ driverData }) => {
   }, [driverData]);
 
   // 2) Fetch risk events from the API
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        setEvents([]);
-        setPageInputValue("1");
-        setCurrentPage(1);
-        // Fetch trips for the driver
-        const tripsResponse = await fetch(
-          `https://aifsd.xyz/api/trips/${driverPhone}`
-        );
-        const trips = await tripsResponse.json();
-        const tripIds = trips.map((trip) => trip.id);
+  const fetchEvents = async () => {
+    try {
+      setEvents([]);
+      setPageInputValue("1");
+      setCurrentPage(1);
+      // Fetch trips for the driver
+      const tripsResponse = await fetch(
+        `https://aifsd.xyz/api/trips/${driverPhone}`
+      );
+      const trips = await tripsResponse.json();
+      const tripIds = trips.map((trip) => trip.id);
 
-        // Fetch risk events for those trips
-        const riskEventsResponse = await fetch(
-          `https://aifsd.xyz/api/risk-events-id`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ tripIds }),
-          }
-        );
-        const riskEvents = await riskEventsResponse.json();
+      // Fetch risk events for those trips
+      const riskEventsResponse = await fetch(
+        `https://aifsd.xyz/api/risk-events-id`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ tripIds }),
+        }
+      );
+      const riskEvents = await riskEventsResponse.json();
 
-        // Parse them
-        const parsedEvents = [];
-        for (const event of riskEvents) {
-          for (const [key, value] of Object.entries(event)) {
-            if (value === true) {
-              parsedEvents.push({
-                date: new Date(event.timestamp).toLocaleString(),
-                eventType: key,
-                durationOrLocation: event.durationOrLocation || "...",
-                aiType: event.aiType || "Inside",
-                tripId: event.trip_id,
-              });
-            }
+      // Parse them
+      const parsedEvents = [];
+      for (const event of riskEvents) {
+        for (const [key, value] of Object.entries(event)) {
+          if (value === true) {
+            parsedEvents.push({
+              date: new Date(event.timestamp).toLocaleString(),
+              eventType: key,
+              durationOrLocation: event.durationOrLocation || "...",
+              aiType: event.aiType || "Inside",
+              tripId: event.trip_id || "Current Trip",
+            });
           }
         }
-
-        setEvents((prevEvents) => [...prevEvents, ...parsedEvents]);
-      } catch (error) {
-        console.error("Error fetching events:", error);
       }
-    };
 
+      setEvents((prevEvents) => [...prevEvents, ...parsedEvents]);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  useEffect(() => {
     if (driverPhone) {
       fetchEvents();
     }
   }, [driverPhone]);
 
-  // 3) WebSocket subscription (pushing new events in real-time)
-  useEffect(() => {
-    const ws = new WebSocket("wss://your-websocket-url");
-
-    ws.onmessage = (event) => {
-      const newEvent = JSON.parse(event.data);
-      setEvents((prevEvents) => [...prevEvents, newEvent]);
-    };
-
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
-    ws.onclose = () => {
-      console.log("WebSocket connection closed");
-    };
-
-    return () => {
-      ws.close();
-    };
-  }, []);
+  // useEffect(() => {
+  //   fetchEvents();
+  // }, []);
 
   const columns = useMemo(() => [
     {

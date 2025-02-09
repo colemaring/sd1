@@ -73,7 +73,7 @@ const WarningCount = ({ driverData }) => {
           }
         );
         const riskEvents = await riskEventsResponse.json();
-        console.log("riskEvents", riskEvents);
+        // console.log("riskEvents", riskEvents);
 
         // Filter risk events based on the selected filter
         const now = new Date();
@@ -119,6 +119,38 @@ const WarningCount = ({ driverData }) => {
       fetchEvents();
     }
   }, [driverPhone, selectedFilter]);
+
+  useEffect(() => {
+    const updateCounts = () => {
+      const newCounts = { ...warningCounts };
+
+      const keyMapping = {
+        Drinking: "drinking",
+        Eating: "eating",
+        OnPhone: "phone",
+        SeatbeltOff: "seatbelt_off",
+        Sleeping: "sleeping",
+        Smoking: "smoking",
+        OutOfLane: "out_of_lane",
+        RiskyDrivers: "risky_drivers",
+        UnsafeDistance: "unsafe_distance",
+        HandsOffWheel: "hands_off_wheel",
+      };
+
+      for (const [key, value] of Object.entries(driverData)) {
+        const mappedKey = keyMapping[key];
+        if (value === true && mappedKey && newCounts[mappedKey] !== undefined) {
+          newCounts[mappedKey] += 1;
+        }
+      }
+
+      setWarningCounts(newCounts);
+    };
+
+    if (driverData) {
+      updateCounts();
+    }
+  }, [driverData]);
 
   const handleFilterClick = (filter) => {
     setSelectedFilter(filter);
