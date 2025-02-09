@@ -206,7 +206,7 @@ router.get("/risk-events-summary/:driverPhone", async (req, res) => {
 const generatePrompt = (driverName, riskEvents) => {
   console.log("riskEvents", riskEvents);
   return `
-    Generate a short 2 sentence summary for the following risk events for the driver ${driverName}. These risk events are from a system which provides fleet managers with insights into how their drivers are driving. The response should include some information about their tendencies and behaviors. Your response should be brief and be able to quickly tell the reader the tendencies of this driver. Respond only with the short 2 sentence summary, and nothing else.:
+    Given ${driverName} ‘s risk events (listed below), identify the top two most prevalent patterns in their risky driving. Format your response in two sentences for fleet managers as: 'Name Here tends to exhibit [risk behavior] after [time period/event]' and 'Name Here also frequently [another risk behavior] when [time period/event]'. This information will be used to improve driver safety. These risk events are from a system which provides fleet managers with insights into how their drivers are driving. The response should include some information about their tendencies and behaviors. Your response should be brief and be able to quickly tell the reader the tendencies of this driver. Respond only with the short 2 sentence summary, and nothing else.
 
     Risk Events:
     ${JSON.stringify(riskEvents, null, 2)}
