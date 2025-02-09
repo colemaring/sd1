@@ -59,11 +59,7 @@ function NavBar() {
           >
             Fleet
           </Nav.Link>
-          <NavDropdown
-            title="Drivers"
-            id="collapsible-nav-dropdown"
-            className="custom-dropdown"
-          >
+          <NavDropdown title="Drivers" id="collapsible-nav-dropdown">
             {drivers.length > 0 ? (
               drivers.map((driver) => (
                 <NavDropdown.Item

@@ -4,34 +4,35 @@ import { IoMdCheckmarkCircle, IoMdCloseCircle } from "react-icons/io";
 import { IoAlertCircle } from "react-icons/io5";
 import { useTheme } from "../context/ThemeContext";
 import { useParams } from "react-router-dom";
+
 const WarningCount = ({ driverData }) => {
   const { theme } = useTheme();
   const { driverPhone } = useParams();
   const [selectedFilter, setSelectedFilter] = useState("7 Day");
   const [warningCounts, setWarningCounts] = useState({
-    Drinking: 0,
-    Eating: 0,
-    OnPhone: 0,
-    SeatbeltOff: 0,
-    Sleeping: 0,
-    Smoking: 0,
-    OutOfLane: 0,
-    RiskyDrivers: 0,
-    UnsafeDistance: 0,
-    HandsOnWheel: 0,
+    drinking: 0,
+    eating: 0,
+    phone: 0,
+    seatbelt_off: 0,
+    sleeping: 0,
+    smoking: 0,
+    out_of_lane: 0,
+    risky_drivers: 0,
+    unsafe_distance: 0,
+    hands_off_wheel: 0,
   });
 
   const warnings = [
-    { label: "Drinking", key: "Drinking" },
-    { label: "Eating", key: "Eating" },
-    { label: "Cell Phone Usage", key: "OnPhone" },
-    { label: "Seatbelt Off", key: "SeatbeltOff" },
-    { label: "Sleeping", key: "Sleeping" },
-    { label: "Smoking", key: "Smoking" },
-    { label: "Out of Lane", key: "OutOfLane" },
-    { label: "Risky Drivers", key: "RiskyDrivers" },
-    { label: "Unsafe Distance", key: "UnsafeDistance" },
-    { label: "Hands on Wheel", key: "HandsOnWheel" },
+    { label: "Drinking", key: "drinking" },
+    { label: "Eating", key: "eating" },
+    { label: "Cell Phone Usage", key: "phone" },
+    { label: "Seatbelt Off", key: "seatbelt_off" },
+    { label: "Sleeping", key: "sleeping" },
+    { label: "Smoking", key: "smoking" },
+    { label: "Out of Lane", key: "out_of_lane" },
+    { label: "Risky Drivers", key: "risky_drivers" },
+    { label: "Unsafe Distance", key: "unsafe_distance" },
+    { label: "Hands off Wheel", key: "hands_off_wheel" },
   ];
 
   const icons = {
@@ -53,27 +54,75 @@ const WarningCount = ({ driverData }) => {
   };
 
   useEffect(() => {
-    const newCounts = { ...warningCounts };
+    const fetchEvents = async () => {
+      try {
+        const tripsResponse = await fetch(
+          `https://aifsd.xyz/api/trips/${driverPhone}`
+        );
+        const trips = await tripsResponse.json();
+        const tripIds = trips.map((trip) => trip.id);
 
-    for (const [key, value] of Object.entries(driverData)) {
-      if (value === true && newCounts[key] !== undefined) {
-        newCounts[key] += 1;
+        const riskEventsResponse = await fetch(
+          `https://aifsd.xyz/api/risk-events-id`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ tripIds }),
+          }
+        );
+        const riskEvents = await riskEventsResponse.json();
+        console.log("riskEvents", riskEvents);
+
+        // Filter risk events based on the selected filter
+        const now = new Date();
+        const filteredEvents = riskEvents.filter((event) => {
+          const eventDate = new Date(event.timestamp);
+          if (selectedFilter === "7 Day") {
+            return now - eventDate <= 7 * 24 * 60 * 60 * 1000;
+          } else if (selectedFilter === "30 Day") {
+            return now - eventDate <= 30 * 24 * 60 * 60 * 1000;
+          }
+          return false;
+        });
+
+        // Count risk events within the given window
+        const newCounts = {
+          drinking: 0,
+          eating: 0,
+          phone: 0,
+          seatbelt_off: 0,
+          sleeping: 0,
+          smoking: 0,
+          out_of_lane: 0,
+          risky_drivers: 0,
+          unsafe_distance: 0,
+          hands_off_wheel: 0,
+        };
+
+        for (const event of filteredEvents) {
+          for (const [key, value] of Object.entries(event)) {
+            if (value === true && newCounts[key] !== undefined) {
+              newCounts[key] += 1;
+            }
+          }
+        }
+
+        setWarningCounts(newCounts);
+      } catch (error) {
+        console.error("Error fetching events:", error);
       }
-    }
+    };
 
-    setWarningCounts((prevCounts) => ({
-      ...prevCounts,
-      [driverData.Phone]: newCounts,
-    }));
-  }, [driverData]);
+    if (driverPhone) {
+      fetchEvents();
+    }
+  }, [driverPhone, selectedFilter]);
 
   const handleFilterClick = (filter) => {
     setSelectedFilter(filter);
-    if (filter == "7 Day") {
-      console.log("calling 7 day api");
-    } else {
-      console.log("calling 30 day api");
-    }
+    console.log(`Filter selected: ${filter}`);
   };
 
   return (
@@ -85,7 +134,7 @@ const WarningCount = ({ driverData }) => {
           <Card.Title className="text-left text-xl font-bold">
             Warning Count
           </Card.Title>
-          <DropdownButton variant="success" title={selectedFilter}>
+          <DropdownButton className="filterDropdown" title={selectedFilter}>
             <Dropdown.Item onClick={() => handleFilterClick("7 Day")}>
               7 Day
             </Dropdown.Item>
@@ -94,8 +143,7 @@ const WarningCount = ({ driverData }) => {
             </Dropdown.Item>
           </DropdownButton>
         </div>
-
-        <div className="">
+        <div>
           {warnings.map(({ label, key }) => {
             const count =
               warningCounts[key] !== undefined ? warningCounts[key] : "...";

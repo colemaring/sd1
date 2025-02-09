@@ -29,7 +29,13 @@ function ScoreCard({ name, phone, score, change, active }) {
       >
         {/* Profile Picture */}
         <div className="flex flex-col items-center">
-          <div className="rounded-full bg-muted w-16 h-16"></div>
+          <div className="rounded-full bg-muted w-16 h-16">
+          <img
+            src={`https://api.dicebear.com/9.x/micah/svg?seed=${phone}&mouth=laughing,smile,smirk`}
+            alt="Profile"
+            className="w-full h-full object-cover"
+          />
+          </div>
         </div>
 
         {/* On/off signal */}

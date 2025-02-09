@@ -16,8 +16,6 @@ export default function DriverDash() {
   const { driverPhone } = useParams();
   const messages = useContext(WebSocketsContext);
   const [driverData, setDriverData] = useState({});
-  const [tripsRange, setTripsRange] = useState(); // To be used for conditional rendering
-  const [eventTypes, setEventTypes] = useState();
 
   useEffect(() => {
     setDriverData(messages[driverPhone] || {});
@@ -38,7 +36,7 @@ export default function DriverDash() {
               <DriverInfo />
             </div>
 
-            <AISummary driverData={driverData} />
+            <AISummary />
             <DashFilters />
 
             {/* Warning Count */}
