@@ -294,6 +294,25 @@ router.get("/vehicles/phone/:phone_number", async (req, res) => {
   }
 });
 
+// Read all risk events with driver and vehicle details
+router.get("/risk-events-details", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        re.*, 
+        d.name AS driver_name, 
+        d.phone_number 
+      FROM risk_event re
+      JOIN trip t ON re.trip_id = t.id
+      JOIN driver d ON t.driver_id = d.id
+      ORDER BY re.timestamp DESC
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // Read all risk events
 router.get("/risk-events", async (req, res) => {
   try {
