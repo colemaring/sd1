@@ -48,3 +48,8 @@ python client_test.py
 
 
 ## TODO:
+Fix "Current Trip" functionality in EventsLogNew <br>
+Fix dark mode and color on 7d/30d dropdown and Apply Filters button <br>
+Include % change on Scorecard <br>
+Implement risk score calculation <br>
+FCM/Push notifs <br>
