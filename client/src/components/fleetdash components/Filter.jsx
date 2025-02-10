@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { IoFilter } from "react-icons/io5";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Button } from "react-bootstrap";
 import "../../bootstrap-overrides.css"; // Custom overrides
 
 function Filter({
@@ -116,16 +117,9 @@ function Filter({
 
           {/* Right: Apply Filters*/}
           <div className="flex-1 pl-4 flex items-center">
-            <button
-              className="px-3 py-2 rounded"
-              style={{
-                backgroundColor: `hsl(var(--primary))`,
-                color: `hsl(var(--primary-foreground))`,
-              }}
-              onClick={applyFilters}
-            >
+            <Button variant="success" onClick={applyFilters}>
               Apply Filters
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
@@ -170,16 +164,9 @@ function Filter({
             </div>
 
             {/* Row 3: Apply Filters*/}
-            <button
-              className="px-3 py-2 rounded self-start"
-              style={{
-                backgroundColor: `hsl(var(--primary))`,
-                color: `hsl(var(--primary-foreground))`,
-              }}
-              onClick={applyFilters}
-            >
+            <Button variant="success" onClick={applyFilters}>
               Apply Filters
-            </button>
+            </Button>
           </div>
         )
       )}

@@ -16,9 +16,9 @@ function HighRiskDrivers() {
   );
 
   return (
-    <div className="activeContainer flex items-center justify-center">
+    <div className="activeContainer rounded-xl shadow flex items-center bg-card justify-center border">
       {filteredDrivers.length === 0 ? (
-        <div className="flex justify-center items-center h-full">
+        <div className="flex justify-center items-center h-full ">
           <h2 className="text-lg font-semibold">
             Active or High Risk Drivers will be displayed here.
           </h2>

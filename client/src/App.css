@@ -71,16 +71,11 @@ body {
   height: 22.8vh;
   margin-left: 2rem;
   margin-right: 2rem;
-  border: 1px solid #ccc;
-  border-radius: 10px;
   box-shadow: 0 0px 8px rgba(0, 0, 0, 0.1);
 }
 
 .cardBorder{
-  box-shadow: 0 0px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid #ccc;
   height: 22.8vh;
-  border-radius: 10px;
 }
 
 .truck-info {

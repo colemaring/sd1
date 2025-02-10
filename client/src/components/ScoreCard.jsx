@@ -24,17 +24,17 @@ function ScoreCard({ name, phone, score, change, active }) {
     <div className="flex flex-wrap justify-center gap-4 w-full">
       <div
         key={name}
-        className="relative cardBorder flex rounded-xl w-72 p-4 bg-card text-foreground shadow-md cursor-pointer"
+        className="relative shadow cardBorder flex rounded-xl w-72 p-4 bg-card text-foreground shadow-md cursor-pointer border transition-transform duration-300 ease-in-out hover:scale-[1.02]"
         onClick={handleCardClick} // Add onClick handler
       >
         {/* Profile Picture */}
         <div className="flex flex-col items-center">
           <div className="rounded-full bg-muted w-16 h-16">
-          <img
-            src={`https://api.dicebear.com/9.x/micah/svg?seed=${phone}&mouth=laughing,smile,smirk`}
-            alt="Profile"
-            className="w-full h-full object-cover"
-          />
+            <img
+              src={`https://api.dicebear.com/9.x/micah/svg?seed=${phone}&mouth=laughing,smile,smirk`}
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
 
@@ -73,7 +73,7 @@ function ScoreCard({ name, phone, score, change, active }) {
         </div>
 
         {/* Dropdown */}
-        <div className="absolute top-2 right-2">
+        {/* <div className="absolute top-2 right-2">
           <button
             className="text-xl rounded-full bg-muted p-2"
             onClick={(e) => {
@@ -92,7 +92,7 @@ function ScoreCard({ name, phone, score, change, active }) {
               </ul>
             </div>
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );

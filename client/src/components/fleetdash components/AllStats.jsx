@@ -10,6 +10,7 @@ import {
   Legend,
   Filler,
 } from "chart.js";
+import { Button } from "react-bootstrap";
 import { Line } from "react-chartjs-2";
 import { registerables } from "chart.js";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
@@ -25,6 +26,15 @@ ChartJS.register(
   Filler,
   ...registerables
 );
+
+// Converts a hex color like "#f8b73d" into RGBA with the specified alpha
+function hexToRgba(hex, alpha = 0.15) {
+  const trimmedHex = hex.replace("#", "");
+  const r = parseInt(trimmedHex.substring(0, 2), 16);
+  const g = parseInt(trimmedHex.substring(2, 4), 16);
+  const b = parseInt(trimmedHex.substring(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 const colors = [
   "#f8b73d",
@@ -68,13 +78,8 @@ export const options = {
       },
     },
     y: {
-      stacked: true,
-      title: {
-        display: false,
-      },
-      grid: {
-        display: false,
-      },
+      title: { display: false },
+      grid: { display: false },
     },
   },
 };
@@ -110,8 +115,9 @@ const AllStats = () => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-        const data = await response.json();
+        const allRiskEvents = await response.json();
 
+        // Define event types to count per day
         const eventTypes = [
           "drinking",
           "eating",
@@ -124,12 +130,11 @@ const AllStats = () => {
           "hands_off_wheel",
         ];
 
-        const datasets = eventTypes.map((eventType, index) => {
+        const dailyDatasets = eventTypes.map((eventType, index) => {
           const dailyCounts = Array(30).fill(0);
 
-          data.forEach((event) => {
+          allRiskEvents.forEach((event) => {
             const eventDate = new Date(event.timestamp);
-
             if (
               eventDate.getMonth() === selectedMonth.getMonth() &&
               eventDate.getFullYear() === selectedMonth.getFullYear()
@@ -141,19 +146,14 @@ const AllStats = () => {
             }
           });
 
-          const backgroundColor = colors[index % colors.length].replace(
-            /[^,]+(?=\))/,
-            "0.5"
-          );
           return {
             label: eventType,
             data: dailyCounts,
-            backgroundColor: backgroundColor,
             borderColor: colors[index % colors.length],
+            backgroundColor: hexToRgba(colors[index % colors.length], 0.15),
             borderWidth: 2,
-            fill: true,
-            stack: "1",
             tension: 0.5,
+            fill: true, // enable area fill
           };
         });
 
@@ -161,7 +161,7 @@ const AllStats = () => {
           labels: Array.from({ length: 30 }, (_, i) =>
             String(i + 1).padStart(2, "0")
           ),
-          datasets: datasets,
+          datasets: dailyDatasets,
         });
       } catch (error) {
         console.error("Error fetching risk events:", error);
@@ -177,16 +177,24 @@ const AllStats = () => {
 
   return (
     <div className="relative w-full md:max-w-6xl p-4 border bg-card text-card-foreground shadow rounded-xl overflow-hidden">
-      <div className="flex justify-between items-center mb-4">
-        <button onClick={handlePrevMonth} className="p-2 rounded bg-gray-200">
-          <FaChevronLeft />
-        </button>
+      <div className="flex justify-between items-center mb-2">
+        <Button
+          variant="success"
+          onClick={handlePrevMonth}
+          className="p-2 rounded bg-card"
+        >
+          <FaChevronLeft className="text-card-foreground" />
+        </Button>
         <span className="font-bold text-lg">
           {getMonthYearString(displayedMonth)}
         </span>
-        <button onClick={handleNextMonth} className="p-2 rounded bg-gray-200">
-          <FaChevronRight />
-        </button>
+        <Button
+          variant="success"
+          onClick={handleNextMonth}
+          className="p-2 rounded bg-card"
+        >
+          <FaChevronRight className="text-card-foreground" />
+        </Button>
       </div>
       <div style={{ height: "380px" }}>
         <Line options={options} data={chartData} />

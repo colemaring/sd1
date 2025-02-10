@@ -5,7 +5,6 @@ import "../bootstrap-overrides.css"; // Custom overrides
 import "../App.css";
 import WarningCount from "../components/WarningCount";
 import DriverInfo from "../components/DriverInfo";
-import EventsLog from "../components/EventsLog";
 import EventsLogNew from "../components/EventsLogNew";
 import NavBar from "../components/NavBar";
 import { WebSocketsContext } from "../context/WebSocketsContext";

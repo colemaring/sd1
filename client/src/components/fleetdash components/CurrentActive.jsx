@@ -14,7 +14,7 @@ function CurrentActive() {
   }, [drivers]);
 
   return (
-    <div className="ml-5 mr-2 flex justify-center">
+    <div className="bg-card rounded-xl shadow ml-5 mr-2 flex justify-center border">
       <div className="relative cardBorder flex w-72 p-4 overflow-hidden text-foreground">
         <div className="z-10">
           <h1 className="text-xl font-semibold">Active vehicles</h1>

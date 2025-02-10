@@ -53,7 +53,7 @@ const DashFilters = () => {
   };
 
   return (
-    <div className="col-span-12 lg:col-span-4 bg-card shadow rounded-xl p-3 m-4">
+    <div className="border col-span-12 lg:col-span-4 bg-card shadow rounded-xl p-3 m-4">
       {/* <div className="mb-2">
         <h3 className="text-md font-medium">Range</h3>
         <select

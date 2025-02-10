@@ -1,9 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { DriverRiskEventsContext } from "../context/DriverRiskEventsContext";
+import { useContext } from "react";
 
 // TODO
 // FIX BUG WHERE PAGINATION RESETS WHEN driverData CHANGES
+// FIX "CURRENT TRIP" IMPLEMENTATION
 
 import {
   MaterialReactTable,
@@ -13,63 +16,34 @@ import {
 const EventsLogNew = ({ driverData }) => {
   const { driverPhone } = useParams(); // phone number from URL
   const { theme } = useTheme();
-
+  const riskEvents = useContext(DriverRiskEventsContext);
   const [events, setEvents] = useState([]);
 
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageInputValue, setPageInputValue] = useState("1");
-  const rowsPerPage = 8;
-
-  // 1) Convert driverData -> "newEvents"
+  // Combine driverData events and risk events from context
   useEffect(() => {
     const newEvents = [];
-    for (const [key, value] of Object.entries(driverData)) {
-      if (value === true) {
-        newEvents.push({
-          date: new Date(driverData.Timestamp).toLocaleString(),
-          eventType: key,
-          durationOrLocation: "...",
-          aiType: "Inside",
-          tripId: driverData.tripId || "Current Trip",
-        });
+
+    // Convert driverData to events.
+    if (driverData) {
+      for (const [key, value] of Object.entries(driverData)) {
+        if (value === true) {
+          newEvents.push({
+            date: new Date(driverData.Timestamp).toLocaleString(),
+            eventType: key,
+            durationOrLocation: "...",
+            aiType: "Inside",
+            tripId: driverData.tripId || "Current Trip",
+          });
+        }
       }
     }
-    setEvents((prevEvents) => [...prevEvents, ...newEvents]);
-  }, [driverData]);
 
-  // 2) Fetch risk events from the API
-  const fetchEvents = async () => {
-    try {
-      setEvents([]);
-      setPageInputValue("1");
-      setCurrentPage(1);
-      // Fetch trips for the driver
-      const tripsResponse = await fetch(
-        `https://aifsd.xyz/api/trips/${driverPhone}`
-      );
-      const trips = await tripsResponse.json();
-      const tripIds = trips.map((trip) => trip.id);
-
-      // Fetch risk events for those trips
-      const riskEventsResponse = await fetch(
-        `https://aifsd.xyz/api/risk-events-id`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ tripIds }),
-        }
-      );
-      const riskEvents = await riskEventsResponse.json();
-
-      // Parse them
-      const parsedEvents = [];
+    // Parse risk events from context.
+    if (riskEvents && riskEvents.length > 0) {
       for (const event of riskEvents) {
         for (const [key, value] of Object.entries(event)) {
           if (value === true) {
-            parsedEvents.push({
+            newEvents.push({
               date: new Date(event.timestamp).toLocaleString(),
               eventType: key,
               durationOrLocation: event.durationOrLocation || "...",
@@ -79,41 +53,33 @@ const EventsLogNew = ({ driverData }) => {
           }
         }
       }
-
-      setEvents((prevEvents) => [...prevEvents, ...parsedEvents]);
-    } catch (error) {
-      console.error("Error fetching events:", error);
     }
-  };
 
-  useEffect(() => {
-    if (driverPhone) {
-      fetchEvents();
-    }
-  }, [driverPhone]);
+    setEvents(newEvents);
+  }, [driverData, riskEvents]);
 
-  // useEffect(() => {
-  //   fetchEvents();
-  // }, []);
-
-  const columns = useMemo(() => [
-    {
-      accessorKey: "date",
-      header: "Date of Event",
-    },
-    {
-      accessorKey: "eventType",
-      header: "Event Type",
-    },
-    {
-      accessorKey: "aiType",
-      header: "AI Type",
-    },
-    {
-      accessorKey: "tripId",
-      header: "Trid ID",
-    },
-  ]);
+  // Table columns
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "date",
+        header: "Date of Event",
+      },
+      {
+        accessorKey: "eventType",
+        header: "Event Type",
+      },
+      {
+        accessorKey: "aiType",
+        header: "AI Type",
+      },
+      {
+        accessorKey: "tripId",
+        header: "Trip ID",
+      },
+    ],
+    []
+  );
 
   const table = useMaterialReactTable({
     columns,

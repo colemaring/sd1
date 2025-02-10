@@ -29,7 +29,7 @@ const DriverInfo = () => {
   }
 
   return (
-    <div className="relative flex flex-row items-center rounded-xl w-full p-6 bg-chart-4 text-card-foreground shadow border">
+    <div className=" relative flex flex-row items-center rounded-xl w-full p-6 bg-chart-4 text-card-foreground shadow border">
       {/* Left: Avatar + Risk Score */}
       <div className="flex flex-col items-center w-1/5 pr-4">
         {/* Avatar Placeholder */}

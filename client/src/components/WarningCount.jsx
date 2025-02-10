@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Card, Dropdown, DropdownButton } from "react-bootstrap";
 import { IoMdCheckmarkCircle, IoMdCloseCircle } from "react-icons/io";
 import { IoAlertCircle } from "react-icons/io5";
 import { useTheme } from "../context/ThemeContext";
-import { useParams } from "react-router-dom";
+import { DriverRiskEventsContext } from "../context/DriverRiskEventsContext";
 
 const WarningCount = ({ driverData }) => {
   const { theme } = useTheme();
-  const { driverPhone } = useParams();
+  const riskEvents = useContext(DriverRiskEventsContext);
   const [selectedFilter, setSelectedFilter] = useState("7 Day");
   const [warningCounts, setWarningCounts] = useState({
     drinking: 0,
@@ -53,74 +53,50 @@ const WarningCount = ({ driverData }) => {
     ),
   };
 
+  // Use risk events from context to compute warning counts based on the selected filter.
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const tripsResponse = await fetch(
-          `https://aifsd.xyz/api/trips/${driverPhone}`
-        );
-        const trips = await tripsResponse.json();
-        const tripIds = trips.map((trip) => trip.id);
+    if (!riskEvents || riskEvents.length === 0) return;
 
-        const riskEventsResponse = await fetch(
-          `https://aifsd.xyz/api/risk-events-id`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ tripIds }),
-          }
-        );
-        const riskEvents = await riskEventsResponse.json();
-        // console.log("riskEvents", riskEvents);
-
-        // Filter risk events based on the selected filter
-        const now = new Date();
-        const filteredEvents = riskEvents.filter((event) => {
-          const eventDate = new Date(event.timestamp);
-          if (selectedFilter === "7 Day") {
-            return now - eventDate <= 7 * 24 * 60 * 60 * 1000;
-          } else if (selectedFilter === "30 Day") {
-            return now - eventDate <= 30 * 24 * 60 * 60 * 1000;
-          }
-          return false;
-        });
-
-        // Count risk events within the given window
-        const newCounts = {
-          drinking: 0,
-          eating: 0,
-          phone: 0,
-          seatbelt_off: 0,
-          sleeping: 0,
-          smoking: 0,
-          out_of_lane: 0,
-          risky_drivers: 0,
-          unsafe_distance: 0,
-          hands_off_wheel: 0,
-        };
-
-        for (const event of filteredEvents) {
-          for (const [key, value] of Object.entries(event)) {
-            if (value === true && newCounts[key] !== undefined) {
-              newCounts[key] += 1;
-            }
-          }
-        }
-
-        setWarningCounts(newCounts);
-      } catch (error) {
-        console.error("Error fetching events:", error);
+    const now = new Date();
+    const filteredEvents = riskEvents.filter((event) => {
+      const eventDate = new Date(event.timestamp);
+      if (selectedFilter === "7 Day") {
+        return now - eventDate <= 7 * 24 * 60 * 60 * 1000;
+      } else if (selectedFilter === "30 Day") {
+        return now - eventDate <= 30 * 24 * 60 * 60 * 1000;
       }
+      return false;
+    });
+
+    // Count risk events within the given window.
+    const newCounts = {
+      drinking: 0,
+      eating: 0,
+      phone: 0,
+      seatbelt_off: 0,
+      sleeping: 0,
+      smoking: 0,
+      out_of_lane: 0,
+      risky_drivers: 0,
+      unsafe_distance: 0,
+      hands_off_wheel: 0,
     };
 
-    if (driverPhone) {
-      fetchEvents();
+    for (const event of filteredEvents) {
+      for (const [key, value] of Object.entries(event)) {
+        if (value === true && newCounts[key] !== undefined) {
+          newCounts[key] += 1;
+        }
+      }
     }
-  }, [driverPhone, selectedFilter]);
 
+    setWarningCounts(newCounts);
+  }, [riskEvents, selectedFilter]);
+
+  // Merge in additional counts based on driverData coming from props.
   useEffect(() => {
+    if (!driverData) return;
+
     const updateCounts = () => {
       const newCounts = { ...warningCounts };
 
@@ -147,9 +123,7 @@ const WarningCount = ({ driverData }) => {
       setWarningCounts(newCounts);
     };
 
-    if (driverData) {
-      updateCounts();
-    }
+    updateCounts();
   }, [driverData]);
 
   const handleFilterClick = (filter) => {
@@ -157,16 +131,19 @@ const WarningCount = ({ driverData }) => {
     console.log(`Filter selected: ${filter}`);
   };
 
+  // TODO
+  // fix button color 7d 30d dropdown warningCount
+  // rn its inverted
+  // also fix the same issue in filter.jsx for apply filters button
+
   return (
-    <Card
-      className={`py-2 rounded-xl bg-card text-card-foreground shadow border`}
-    >
+    <Card className="rounded-xl bg-card text-card-foreground shadow border">
       <Card.Body>
         <div className="flex justify-between items-center">
           <Card.Title className="text-left text-xl font-bold">
             Warning Count
           </Card.Title>
-          <DropdownButton className="filterDropdown" title={selectedFilter}>
+          <DropdownButton variant="success" title={selectedFilter}>
             <Dropdown.Item onClick={() => handleFilterClick("7 Day")}>
               7 Day
             </Dropdown.Item>
@@ -182,7 +159,7 @@ const WarningCount = ({ driverData }) => {
             return (
               <div
                 key={label}
-                className={`flex justify-between items-center px-3 py-2 rounded-md bg-secondary`}
+                className="flex justify-between items-center px-3 py-2 rounded-md bg-secondary"
               >
                 <div className="flex items-center">
                   {count <= 3
