@@ -20,12 +20,18 @@
   --bs-border-color: hsl(var(--border));
 }
 
+.btn-primary {
+  background-color: hsl(var(--primary)) !important;
+  border-color: hsl(var(--primary)) !important;
+}
+
+
 .dark .logo {
   filter: invert(1);
 }
 
 .dropdown-toggle {
-  color: hsl(var(--foreground));
+  color: hsl(var(--foreground)) !important;
 }
 
 .navbar-toggler:focus {

@@ -117,9 +117,7 @@ function Filter({
 
           {/* Right: Apply Filters*/}
           <div className="flex-1 pl-4 flex items-center">
-            <Button variant="success" onClick={applyFilters}>
-              Apply Filters
-            </Button>
+            <Button onClick={applyFilters}>Apply Filters</Button>
           </div>
         </div>
       ) : (

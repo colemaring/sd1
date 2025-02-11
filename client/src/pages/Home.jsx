@@ -21,10 +21,10 @@ export default function Home() {
           </div>
 
           {/* High Risk Drivers and Current Active in the same row */}
-          <div className="col-span-12 md:col-span-8 lg:col-span-9 mt-2 mb-4 md:mb-0">
+          <div className="col-span-12 md:col-span-8 lg:col-span-9 mt-4 ml-5 mr-6">
             <HighRiskDrivers />
           </div>
-          <div className="col-span-12 md:col-span-4 lg:col-span-3 mt-2">
+          <div className="col-span-12 md:col-span-4 lg:col-span-3 mt-4 mr-4">
             <CurrentActive />
           </div>
 

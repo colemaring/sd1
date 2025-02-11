@@ -4,6 +4,7 @@ import { IoMdCheckmarkCircle, IoMdCloseCircle } from "react-icons/io";
 import { IoAlertCircle } from "react-icons/io5";
 import { useTheme } from "../context/ThemeContext";
 import { DriverRiskEventsContext } from "../context/DriverRiskEventsContext";
+import "../bootstrap-overrides.css";
 
 const WarningCount = ({ driverData }) => {
   const { theme } = useTheme();
@@ -143,7 +144,7 @@ const WarningCount = ({ driverData }) => {
           <Card.Title className="text-left text-xl font-bold">
             Warning Count
           </Card.Title>
-          <DropdownButton variant="success" title={selectedFilter}>
+          <DropdownButton className="btn-primary-custom" title={selectedFilter}>
             <Dropdown.Item onClick={() => handleFilterClick("7 Day")}>
               7 Day
             </Dropdown.Item>

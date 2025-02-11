@@ -176,7 +176,7 @@ const AllStats = () => {
   }
 
   return (
-    <div className="relative w-full md:max-w-6xl p-4 border bg-card text-card-foreground shadow rounded-xl overflow-hidden">
+    <div className="relative w-full  p-4 border bg-card text-card-foreground shadow rounded-xl overflow-hidden">
       <div className="flex justify-between items-center mb-2">
         <Button
           variant="success"

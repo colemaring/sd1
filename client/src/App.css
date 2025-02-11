@@ -67,11 +67,8 @@ body {
 
 
 .activeContainer {
-  width: 85%;
+  width: 100%;
   height: 22.8vh;
-  margin-left: 2rem;
-  margin-right: 2rem;
-  box-shadow: 0 0px 8px rgba(0, 0, 0, 0.1);
 }
 
 .cardBorder{

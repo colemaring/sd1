@@ -1,12 +1,12 @@
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../bootstrap-overrides.css"; // Bootstrap overrides for Tailwind colors
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { DriversContext } from "../context/DriversContext"; // Import DriversContext
 import { FaBars, FaSun, FaMoon } from "react-icons/fa";
-import logo from "../assets/AIFSD_Logo.svg";
+import logo from "../assets/AIFSD_Logo.png";
 
 function NavBar() {
   const { theme, toggleTheme } = useTheme();
@@ -35,6 +35,18 @@ function NavBar() {
           }}
         />
       </Navbar.Brand>
+
+      {/* Mobile dark mode toggle: visible only on mobile */}
+      <div
+        onClick={toggleTheme}
+        className="cursor-pointer d-lg-none me-2"
+        style={{
+          color: theme === "light" ? "black" : "white",
+        }}
+      >
+        {theme === "light" ? <FaMoon size={24} /> : <FaSun size={24} />}
+      </div>
+
       {/* Custom Hamburger Menu */}
       <Navbar.Toggle
         aria-controls="responsive-navbar-nav"
@@ -48,6 +60,7 @@ function NavBar() {
       >
         <FaBars size={24} color={`hsl(var(--primary))`} />
       </Navbar.Toggle>
+
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="me-auto">
           <Nav.Link
@@ -87,21 +100,20 @@ function NavBar() {
             )}
           </NavDropdown>
         </Nav>
-        <Nav>
-          <Nav.Item className="d-flex align-items-center">
-            <div
-              onClick={toggleTheme}
-              className="cursor-pointer"
-              style={{
-                color: theme === "light" ? "black" : "white", // Set icon color based on theme
-              }}
-            >
-              {theme === "light" ? <FaMoon size={24} /> : <FaSun size={24} />}{" "}
-              {/* Toggle icon */}
-            </div>
-          </Nav.Item>
-        </Nav>
       </Navbar.Collapse>
+
+      {/* Desktop dark mode toggle: hidden on mobile */}
+      <Nav.Item className="d-none d-lg-flex align-items-center">
+        <div
+          onClick={toggleTheme}
+          className="cursor-pointer"
+          style={{
+            color: theme === "light" ? "black" : "white",
+          }}
+        >
+          {theme === "light" ? <FaMoon size={24} /> : <FaSun size={24} />}
+        </div>
+      </Nav.Item>
     </Navbar>
   );
 }

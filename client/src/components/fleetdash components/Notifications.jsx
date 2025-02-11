@@ -117,7 +117,7 @@ const Notifications = () => {
         centered
       >
         <Modal.Header>
-          <Modal.Title>All Risk Events</Modal.Title>
+          <Modal.Title>All High Risk Event Notifications</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ maxHeight: "70vh", overflowY: "auto" }}>
           {sortedDesc.map((event) => (
@@ -151,9 +151,7 @@ const Notifications = () => {
           ))}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Close
-          </Button>
+          <Button onClick={() => setShowModal(false)}>Close</Button>
         </Modal.Footer>
       </Modal>
     </div>

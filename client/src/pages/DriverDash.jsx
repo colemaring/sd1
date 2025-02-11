@@ -8,7 +8,7 @@ import DriverInfo from "../components/DriverInfo";
 import EventsLogNew from "../components/EventsLogNew";
 import NavBar from "../components/NavBar";
 import { WebSocketsContext } from "../context/WebSocketsContext";
-import DashFilters from "../components/fleetdash components/DashFilters";
+import TripGraph from "../components/fleetdash components/TripGraph";
 import AISummary from "../components/fleetdash components/AISummary";
 
 export default function DriverDash() {
@@ -36,10 +36,10 @@ export default function DriverDash() {
             </div>
 
             <AISummary />
-            <DashFilters />
+            <TripGraph />
 
             {/* Warning Count */}
-            <div className="col-span-12 md:col-span-6 lg:col-span-3 p-4">
+            <div className="col-span-12 md:col-span-6 lg:col-span-3 p-4 ">
               <WarningCount driverData={driverData} />
             </div>
             {/* Events Log */}
