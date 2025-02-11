@@ -48,8 +48,9 @@ python client_test.py
 
 
 ## TODO:
-Fix "Current Trip" functionality in EventsLogNew <br>
-Fix dark mode and color on 7d/30d dropdown and Apply Filters button <br>
+Fix "Current Trip" functionality in EventsLogNew (pagination reset and weird behavior) <br>
 Include % change on Scorecard <br>
 Implement risk score calculation <br>
 FCM/Push notifs <br>
+shimmer or placeholder loading <br>
+light mode -> drivers page -> dark mode button is broken (only sometimes) <br>
