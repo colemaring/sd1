@@ -43,6 +43,14 @@ export const tripGraphOptions = {
     legend: {
       display: false,
     },
+    title: {
+      display: true,
+      text: "This Week's Trip Frequency", // Title text
+      font: {
+        size: 16,
+      },
+      color: "#333", // Adjust title color as needed
+    },
     tooltip: {
       callbacks: {
         label: (context) => {
@@ -70,10 +78,8 @@ export const tripGraphOptions = {
   },
 };
 
-const TripGraph = ({ phoneNumber }) => {
+const TripGraph = () => {
   const { driverPhone } = useParams();
-  // Determine the effective phone number
-  const effectivePhone = phoneNumber || driverPhone;
   const [tripData, setTripData] = useState(null);
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
@@ -82,20 +88,19 @@ const TripGraph = ({ phoneNumber }) => {
     setLoading(true);
     setError(null);
 
-    if (!effectivePhone) {
+    if (!driverPhone) {
       setLoading(false);
       return;
     }
 
     try {
       const response = await fetch(
-        `https://aifsd.xyz/api/trips/${effectivePhone}`
+        `https://aifsd.xyz/api/trips/${driverPhone}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const trips = await response.json();
-      console.log(trips);
       const dailyCounts = Array(7).fill(0);
       const today = new Date();
 
@@ -132,10 +137,9 @@ const TripGraph = ({ phoneNumber }) => {
     }
   };
 
-  // Use one effect that refetches data when effectivePhone changes
   useEffect(() => {
     fetchTripData();
-  }, [effectivePhone]);
+  }, [driverPhone]);
 
   if (loading) {
     return (
@@ -162,8 +166,11 @@ const TripGraph = ({ phoneNumber }) => {
   }
 
   return (
-    <div className="border col-span-12 lg:col-span-4 bg-card shadow rounded-xl p-3 m-4">
-      <div style={{ height: "300px" }}>
+    <div
+      style={{ height: "23vh" }}
+      className="border col-span-12 lg:col-span-4 bg-card shadow rounded-xl p-3 m-4"
+    >
+      <div>
         <Line options={tripGraphOptions} data={tripData} />
       </div>
     </div>

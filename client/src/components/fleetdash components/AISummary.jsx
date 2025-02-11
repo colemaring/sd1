@@ -25,10 +25,13 @@ const AISummary = () => {
   }, [driverPhone]);
 
   return (
-    <div className="border col-span-12 md:col-span-6 lg:col-span-3 bg-card shadow rounded-xl p-3 m-4">
+    <div
+      style={{ height: "23vh" }}
+      className="border col-span-12 md:col-span-6 lg:col-span-3 bg-card shadow rounded-xl p-3 m-4"
+    >
       <div className="flex items-center mb-2">
-        <FaMagic className="text-primary mr-2" />
-        <h2 className="text-md font-medium">AI Summary</h2>
+        <FaMagic className="mr-2" />
+        <h2 className="font-medium">AI Summary</h2>
       </div>
       <p>{summary || "Loading AI summary..."}</p>
     </div>

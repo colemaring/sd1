@@ -35,8 +35,8 @@ export default function DriverDash() {
               <DriverInfo />
             </div>
 
-            <AISummary />
             <TripGraph />
+            <AISummary />
 
             {/* Warning Count */}
             <div className="col-span-12 md:col-span-6 lg:col-span-3 p-4 ">
