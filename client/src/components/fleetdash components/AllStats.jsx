@@ -14,6 +14,7 @@ import { Button } from "react-bootstrap";
 import { Line } from "react-chartjs-2";
 import { registerables } from "chart.js";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import "../styles/loader.css";
 
 ChartJS.register(
   CategoryScale,
@@ -172,7 +173,13 @@ const AllStats = () => {
   }, [selectedMonth]);
 
   if (!chartData) {
-    return <div>Loading...</div>;
+    return (
+      <div className="relative w-full p-4 border bg-gray-300 text-card-foreground rounded-xl overflow-hidden animate-pulse ">
+        <div className="flex items-center justify-center mb-2 h-[380px]">
+          <div className="loader"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
