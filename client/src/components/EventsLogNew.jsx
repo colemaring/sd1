@@ -1,12 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { DriverRiskEventsContext } from "../context/DriverRiskEventsContext";
 import { useContext } from "react";
 
 // TODO
-// FIX BUG WHERE PAGINATION RESETS WHEN driverData CHANGES
-// FIX "CURRENT TRIP" IMPLEMENTATION
+// when last flag is recieved, trigger table reload
 
 import {
   MaterialReactTable,
@@ -14,25 +13,24 @@ import {
 } from "material-react-table";
 
 const EventsLogNew = ({ driverData }) => {
-  const { driverPhone } = useParams(); // phone number from URL
+  const { driverPhone } = useParams();
   const { theme } = useTheme();
   const riskEvents = useContext(DriverRiskEventsContext);
   const [events, setEvents] = useState([]);
 
-  // Combine driverData events and risk events from context
   useEffect(() => {
-    const newEvents = [];
+    let newEvents = [];
 
     // Convert driverData to events.
     if (driverData) {
       for (const [key, value] of Object.entries(driverData)) {
-        if (value === true) {
+        if (value === true && key !== "FirstFlag" && key !== "LastFlag") {
           newEvents.push({
             date: new Date(driverData.Timestamp).toLocaleString(),
             eventType: key,
             durationOrLocation: "...",
             aiType: "Inside",
-            tripId: driverData.tripId || "Current Trip",
+            tripId: "Current Trip",
           });
         }
       }
@@ -55,10 +53,24 @@ const EventsLogNew = ({ driverData }) => {
       }
     }
 
-    setEvents(newEvents);
+    const newCurrentTripEvents = newEvents.filter(
+      (event) => event.tripId === "Current Trip"
+    );
+    const newNonCurrentEvents = newEvents.filter(
+      (event) => event.tripId !== "Current Trip"
+    );
+
+    setEvents((prevEvents) => {
+      const prevNonCurrent = prevEvents.filter(
+        (event) => event.tripId !== "Current Trip"
+      );
+      const prevCurrent = prevEvents.filter(
+        (event) => event.tripId === "Current Trip"
+      );
+      return [...newNonCurrentEvents, ...prevCurrent, ...newCurrentTripEvents];
+    });
   }, [driverData, riskEvents]);
 
-  // Table columns
   const columns = useMemo(
     () => [
       {
@@ -91,6 +103,7 @@ const EventsLogNew = ({ driverData }) => {
     initialState: {
       grouping: ["tripId"],
     },
+    autoResetPageIndex: false,
   });
 
   return <MaterialReactTable table={table} />;
