@@ -8,6 +8,8 @@ const database = process.env.DB_DATABASE;
 const password = process.env.DB_PASSWORD;
 const port = process.env.DB_PORT;
 
+console.log(user, password);
+
 const pool = new Pool({
   user: "postgres",
   host: host,
