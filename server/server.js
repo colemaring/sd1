@@ -9,7 +9,7 @@ const cors = require("cors");
 app.use(cors()); 
 
 const db = require("./db");
-const api = require("./api"); // test
+const api = require("./api");
 
 const isDev = process.argv.includes("dev");
 
