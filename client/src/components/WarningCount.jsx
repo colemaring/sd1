@@ -154,26 +154,34 @@ const WarningCount = ({ driverData }) => {
           </DropdownButton>
         </div>
         <div>
-          {warnings.map(({ label, key }) => {
-            const count =
-              warningCounts[key] !== undefined ? warningCounts[key] : "...";
-            return (
-              <div
-                key={label}
-                className="flex justify-between items-center px-3 py-2 rounded-md bg-secondary"
-              >
-                <div className="flex items-center">
-                  {count <= 3
-                    ? icons.good
-                    : count <= 5
-                    ? icons.alert
-                    : icons.bad}
-                  <span className="ml-2 text-sm">{label}</span>
+          {warnings
+            .sort((a, b) => {
+              const countA =
+                warningCounts[a.key] !== undefined ? warningCounts[a.key] : 0;
+              const countB =
+                warningCounts[b.key] !== undefined ? warningCounts[b.key] : 0;
+              return countB - countA; // Sorting in descending order
+            })
+            .map(({ label, key }) => {
+              const count =
+                warningCounts[key] !== undefined ? warningCounts[key] : "...";
+              return (
+                <div
+                  key={label}
+                  className="flex justify-between items-center px-3 py-2 rounded-md bg-secondary"
+                >
+                  <div className="flex items-center">
+                    {count <= 3
+                      ? icons.good
+                      : count <= 5
+                      ? icons.alert
+                      : icons.bad}
+                    <span className="ml-2 text-sm">{label}</span>
+                  </div>
+                  <span className="text-sm">{count}</span>
                 </div>
-                <span className="text-sm">{count}</span>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </Card.Body>
     </Card>
