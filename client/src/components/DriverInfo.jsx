@@ -56,7 +56,13 @@ const DriverInfo = () => {
         <span className="text-sm text-primary">Selected Driver</span>
         <h1 className="text-3xl font-bold mb-12">{driverData.name}</h1>
 
-        <h1 className="text-xl font-semibold">{driverData.phone_number}</h1>
+        <h1 className="text-xl font-semibold">
+          {" "}
+          {driverData.phone_number.replace(
+            /(\d{3})(\d{3})(\d{4})/,
+            "($1) $2-$3"
+          )}
+        </h1>
         <h2 className="text-sm text-primary">Contact Information</h2>
       </div>
 

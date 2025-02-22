@@ -174,7 +174,13 @@ const Notifications = () => {
                 Driver: {event.driver_name || "N/A"}
               </span>
               <span className="text-xs text-muted-foreground">
-                Phone: {event.phone_number ? event.phone_number : "N/A"}
+                Phone:{" "}
+                {event.phone_number
+                  ? event.phone_number.replace(
+                      /(\d{3})(\d{3})(\d{4})/,
+                      "($1) $2-$3"
+                    )
+                  : "N/A"}
               </span>
               <span className="text-xs text-muted-foreground">
                 {new Date(event.timestamp).toLocaleString()}
@@ -215,7 +221,13 @@ const Notifications = () => {
                     Driver: {event.driver_name || "N/A"}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    Phone: {event.phone_number ? event.phone_number : "N/A"}
+                    Phone:{" "}
+                    {event.phone_number
+                      ? event.phone_number.replace(
+                          /(\d{3})(\d{3})(\d{4})/,
+                          "($1) $2-$3"
+                        )
+                      : "N/A"}
                   </span>
                   <span className="text-xs text-muted-foreground">
                     {new Date(event.timestamp).toLocaleString()}

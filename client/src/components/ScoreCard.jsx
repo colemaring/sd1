@@ -24,7 +24,7 @@ function ScoreCard({ name, phone, score, change, active }) {
     <div className="flex flex-wrap justify-center gap-4 w-full">
       <div
         key={name}
-        className="relative shadow cardBorder flex rounded-xl w-72 p-4 bg-card text-foreground shadow-md cursor-pointer border transition-transform duration-300 ease-in-out hover:scale-[1.02]"
+        className="relative cardBorder flex rounded-xl w-72 p-4 bg-card text-foreground shadow-md cursor-pointer border transition-transform duration-300 ease-in-out hover:scale-[1.02]"
         onClick={handleCardClick} // Add onClick handler
       >
         {/* Profile Picture */}
@@ -57,7 +57,9 @@ function ScoreCard({ name, phone, score, change, active }) {
               {getRiskLevel(score)}
             </h3>
             <h1 className="text-lg font-semibold">{name}</h1>
-            <h3 className="text-sm">{phone}</h3>
+            <h3 className="text-sm">
+              {phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3")}
+            </h3>
           </div>
 
           {/* Risk Score and Percentage Change */}
