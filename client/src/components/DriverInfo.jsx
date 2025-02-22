@@ -4,7 +4,6 @@ import { CiMail } from "react-icons/ci";
 import { RiUserLocationLine } from "react-icons/ri";
 import { useTheme } from "../context/ThemeContext";
 import { useParams } from "react-router-dom";
-import truck from "../assets/truck.png";
 import { DriversContext } from "../context/DriversContext";
 
 const DriverInfo = () => {
@@ -29,7 +28,7 @@ const DriverInfo = () => {
   }
 
   return (
-    <div className=" relative flex flex-row items-center rounded-xl w-full p-6 bg-chart-4 text-card-foreground shadow border">
+    <div className=" relative flex flex-row items-center rounded-xl w-full p-6 bg-chart-4 text-card-foreground shadow border bg1 bg-top bg-contain ">
       {/* Left: Avatar + Risk Score */}
       <div className="flex flex-col items-center w-1/5 pr-4">
         {/* Avatar Placeholder */}
@@ -71,15 +70,15 @@ const DriverInfo = () => {
         {/* “Active” Status Ping (top-right) */}
         {driverData.active ? (
           <>
-            <span className="absolute top-0 right-0 rounded-full bg-green-500 w-6 h-6 inline-flex animate-ping"></span>
-            <span className="absolute top-0 right-0 rounded-full bg-green-700 w-6 h-6"></span>
+            <span className="absolute top-14 right-0 rounded-full bg-green-500 w-6 h-6 inline-flex animate-ping"></span>
+            <span className="absolute top-14 right-0 rounded-full bg-green-700 w-6 h-6"></span>
           </>
         ) : (
-          <span className="absolute top-0 right-0 rounded-full bg-red-500 w-6 h-6"></span>
+          <span className="absolute top-14 right-0 rounded-full bg-red-500 w-6 h-6"></span>
         )}
 
         {/* Truck image (bottom-right) */}
-        <img src={truck} alt="Truck" className="mt-20" />
+        {/* <img src={truck} alt="Truck" className="h-max" /> */}
       </div>
     </div>
   );

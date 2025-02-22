@@ -16,3 +16,9 @@
       60%{background-position:0%  50%, 50% 100%,100%   0%}
       80%{background-position:0%  50%, 50%  50%,100% 100%}
   }
+
+
+  /* image bg */
+  .bg1 {
+    background-image: url("../../assets/bg.png");
+  }

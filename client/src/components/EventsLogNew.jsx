@@ -43,7 +43,9 @@ const EventsLogNew = ({ driverData }) => {
           if (value === true) {
             newEvents.push({
               date: new Date(event.timestamp).toLocaleString(),
-              eventType: key,
+              eventType: key
+                .replace(/_/g, " ")
+                .replace(/\b\w/g, (char) => char.toUpperCase()),
               durationOrLocation: event.durationOrLocation || "...",
               aiType: event.aiType || "Inside",
               tripId: event.trip_id || "Current Trip",
