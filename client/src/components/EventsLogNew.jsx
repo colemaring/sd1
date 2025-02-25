@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
+import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import { DriverRiskEventsContext } from "../context/DriverRiskEventsContext";
 import { useContext } from "react";
 
@@ -95,6 +95,13 @@ const EventsLogNew = ({ driverData }) => {
     []
   );
 
+  
+  const baseBackgroundColor = theme === 'dark'
+    ? 'rgba(19, 19, 19, 0.8)'
+    : 'rgba(255, 255, 255, 0.8)';
+
+  const textColor = theme === "dark" ? "rgba(255, 255, 255, 0.8)" : "#000";
+
   const table = useMaterialReactTable({
     columns,
     data: events,
@@ -106,6 +113,10 @@ const EventsLogNew = ({ driverData }) => {
       grouping: ["tripId"],
     },
     autoResetPageIndex: false,
+    mrtTheme: (theme) => ({
+      baseBackgroundColor: baseBackgroundColor,
+      textColor: textColor,
+    }),
   });
 
   return <MaterialReactTable table={table} />;
