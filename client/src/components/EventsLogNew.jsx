@@ -113,13 +113,21 @@ const EventsLogNew = ({ driverData }) => {
       grouping: ["tripId"],
     },
     autoResetPageIndex: false,
+    muiFilterTextFieldProps: {color: 'secondary'},
+    muiExpandButtonProps: {color: theme === "dark" ? 'secondary' : 'default'},
+    muiTableBodyCellProps: {sx: { color: theme === "dark" ? 'white': 'black',}},
+    muiTableHeadCellProps: {
+      sx: {
+        color: theme === "dark" ? 'white': 'black',
+      },
+    },
     mrtTheme: (theme) => ({
       baseBackgroundColor: baseBackgroundColor,
       textColor: textColor,
     }),
   });
 
-  return <MaterialReactTable table={table} />;
+  return <MaterialReactTable table={table}/>;
 };
 
 export default EventsLogNew;
