@@ -7,8 +7,6 @@ from datetime import datetime
 numMessages = 10 # Number of messages to send (exists to simulate first/last flags)
 timeoutSec = 1 # Time to wait between generating new data
 
-eventsPerTrip = 10 # Simulating Trip based off events
-eventCount = 0
 eventFrequencies = {}
 
 # Constants
@@ -78,8 +76,8 @@ def calculate_safety_score(pcf):
 async def generate_data():
     return {
         "Timestamp": datetime.utcnow().isoformat() + "Z", 
-        "Driver": "John Cole",
-        "Phone": "2211514290",
+        "Driver": "Test Dude2",
+        "Phone": "2211524256",
         "Drinking": random.choices([True, False], weights=[1, 15])[0],
         "Eating": random.choices([True, False], weights=[1, 15])[0],
         "OnPhone": random.choices([True, False], weights=[1, 5])[0],
@@ -98,7 +96,7 @@ async def connect():
     # use ws://localhost:8080 if local
     # wss://aifsd.xyz for deployed
     uri = "wss://aifsd.xyz"
-    global eventCount, eventFrequencies
+    global eventFrequencies
 
     async with websockets.connect(uri) as websocket:
         print("Connected to the server")
@@ -118,13 +116,23 @@ async def connect():
                 data["FirstFlag"] = messageCount == 1
                 data["LastFlag"] = messageCount == numMessages
 
+                # On trip end send the calculated risk score
+                if data["LastFlag"]:
+                    pcf = calculate_pcf(eventFrequencies)
+                    safetyScore = calculate_safety_score(pcf)
+
+                    print(f"Trip Event Frequencies: {eventFrequencies}")
+                    print(f"Calculated PCF: {pcf}")
+                    print(f"Trip Safety Score: {safetyScore}")
+                    data["risk_score"] = round(safetyScore, 2)
+
+                    # Reset for the next trip
+                    eventFrequencies = {}
+
                 # Send data to server   
                 await websocket.send(json.dumps(data))
                 print("Sent message to server")
                 await websocket.recv() # Tells ws server we still exist
-
-            # Note that the event log as of 1/25/25 doesn't render all events therefore it might 
-            # look like we're sending unchaged data
                 
             # Update event frequencies
             for key, value in data.items():
@@ -137,23 +145,6 @@ async def connect():
                     eventFrequencies["RiskyDrivers"] = eventFrequencies.get("RiskyDrivers", 0) + value
                 elif isinstance(value, bool) and value:
                     eventFrequencies[key] = eventFrequencies.get(key, 0) + 1
-
-            # Increment event count
-            eventCount += 1
-
-            # If the number of events reaches the threshold, calculate the safety score
-            # * This is temporary and will be replaced by the end trip event
-            if eventCount >= eventsPerTrip:
-                pcf = calculate_pcf(eventFrequencies)
-                safetyScore = calculate_safety_score(pcf)
-
-                print(f"Trip Event Frequencies: {eventFrequencies}")
-                print(f"Calculated PCF: {pcf}")
-                print(f"Trip Safety Score: {safetyScore}")
-
-                # Reset counters for the next trip
-                eventCount = 0
-                eventFrequencies = {}
 
             await asyncio.sleep(timeoutSec)
         
