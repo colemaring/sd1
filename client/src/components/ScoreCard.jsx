@@ -1,23 +1,64 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { FaTrash } from "react-icons/fa";
+import { Modal, Button, Form } from "react-bootstrap";
 
 function ScoreCard({ name, phone, score, change, active }) {
   const navigate = useNavigate(); // Initialize useNavigate
   const [activeDropdown, setActiveDropdown] = useState(null); // State to track the active dropdown
+  const [showModal, setShowModal] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const toggleDropdown = (name) => {
     // If the clicked dropdown is already open, close it. Otherwise, open the new one.
     setActiveDropdown((prev) => (prev === name ? null : name));
   };
 
-  const handleCardClick = () => {
-    navigate(`/driver/${phone}`); // Navigate to /driver/phonenumber
+  const handleCardClick = (e) => {
+    if (!showModal) {
+      navigate(`/driver/${phone}`);
+    }
   };
 
   const getRiskLevel = (score) => {
     if (score > 80) return "Low Risk";
     if (score > 60) return "Medium Risk";
     return "High Risk";
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (password) {
+      handleConfirmDelete();
+    }
+  };
+
+  const handleDelete = async (e) => {
+    e.stopPropagation();
+    setShowModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      const response = await fetch(`https://aifsd.xyz/api/drivers/${phone}`, {
+        method: "DELETE",
+        headers: {
+          password: password,
+        },
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to delete driver");
+      }
+
+      setShowModal(false);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting driver:", error);
+      setError(error.message);
+    }
   };
 
   return (
@@ -74,27 +115,69 @@ function ScoreCard({ name, phone, score, change, active }) {
           </div>
         </div>
 
-        {/* Dropdown */}
-        {/* <div className="absolute top-2 right-2">
-          <button
-            className="text-xl rounded-full bg-muted p-2"
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent card click
-              toggleDropdown(name);
-            }}
-          >
-            ...
-          </button>
-          {activeDropdown === name && (
-            <div className="absolute right-0 mt-2 w-40 bg-card shadow-lg rounded-lg">
-              <ul>
-                <li className="p-2 hover:bg-muted">Option 1</li>
-                <li className="p-2 hover:bg-muted">Option 2</li>
-                <li className="p-2 hover:bg-muted">Option 3</li>
-              </ul>
-            </div>
-          )}
-        </div> */}
+        <button
+          className="absolute top-2 right-2 p-2 rounded-full hover:bg-destructive/10 text-destructive"
+          onClick={handleDelete}
+        >
+          <FaTrash size={16} />
+        </button>
+
+        <Modal
+          show={showModal}
+          onHide={() => {
+            setShowModal(false);
+            setError("");
+            setPassword("");
+          }}
+          onClick={(e) => e.stopPropagation()}
+          // backdrop="static"
+          // keyboard={false}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm Driver Deletion</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Are you sure you want to delete driver {name}?</p>
+            <p className="text-sm text-muted-foreground mb-4">
+              This action cannot be undone. All associated trips and risk events
+              will also be deleted.
+            </p>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3">
+                <Form.Label>Enter Admin Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  isInvalid={!!error}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {error}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setShowModal(false);
+                setError("");
+                setPassword("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              onClick={handleConfirmDelete}
+              disabled={!password}
+            >
+              Delete Driver
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </div>
   );
