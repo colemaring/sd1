@@ -118,7 +118,6 @@ const AllStats = () => {
         }
         const allRiskEvents = await response.json();
 
-        // Define event types to count per day
         const eventTypes = [
           "drinking",
           "eating",
@@ -154,7 +153,7 @@ const AllStats = () => {
             backgroundColor: hexToRgba(colors[index % colors.length], 0.15),
             borderWidth: 2,
             tension: 0.5,
-            fill: true, // enable area fill
+            fill: true,
           };
         });
 
@@ -170,6 +169,8 @@ const AllStats = () => {
     };
 
     fetchRiskEvents();
+    const interval = setInterval(fetchRiskEvents, 1000);
+    return () => clearInterval(interval);
   }, [selectedMonth]);
 
   if (!chartData) {

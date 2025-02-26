@@ -132,11 +132,6 @@ const WarningCount = ({ driverData }) => {
     console.log(`Filter selected: ${filter}`);
   };
 
-  // TODO
-  // fix button color 7d 30d dropdown warningCount
-  // rn its inverted
-  // also fix the same issue in filter.jsx for apply filters button
-
   return (
     <Card className="rounded-xl bg-card text-card-foreground shadow border">
       <Card.Body>

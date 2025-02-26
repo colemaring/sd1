@@ -41,7 +41,10 @@ const Notifications = () => {
       }
     };
 
+    // Initial fetch
     fetchRiskEvents();
+    const interval = setInterval(fetchRiskEvents, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   // Filter events to include only those with at least one truthy risk event value.
@@ -83,7 +86,7 @@ const Notifications = () => {
 
         <div className="flex flex-row animate-pulse">
           <svg
-            class="w-10 h-10 text-gray-200 mr-2 self-center "
+            className="w-10 h-10 text-gray-200 mr-2 self-center "
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -95,7 +98,7 @@ const Notifications = () => {
         </div>
         <div className="flex flex-row animate-pulse">
           <svg
-            class="w-10 h-10 text-gray-200 mr-2 self-center "
+            className="w-10 h-10 text-gray-200 mr-2 self-center "
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -107,7 +110,7 @@ const Notifications = () => {
         </div>
         <div className="flex flex-row animate-pulse">
           <svg
-            class="w-10 h-10 text-gray-200 mr-2 self-center "
+            className="w-10 h-10 text-gray-200 mr-2 self-center "
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -119,7 +122,7 @@ const Notifications = () => {
         </div>
         <div className="flex flex-row animate-pulse">
           <svg
-            class="w-10 h-10 text-gray-200 mr-2 self-center "
+            className="w-10 h-10 text-gray-200 mr-2 self-center "
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"

@@ -13,6 +13,7 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { registerables } from "chart.js";
+import { useTheme } from "../../context/ThemeContext";
 
 ChartJS.register(
   CategoryScale,
@@ -36,53 +37,58 @@ function hexToRgba(hex, alpha = 0.15) {
 
 const primaryColor = "#f8b73d"; // Or your preferred primary color
 
-export const tripGraphOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      display: false,
-    },
-    title: {
-      display: true,
-      text: "This Week's Trip Frequency", // Title text
-      font: {
-        size: 16,
-      },
-      color: "#333", // Adjust title color as needed
-    },
-    tooltip: {
-      callbacks: {
-        label: (context) => {
-          return `Trips: ${context.formattedValue}`; // Customize tooltip text
-        },
-      },
-    },
-  },
-  scales: {
-    x: {
-      type: "category",
-      labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-      grid: {
-        display: false,
-      },
-    },
-    y: {
-      title: { display: false },
-      grid: { display: false },
-      beginAtZero: true, // Start y-axis at 0 for trip counts
-      ticks: {
-        stepSize: 1, // Integer steps on the y-axis
-      },
-    },
-  },
-};
-
 const TripGraph = () => {
+  const { theme } = useTheme();
   const { driverPhone } = useParams();
   const [tripData, setTripData] = useState(null);
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+
+  const tripGraphOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      title: {
+        display: true,
+        text: "This Week's Trip Frequency", // Title text
+        font: {
+          size: 15,
+        },
+        color: theme === "dark" ? "#ffffff" : "#000000",
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            return `Trips: ${context.formattedValue}`; // Customize tooltip text
+          },
+        },
+      },
+    },
+    scales: {
+      x: {
+        type: "category",
+        labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: theme === "dark" ? "#ffffff" : "#000000",
+        },
+      },
+      y: {
+        title: { display: false },
+        grid: { display: false },
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1,
+          color: theme === "dark" ? "#ffffff" : "#000000",
+        },
+      },
+    },
+  };
 
   const fetchTripData = async () => {
     setLoading(true);

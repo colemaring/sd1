@@ -7,11 +7,19 @@ import { useTheme } from "../context/ThemeContext";
 import { DriversContext } from "../context/DriversContext"; // Import DriversContext
 import { FaBars, FaSun, FaMoon } from "react-icons/fa";
 import logo from "../assets/AIFSD_Logo.png";
+import { useEffect } from "react";
 
 function NavBar() {
   const { theme, toggleTheme } = useTheme();
   const drivers = useContext(DriversContext); // Use DriversContext
 
+  useEffect(() => {
+    const currentTheme = localStorage.getItem("theme");
+    if (currentTheme && currentTheme !== theme) {
+      toggleTheme();
+    }
+  }, []);
+  
   return (
     <Navbar
       collapseOnSelect
@@ -41,7 +49,7 @@ function NavBar() {
         onClick={toggleTheme}
         className="cursor-pointer d-lg-none me-2"
         style={{
-          color: theme === "light" ? "black" : "white",
+          color: `hsl(var(--foreground))`, // Use theme HSL variable instead of black/white
         }}
       >
         {theme === "light" ? <FaMoon size={24} /> : <FaSun size={24} />}
@@ -108,7 +116,7 @@ function NavBar() {
           onClick={toggleTheme}
           className="cursor-pointer"
           style={{
-            color: theme === "light" ? "black" : "white",
+            color: `hsl(var(--foreground))`, // Use theme HSL variable instead of black/white
           }}
         >
           {theme === "light" ? <FaMoon size={24} /> : <FaSun size={24} />}
