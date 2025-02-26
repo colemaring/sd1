@@ -56,42 +56,68 @@ const WarningCount = ({ driverData }) => {
 
   // Use risk events from context to compute warning counts based on the selected filter.
   useEffect(() => {
-    if (!riskEvents || riskEvents.length === 0) return;
-
-    const now = new Date();
-    const filteredEvents = riskEvents.filter((event) => {
-      const eventDate = new Date(event.timestamp);
-      if (selectedFilter === "7 Day") {
-        return now - eventDate <= 7 * 24 * 60 * 60 * 1000;
-      } else if (selectedFilter === "30 Day") {
-        return now - eventDate <= 30 * 24 * 60 * 60 * 1000;
-      }
-      return false;
-    });
-
-    // Count risk events within the given window.
-    const newCounts = {
-      drinking: 0,
-      eating: 0,
-      phone: 0,
-      seatbelt_off: 0,
-      sleeping: 0,
-      smoking: 0,
-      out_of_lane: 0,
-      risky_drivers: 0,
-      unsafe_distance: 0,
-      hands_off_wheel: 0,
+    // Initialize counts to zero when no events exist
+    const initializeCounts = () => {
+      setWarningCounts({
+        drinking: 0,
+        eating: 0,
+        phone: 0,
+        seatbelt_off: 0,
+        sleeping: 0,
+        smoking: 0,
+        out_of_lane: 0,
+        risky_drivers: 0,
+        unsafe_distance: 0,
+        hands_off_wheel: 0,
+      });
     };
 
-    for (const event of filteredEvents) {
-      for (const [key, value] of Object.entries(event)) {
-        if (value === true && newCounts[key] !== undefined) {
-          newCounts[key] += 1;
-        }
-      }
+    // Handle empty or invalid risk events
+    if (!riskEvents || !Array.isArray(riskEvents) || riskEvents.length === 0) {
+      initializeCounts();
+      return;
     }
 
-    setWarningCounts(newCounts);
+    try {
+      const now = new Date();
+      const filteredEvents = riskEvents.filter((event) => {
+        if (!event || !event.timestamp) return false;
+        const eventDate = new Date(event.timestamp);
+        if (selectedFilter === "7 Day") {
+          return now - eventDate <= 7 * 24 * 60 * 60 * 1000;
+        } else if (selectedFilter === "30 Day") {
+          return now - eventDate <= 30 * 24 * 60 * 60 * 1000;
+        }
+        return false;
+      });
+
+      // Rest of your existing code...
+      const newCounts = {
+        drinking: 0,
+        eating: 0,
+        phone: 0,
+        seatbelt_off: 0,
+        sleeping: 0,
+        smoking: 0,
+        out_of_lane: 0,
+        risky_drivers: 0,
+        unsafe_distance: 0,
+        hands_off_wheel: 0,
+      };
+
+      for (const event of filteredEvents) {
+        for (const [key, value] of Object.entries(event)) {
+          if (value === true && newCounts[key] !== undefined) {
+            newCounts[key] += 1;
+          }
+        }
+      }
+
+      setWarningCounts(newCounts);
+    } catch (error) {
+      console.error("Error processing risk events:", error);
+      initializeCounts();
+    }
   }, [riskEvents, selectedFilter]);
 
   // Merge in additional counts based on driverData coming from props.
