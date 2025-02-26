@@ -26,12 +26,15 @@ const AISummary = () => {
 
   return (
     <div
-      className="border col-span-12 md:col-span-6 lg:col-span-3 bg-card shadow rounded-xl p-3 pb-4 m-4 h-max"
+      className="border col-span-12 md:col-span-6 lg:col-span-3 bg-card shadow rounded-xl p-3 pb-4 m-4 overflow-y-scroll h-[215px]"
     >
-      <div className="flex items-center mb-2">
+      {/* Sticky header */}
+      <div className="flex items-center mb-2 sticky bg-white pt-2 top-0 w-full z-10">
         <FaMagic className="mr-2" />
         <h2 className="font-medium">AI Summary</h2>
       </div>
+
+      {/* AI Summary Content */}
       <p>{summary || "Loading AI summary..."}</p>
     </div>
   );
