@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { FaTrash } from "react-icons/fa";
 import { Modal, Button, Form } from "react-bootstrap";
 
-function ScoreCard({ name, phone, score, change, active }) {
+function ScoreCard({ style, name, phone, score, change, active }) {
   const navigate = useNavigate(); // Initialize useNavigate
   const [activeDropdown, setActiveDropdown] = useState(null); // State to track the active dropdown
   const [showModal, setShowModal] = useState(false);
@@ -65,7 +65,7 @@ function ScoreCard({ name, phone, score, change, active }) {
     <div className="flex flex-wrap justify-center gap-4 w-full">
       <div
         key={name}
-        className="relative cardBorder flex rounded-xl w-72 lg:h-[200px] p-4 bg-card text-foreground shadow-md cursor-pointer border transition-transform duration-300 ease-in-out hover:scale-[1.02]"
+        className={`${style != null ? style : "relative cardBorder flex rounded-xl w-72 lg:h-[200px] p-4 bg-card text-foreground shadow-md cursor-pointer border transition-transform duration-300 ease-in-out hover:scale-[1.02]"}`}
         onClick={handleCardClick} // Add onClick handler
       >
         {/* Profile Picture */}
