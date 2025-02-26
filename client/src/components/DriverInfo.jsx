@@ -43,7 +43,7 @@ const DriverInfo = () => {
           <h1 className="text-3xl font-bold">
             {driverData.risk_score || "N/A"}
           </h1>
-          <h2 className="text-sm">Risk Score</h2>
+          <h2 className="text-sm">Safety Score</h2>
         </div>
       </div>
 
