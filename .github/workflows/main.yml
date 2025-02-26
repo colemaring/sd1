@@ -30,6 +30,7 @@ jobs:
             echo "DB_USER=${{ secrets.DB_USER }}" >> .env
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
             echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
+            echo "FLEET_MANAGER_SECRET=${{ secrets.FLEET_MANAGER_SECRET }}" >> .env
             npm i
             pm2 kill
             pm2 start server.js
