@@ -211,7 +211,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ risk_score: parsedMessage.SafetyScore }),
+            body: JSON.stringify({ risk_score: parsedMessage.risk_score }),
           }
         );
 

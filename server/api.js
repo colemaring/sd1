@@ -140,6 +140,7 @@ router.patch("/trip/:id/end", async (req, res) => {
 router.patch("/drivers/:id/risk-score", async (req, res) => {
   const { id } = req.params;
   const { risk_score } = req.body;
+  console.log(risk_score);
 
   // Validate risk_score is present and is a number
   if (risk_score === undefined || typeof risk_score !== "number") {
