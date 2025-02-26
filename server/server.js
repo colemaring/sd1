@@ -6,7 +6,7 @@ const fs = require("fs");
 const WebSocket = require("ws");
 const path = require("path");
 const cors = require("cors");
-app.use(cors()); 
+app.use(cors());
 
 const db = require("./db");
 const api = require("./api");
@@ -119,10 +119,9 @@ async function handleWebSocketsMessage(message) {
   }
   // Get driverId of messages coming in
   const driverId = await checkIfDriverExistsElseCreate(parsedMessage);
-  //console.log("Driver ID:", driverId);
+
   // Get tripId of messages coming in and update driver's activity
   const tripId = await checkIfTripExistsElseCreate(driverId, parsedMessage);
-  //console.log("Trip ID:", tripId);
 
   // Add risk events to trip while trip is active
   await addRiskEvents(tripId, parsedMessage);
@@ -185,9 +184,9 @@ async function addRiskEvents(tripId, parsedMessage) {
 
 async function endTripIfNeeded(driverId, tripId, parsedMessage) {
   if (parsedMessage.LastFlag) {
-    // Set end_time to current time if LastFlag is true
     const endTime = new Date().toISOString();
 
+    // Update trip end time
     const updateTripResponse = await fetch(
       `https://aifsd.xyz/api/trip/${tripId}/end`,
       {
@@ -202,6 +201,30 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
     if (updateTripResponse.ok) {
       const updatedTrip = await updateTripResponse.json();
       console.log("Trip end time set to current time:", updatedTrip);
+
+      // Update driver's risk score using the trip's risk_score
+      if (updatedTrip.risk_score !== undefined) {
+        const updateRiskScoreResponse = await fetch(
+          `https://aifsd.xyz/api/drivers/${driverId}/risk-score`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ risk_score: parsedMessage.SafetyScore }),
+          }
+        );
+
+        if (updateRiskScoreResponse.ok) {
+          const updatedDriver = await updateRiskScoreResponse.json();
+          console.log("Driver's risk score updated:", updatedDriver);
+        } else {
+          console.error(
+            "Error updating driver's risk score:",
+            await updateRiskScoreResponse.json()
+          );
+        }
+      }
     } else {
       console.error(
         "Error setting trip end time:",
@@ -311,7 +334,7 @@ async function checkIfDriverExistsElseCreate(message) {
     const newDriver = {
       name: message.Driver,
       phone_number: message.Phone,
-      risk_score: 100, // Eventually replace with real score
+      risk_score: 100, // starts at 100 if driver has not yet driven
       fleet_id: 1, // Hardcode at 1 for now
     };
 

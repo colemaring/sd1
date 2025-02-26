@@ -136,6 +136,39 @@ router.patch("/trip/:id/end", async (req, res) => {
   }
 });
 
+// Update a driver's risk score
+router.patch("/drivers/:id/risk-score", async (req, res) => {
+  const { id } = req.params;
+  const { risk_score } = req.body;
+
+  // Validate risk_score is present and is a number
+  if (risk_score === undefined || typeof risk_score !== "number") {
+    return res.status(400).json({ error: "Valid risk_score is required" });
+  }
+
+  try {
+    const result = await db.query(
+      `UPDATE driver SET risk_score = $1 WHERE id = $2 RETURNING *`,
+      [risk_score, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Driver not found" });
+    }
+
+    res.json({
+      message: "Risk score updated successfully",
+      driver: result.rows[0],
+    });
+  } catch (err) {
+    console.error("Error updating driver risk score:", err);
+    res.status(500).json({
+      error: "Failed to update risk score",
+      details: err.message,
+    });
+  }
+});
+
 // READ
 // Read dispatcher by phone number
 router.get("/dispatchers/phone/:phone_number", async (req, res) => {
