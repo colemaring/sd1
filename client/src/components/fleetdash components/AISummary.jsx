@@ -26,8 +26,7 @@ const AISummary = () => {
 
   return (
     <div
-      style={{ height: "23vh" }}
-      className="border col-span-12 md:col-span-6 lg:col-span-3 bg-card shadow rounded-xl p-3 m-4"
+      className="border col-span-12 md:col-span-6 lg:col-span-3 bg-card shadow rounded-xl p-3 pb-4 m-4 h-max"
     >
       <div className="flex items-center mb-2">
         <FaMagic className="mr-2" />

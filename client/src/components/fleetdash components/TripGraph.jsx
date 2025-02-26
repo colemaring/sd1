@@ -173,8 +173,8 @@ const TripGraph = () => {
 
   return (
     <div
-      style={{ height: "23vh" }}
-      className="border col-span-12 lg:col-span-4 bg-card shadow rounded-xl p-3 m-4"
+      
+      className="border col-span-12 lg:col-span-4 bg-card shadow rounded-xl p-3 pb-5 m-4 h-max"
     >
       <div>
         <Line options={tripGraphOptions} data={tripData} />
