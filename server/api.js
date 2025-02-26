@@ -410,9 +410,20 @@ router.delete("/risk-events/:id", async (req, res) => {
 // Delete a driver and all associated data
 router.delete("/drivers/:phone_number", async (req, res) => {
   const { phone_number } = req.params;
+  const { password } = req.headers; // Get password from request headers
+
+  // Check if password is provided
+  if (!password) {
+    return res.status(401).json({ error: "Password is required" });
+  }
+
+  // Verify password matches environment variable
+  if (password !== process.env.FLEET_MANAGER_SECRET) {
+    return res.status(401).json({ error: "Invalid password" });
+  }
 
   try {
-    // First verify the driver exists
+    // verify the driver exists
     const driverResult = await db.query(
       `SELECT id, name FROM driver WHERE phone_number = $1`,
       [phone_number]
@@ -422,9 +433,7 @@ router.delete("/drivers/:phone_number", async (req, res) => {
       return res.status(404).json({ error: "Driver not found" });
     }
 
-    const driver = driverResult.rows[0];
-
-    // Delete the driver - this will cascade to trips and risk_events
+    // this will cascade to trips and risk_events
     const deleteResult = await db.query(
       `DELETE FROM driver WHERE phone_number = $1 RETURNING *`,
       [phone_number]
