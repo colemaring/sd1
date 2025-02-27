@@ -326,22 +326,19 @@ async function checkIfDriverExistsElseCreate(message) {
   // Check if driver with that phone number exists in the drivers table
   const response = await fetch("https://aifsd.xyz/api/drivers");
   const drivers = await response.json();
-  const existingDriver = drivers.find(
-    (driver) => driver.phone_number === message.Phone
-  );
-
-    drivers.forEach((driver) => {
-    console.log(driver.phone_number);
+  console.log("=== Phone Number Debug ===");
+  console.log("Message Phone:", message.Phone, "Type:", typeof message.Phone);
+  drivers.forEach((driver) => {
+    console.log(
+      "Driver Phone:",
+      driver.phone_number,
+      "Type:",
+      typeof driver.phone_number
+    );
   });
-  console.log("----------");
-  console.log(
-    message.Phone +
-      " " +
-      message.Driver +
-      " " +
-      existingDriver +
-      " drivers: " +
-      drivers
+  const existingDriver = drivers.find(
+    (driver) =>
+      String(driver.phone_number).trim() === String(message.Phone).trim()
   );
 
   if (!existingDriver) {
