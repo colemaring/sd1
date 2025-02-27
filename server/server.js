@@ -330,6 +330,8 @@ async function checkIfDriverExistsElseCreate(message) {
     (driver) => driver.phone_number === message.Phone
   );
 
+  console.log(message.Phone + " " + message.Driver);
+
   if (!existingDriver) {
     // No driver found with that phone number, create a new one
     const newDriver = {
