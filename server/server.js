@@ -314,11 +314,13 @@ async function checkIfTripExistsElseCreate(driverId, parsedMessage) {
       return null;
     }
   } else {
-    // console.log(
-    //   "Trip with this driver_id already exists or FirstFlag was false:",
-    //   currentTrip
-    // );
-    return currentTrip.id; // Return the ID of the existing trip
+    if (currentTrip) {
+      console.log("trip with this driver id already exists");
+      return currentTrip.id;
+    } else {
+      console.log("no trip exists and firstflag was false");
+      return null;
+    }
   }
 }
 
@@ -326,16 +328,6 @@ async function checkIfDriverExistsElseCreate(message) {
   // Check if driver with that phone number exists in the drivers table
   const response = await fetch("https://aifsd.xyz/api/drivers");
   const drivers = await response.json();
-  console.log("=== Phone Number Debug ===");
-  console.log("Message Phone:", message.Phone, "Type:", typeof message.Phone);
-  drivers.forEach((driver) => {
-    console.log(
-      "Driver Phone:",
-      driver.phone_number,
-      "Type:",
-      typeof driver.phone_number
-    );
-  });
   const existingDriver = drivers.find(
     (driver) =>
       String(driver.phone_number).trim() === String(message.Phone).trim()
