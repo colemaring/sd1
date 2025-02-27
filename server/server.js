@@ -330,6 +330,10 @@ async function checkIfDriverExistsElseCreate(message) {
     (driver) => driver.phone_number === message.Phone
   );
 
+    drivers.forEach((driver) => {
+    console.log(driver.phone_number);
+  });
+  console.log("----------");
   console.log(
     message.Phone +
       " " +
