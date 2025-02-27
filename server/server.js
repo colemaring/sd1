@@ -123,12 +123,13 @@ async function handleWebSocketsMessage(message) {
 
   // Get tripId of messages coming in and update driver's activity
   const tripId = await checkIfTripExistsElseCreate(driverId, parsedMessage);
+  if (tripId) {
+    // Add risk events to trip while trip is active
+    await addRiskEvents(tripId, parsedMessage);
 
-  // Add risk events to trip while trip is active
-  await addRiskEvents(tripId, parsedMessage);
-
-  // End trip if LastFlag is true and update driver's activity
-  await endTripIfNeeded(driverId, tripId, parsedMessage);
+    // End trip if LastFlag is true and update driver's activity
+    await endTripIfNeeded(driverId, tripId, parsedMessage);
+  }
 }
 
 async function addRiskEvents(tripId, parsedMessage) {
