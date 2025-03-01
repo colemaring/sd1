@@ -206,7 +206,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
 
       // Update trip risk score
       const updateTripRiskScoreResponse = await fetch(
-        `http://localhost:8080/api/trip/${tripId}/risk-score`,
+        `https://aifsd.xyz/api/trip/${tripId}/risk-score`,
         {
           method: "PATCH",
           headers: {
@@ -227,7 +227,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       console.log("Trip risk score updated:", updatedTripRiskScore);
 
       // Get all trips for this driver
-      const tripsResponse = await fetch(`http://localhost:8080/api/trips/driver/${driverId}`);
+      const tripsResponse = await fetch(`https://aifsd.xyz/api/trips/driver/${driverId}`);
       if (!tripsResponse.ok) {
         console.error("Error getting trips for driver:", await tripsResponse.json());
         return;
