@@ -49,6 +49,8 @@ python client_test.py
 
 ## TODO:
 Include % change on Scorecard <br>
-Implement risk score calculation <br>
 FCM/Push notifs <br>
 shimmer or placeholder loading <br>
+Fix fleet page deselect risk filter bug <br>
+Add error handling for duplicated phone numbers? <br>
+Store driver risk score history <br>
