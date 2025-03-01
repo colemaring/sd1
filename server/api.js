@@ -136,6 +136,29 @@ router.patch("/trip/:id/end", async (req, res) => {
   }
 });
 
+// Update a trip's risk score
+router.patch("/trip/:id/risk-score", async (req, res) => {
+  const { id } = req.params;
+  const { risk_score } = req.body;
+  
+  if (typeof risk_score !== "number") {
+    return res.status(400).json({ error: "Invalid risk score" });
+  }
+
+  try {
+    const result = await db.query(
+      `UPDATE trip SET risk_score = $1 WHERE id = $2 RETURNING *`,
+      [risk_score, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Trip not found" });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // Update a driver's risk score
 router.patch("/drivers/:id/risk-score", async (req, res) => {
   const { id } = req.params;
@@ -280,7 +303,7 @@ router.get("/trips", async (req, res) => {
   }
 });
 
-// Read trips for a given driver
+// Read trips for a given driver by phone number
 router.get("/trips/:phone_number", async (req, res) => {
   const { phone_number } = req.params;
   try {
@@ -297,6 +320,19 @@ router.get("/trips/:phone_number", async (req, res) => {
       [driverId]
     );
     res.json(tripResult.rows);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Read trips for a given driver by driver ID
+router.get("/trips/driver/:driver_id", async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT * FROM trip WHERE driver_id = $1`,
+      [req.params.driver_id]
+    );
+    res.json(result.rows);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

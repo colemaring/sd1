@@ -204,7 +204,43 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       const updatedTrip = await updateTripResponse.json();
       console.log("Trip end time set to current time:", updatedTrip);
 
-      // Update driver's risk score using the trip's risk_score
+      // Update trip risk score
+      const updateTripRiskScoreResponse = await fetch(
+        `http://localhost:8080/api/trip/${tripId}/risk-score`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ risk_score: Math.round(parsedMessage.risk_score) }),
+        }
+      );
+
+      if (!updateTripRiskScoreResponse.ok) {
+        console.error(
+          "Error updating trip risk score:",
+          await updateTripRiskScoreResponse.json()
+        );
+      }
+
+      const updatedTripRiskScore = await updateTripRiskScoreResponse.json();
+      console.log("Trip risk score updated:", updatedTripRiskScore);
+
+      // Get all trips for this driver
+      const tripsResponse = await fetch(`http://localhost:8080/api/trips/driver/${driverId}`);
+      if (!tripsResponse.ok) {
+        console.error("Error getting trips for driver:", await tripsResponse.json());
+        return;
+      }
+      const trips = await tripsResponse.json();
+
+      // Find the average of the risk scores of all trips with a valid end time for this driver
+      const validTrips = trips.filter((trip) => trip.end_time !== null);
+      const totalRiskScore = validTrips.reduce((acc, trip) => acc + trip.risk_score, 0);
+      const averageRiskScore = totalRiskScore / validTrips.length;
+      console.log("Average risk score:", averageRiskScore);
+
+      // Update driver's risk score using the average of all trip risk scores
       if (updatedTrip.risk_score !== undefined) {
         const updateRiskScoreResponse = await fetch(
           `https://aifsd.xyz/api/drivers/${driverId}/risk-score`,
@@ -213,7 +249,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ risk_score: parsedMessage.risk_score }),
+            body: JSON.stringify({ risk_score: averageRiskScore }),
           }
         );
 
