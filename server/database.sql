@@ -24,7 +24,7 @@ create table driver (
 
 create table trip (
 	id serial primary key,
-	risk_score integer default 0,
+	risk_score decimal(5,2) default 0,
 	start_time timestamp with time zone not null,
 	end_time timestamp with time zone,
 	driver_id integer not null,
@@ -46,4 +46,13 @@ create table risk_event (
     unsafe_distance boolean default false,
     hands_off_wheel boolean default false,
     foreign key (trip_id) references trip(id) on delete cascade
+);
+
+create table driver_risk_history (
+    id serial primary key,
+    driver_id integer not null,
+    risk_score decimal(5,2) not null,
+    from_timestamp timestamp with time zone not null default now(),
+    to_timestamp timestamp with time zone,
+    foreign key (driver_id) references driver(id) on delete cascade
 );
