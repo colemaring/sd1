@@ -212,7 +212,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ risk_score: Math.round(parsedMessage.risk_score) }),
+          body: JSON.stringify({ risk_score: parsedMessage.risk_score }),
         }
       );
 
@@ -242,6 +242,8 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
 
       // Update driver's risk score using the average of all trip risk scores
       if (updatedTrip.risk_score !== undefined) {
+        // TODO: Update driver's current risk score in driver_risk_history with to_timestamp
+
         const updateRiskScoreResponse = await fetch(
           `https://aifsd.xyz/api/drivers/${driverId}/risk-score`,
           {
@@ -256,6 +258,9 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
         if (updateRiskScoreResponse.ok) {
           const updatedDriver = await updateRiskScoreResponse.json();
           console.log("Driver's risk score updated:", updatedDriver);
+
+          // TODO: Add new risk score to driver_risk_history
+          
         } else {
           console.error(
             "Error updating driver's risk score:",
