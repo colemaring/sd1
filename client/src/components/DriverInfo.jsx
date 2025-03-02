@@ -9,7 +9,7 @@ import { DriversContext } from "../context/DriversContext";
 const DriverInfo = () => {
   const { theme } = useTheme();
   const { driverPhone } = useParams();
-  const drivers = useContext(DriversContext);
+  const { drivers, isLoading } = useContext(DriversContext);
   const [driverData, setDriverData] = useState(null);
 
   useEffect(() => {
@@ -19,8 +19,11 @@ const DriverInfo = () => {
     }
   }, [driverPhone, drivers]);
 
+  // Loading skeleton
   if (!drivers || drivers.length === 0) {
-    return <div>Loading...</div>;
+    return (
+      <div className="h-[213px] w-full animate-pulse bg-gray-300 border rounded-xl"></div>
+    );
   }
 
   if (!driverData) {

@@ -11,7 +11,7 @@ import { useEffect } from "react";
 
 function NavBar() {
   const { theme, toggleTheme } = useTheme();
-  const drivers = useContext(DriversContext); // Use DriversContext
+  const { drivers, isLoading } = useContext(DriversContext); // Use DriversContext
 
   useEffect(() => {
     const currentTheme = localStorage.getItem("theme");
@@ -19,7 +19,7 @@ function NavBar() {
       toggleTheme();
     }
   }, []);
-  
+
   return (
     <Navbar
       collapseOnSelect

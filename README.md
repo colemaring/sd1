@@ -39,6 +39,7 @@ Running server for development
 ```bash
 node server.js dev
 ```
+
 dont forget .env <br>
 Running the websockets client test script (to simulate a connected vehicle)
 
@@ -46,11 +47,10 @@ Running the websockets client test script (to simulate a connected vehicle)
 python client_test.py
 ```
 
-
 ## TODO:
+
 Include % change on Scorecard <br>
 FCM/Push notifs <br>
-shimmer or placeholder loading <br>
 Fix fleet page deselect risk filter bug <br>
 Add error handling for duplicated phone numbers? <br>
 Store driver risk score history <br>

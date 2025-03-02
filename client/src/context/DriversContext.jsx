@@ -6,6 +6,7 @@ export const DriversContext = createContext();
 // Create the provider component
 export const DriversProvider = ({ children }) => {
   const [drivers, setDrivers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Fetch drivers from the API
@@ -15,11 +16,13 @@ export const DriversProvider = ({ children }) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
+        setIsLoading(true);
         const data = await response.json();
         setDrivers(data);
       } catch (error) {
         console.error("Error fetching drivers:", error);
       }
+      setIsLoading(false);
     };
 
     fetchDrivers();
@@ -29,7 +32,7 @@ export const DriversProvider = ({ children }) => {
   }, []);
 
   return (
-    <DriversContext.Provider value={drivers}>
+    <DriversContext.Provider value={{ drivers, isLoading }}>
       {children}
     </DriversContext.Provider>
   );

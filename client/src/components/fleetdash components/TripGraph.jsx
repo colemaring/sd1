@@ -149,8 +149,8 @@ const TripGraph = () => {
 
   if (loading) {
     return (
-      <div className="border col-span-12 lg:col-span-4 bg-card shadow rounded-xl p-3 m-4">
-        Loading...
+      <div className="col-span-12 lg:col-span-4 bg-gray-300 shadow rounded-xl p-3 m-4 h-[214px] animate-pulse items-center content-center text-center">
+        <p className="font-bold text-xl">Loading</p>
       </div>
     );
   }
@@ -172,10 +172,7 @@ const TripGraph = () => {
   }
 
   return (
-    <div
-      
-      className="border col-span-12 lg:col-span-4 bg-card shadow rounded-xl p-3 pb-5 m-4 h-max"
-    >
+    <div className="border col-span-12 lg:col-span-4 bg-card shadow rounded-xl p-3 pb-5 m-4 h-max">
       <div>
         <Line options={tripGraphOptions} data={tripData} />
       </div>

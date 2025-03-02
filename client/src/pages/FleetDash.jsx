@@ -7,7 +7,7 @@ import ScoreCard from "../components/ScoreCard";
 import { DriversContext } from "../context/DriversContext"; // Import DriversContext
 
 function FleetDash() {
-  const drivers = useContext(DriversContext);
+  const { drivers, isLoading } = useContext(DriversContext);
   const [activeRisk, setActiveRisk] = useState("low");
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [update, setUpdate] = useState(false);
@@ -59,6 +59,14 @@ function FleetDash() {
           </div>
           <div className="col-span-12">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+              {/* Loading skeleton but it causes flicker due to constant real-time refetching */}
+              {/* {isLoading &&
+                Array.from({ length: 12 }, (_, i) => (
+                  <div key={i}>
+                    <div className="animate-pulse rounded-xl w-72 lg:h-[200px] p-4 bg-gray-300 text-foreground shadow-md"></div>
+                  </div>
+                ))} */}
+
               {filteredDrivers.map((driver) => (
                 <ScoreCard
                   className="bg-card border shadow"

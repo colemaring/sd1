@@ -6,7 +6,7 @@ import { DriversContext } from "../../context/DriversContext";
 function CurrentActive() {
   const [activeCount, setActiveCount] = useState(0);
   const { theme } = useTheme();
-  const drivers = useContext(DriversContext);
+  const { drivers, isLoading } = useContext(DriversContext);
 
   useEffect(() => {
     const activeDrivers = drivers.filter((driver) => driver.active).length;
@@ -14,7 +14,7 @@ function CurrentActive() {
   }, [drivers]);
 
   return (
-    <div className="bg-card rounded-xl shadow ml-5 mr-2 flex justify-center border">
+    <div className="bg-card rounded-xl shadow ml-5 mr-2 flex justify-center border h-[213px]">
       <div className="relative cardBorder flex w-72 p-4 overflow-hidden text-foreground">
         <div className="z-10">
           <h1 className="text-xl font-semibold">Active vehicles</h1>
