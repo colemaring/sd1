@@ -236,7 +236,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
 
       // Find the average of the risk scores of all trips with a valid end time for this driver
       const validTrips = trips.filter((trip) => trip.end_time !== null);
-      const totalRiskScore = validTrips.reduce((acc, trip) => acc + trip.risk_score, 0);
+      const totalRiskScore = validTrips.reduce((acc, trip) => acc + Number(trip.risk_score), 0);
       const averageRiskScore = totalRiskScore / validTrips.length;
       console.log("Average risk score:", averageRiskScore);
 
