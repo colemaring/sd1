@@ -121,7 +121,7 @@ async function handleWebSocketsMessage(message) {
   }
   // Get driverId of messages coming in
   const driverId = await checkIfDriverExistsElseCreate(parsedMessage);
-  console.log("Message recieved with driverId: ", driverId);
+  // console.log("Message recieved with driverId: ", driverId);
 
   // Get tripId of messages coming in and update driver's activity
   const tripId = await checkIfTripExistsElseCreate(driverId, parsedMessage);
