@@ -297,7 +297,6 @@ async function addRiskEvents(tripId, parsedMessage, driverId) {
 
 async function endTripIfNeeded(driverId, tripId, parsedMessage) {
   if (parsedMessage.LastFlag) {
-    // Clear any timeout for this trip and remove from active trips map
     if (activeTrips.get(tripId)?.timeoutId) {
       clearTimeout(activeTrips.get(tripId).timeoutId);
     }
@@ -305,7 +304,6 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
 
     const endTime = new Date().toISOString();
 
-    // Update trip end time
     const updateTripResponse = await fetch(
       `https://aifsd.xyz/api/trip/${tripId}/end`,
       {
@@ -321,7 +319,6 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       const updatedTrip = await updateTripResponse.json();
       console.log("Trip end time set to current time:", updatedTrip);
 
-      // Update trip risk score
       const updateTripRiskScoreResponse = await fetch(
         `https://aifsd.xyz/api/trip/${tripId}/risk-score`,
         {
@@ -343,7 +340,6 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       const updatedTripRiskScore = await updateTripRiskScoreResponse.json();
       console.log("Trip risk score updated:", updatedTripRiskScore);
 
-      // Get all trips for this driver
       const tripsResponse = await fetch(
         `https://aifsd.xyz/api/trips/driver/${driverId}`
       );
@@ -356,7 +352,6 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       }
       const trips = await tripsResponse.json();
 
-      // Find the average of the risk scores of all trips with a valid end time for this driver
       const validTrips = trips.filter((trip) => trip.end_time !== null);
       const totalRiskScore = validTrips.reduce(
         (acc, trip) => acc + Number(trip.risk_score),
@@ -365,10 +360,32 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       const averageRiskScore = totalRiskScore / validTrips.length;
       console.log("Average risk score:", averageRiskScore);
 
-      // Update driver's risk score using the average of all trip risk scores
       if (updatedTrip.risk_score !== undefined) {
-        // TODO: Update driver's current risk score in driver_risk_history with to_timestamp
+        // Update the previous risk history entry with a to_timestamp
+        const prevRiskHistoryResponse = await fetch(
+          `https://aifsd.xyz/api/driver_risk_history/driver/${driverId}/end`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ to_timestamp: endTime }),
+          }
+        );        
 
+        if (!prevRiskHistoryResponse.ok) {
+          console.error(
+            "Error updating previous risk history entry:",
+            await prevRiskHistoryResponse.json()
+          );
+        } else {
+          console.log(
+            "Previous risk history entry's to_timestamp updated:",
+            await prevRiskHistoryResponse.json()
+          );
+        }
+
+        // Update driver's risk score
         const updateRiskScoreResponse = await fetch(
           `https://aifsd.xyz/api/drivers/${driverId}/risk-score`,
           {
@@ -384,7 +401,33 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
           const updatedDriver = await updateRiskScoreResponse.json();
           console.log("Driver's risk score updated:", updatedDriver);
 
-          // TODO: Add new risk score to driver_risk_history
+          // Add new risk score entry to driver_risk_history
+          const newRiskHistoryResponse = await fetch(
+            `https://aifsd.xyz/api/driver_risk_history`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                driver_id: driverId,
+                risk_score: averageRiskScore,
+                from_timestamp: endTime,
+              }),
+            }
+          );
+
+          if (!newRiskHistoryResponse.ok) {
+            console.error(
+              "Error adding new risk history entry:",
+              await newRiskHistoryResponse.json()
+            );
+          } else {
+            console.log(
+              "New risk history entry added:",
+              await newRiskHistoryResponse.json()
+            );
+          }
         } else {
           console.error(
             "Error updating driver's risk score:",
@@ -399,7 +442,6 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       );
     }
 
-    // Set the driver's active status to false
     const updateDriverResponse = await fetch(
       `https://aifsd.xyz/api/driver/${driverId}/active`,
       {
@@ -519,6 +561,39 @@ async function checkIfDriverExistsElseCreate(message) {
     if (createResponse.ok) {
       const createdDriver = await createResponse.json();
       console.log("New driver created:", createdDriver);
+
+      const createdDriverId = createdDriver.id;
+      const defaultRiskScore = 100;
+      const currentTime = new Date().toISOString();
+
+      // Add default risk score entry to driver_risk_history for new driver
+      const newRiskHistoryResponse = await fetch(
+        `https://aifsd.xyz/api/driver_risk_history`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            driver_id: createdDriverId,
+            risk_score: defaultRiskScore,
+            from_timestamp: currentTime,
+          }),
+        }
+      );
+
+      if (!newRiskHistoryResponse.ok) {
+        console.error(
+          "Error adding new risk history entry:",
+          await newRiskHistoryResponse.json()
+        );
+      } else {
+        console.log(
+          "New risk history entry added:",
+          await newRiskHistoryResponse.json()
+        );
+      }
+
       return createdDriver.id; // Return the ID of the newly created driver
     } else {
       console.error("Error creating new driver:", await createResponse.json());
