@@ -304,6 +304,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
 
     const endTime = new Date().toISOString();
 
+    // Update trip end time
     const updateTripResponse = await fetch(
       `https://aifsd.xyz/api/trip/${tripId}/end`,
       {
@@ -319,6 +320,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       const updatedTrip = await updateTripResponse.json();
       console.log("Trip end time set to current time:", updatedTrip);
 
+      // Update trip risk score
       const updateTripRiskScoreResponse = await fetch(
         `https://aifsd.xyz/api/trip/${tripId}/risk-score`,
         {
@@ -340,6 +342,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       const updatedTripRiskScore = await updateTripRiskScoreResponse.json();
       console.log("Trip risk score updated:", updatedTripRiskScore);
 
+      // Get all trips for this driver
       const tripsResponse = await fetch(
         `https://aifsd.xyz/api/trips/driver/${driverId}`
       );
@@ -352,6 +355,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       }
       const trips = await tripsResponse.json();
 
+      // Find the average of the risk scores of all trips with a valid end time for this driver
       const validTrips = trips.filter((trip) => trip.end_time !== null);
       const totalRiskScore = validTrips.reduce(
         (acc, trip) => acc + Number(trip.risk_score),
@@ -360,6 +364,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       const averageRiskScore = totalRiskScore / validTrips.length;
       console.log("Average risk score:", averageRiskScore);
 
+      // Update driver's risk score using the average of all trip risk scores
       if (updatedTrip.risk_score !== undefined) {
         // Update the previous risk history entry with a to_timestamp
         const prevRiskHistoryResponse = await fetch(
@@ -442,6 +447,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       );
     }
 
+    // Set the driver's active status to false
     const updateDriverResponse = await fetch(
       `https://aifsd.xyz/api/driver/${driverId}/active`,
       {
