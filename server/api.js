@@ -140,7 +140,7 @@ router.patch("/trip/:id/end", async (req, res) => {
 router.patch("/trip/:id/risk-score", async (req, res) => {
   const { id } = req.params;
   const { risk_score } = req.body;
-  
+
   if (typeof risk_score !== "number") {
     return res.status(400).json({ error: "Invalid risk score" });
   }
@@ -163,7 +163,7 @@ router.patch("/trip/:id/risk-score", async (req, res) => {
 router.patch("/drivers/:id/risk-score", async (req, res) => {
   const { id } = req.params;
   const { risk_score } = req.body;
-  console.log(risk_score);
+  // console.log(risk_score);
 
   // Validate risk_score is present and is a number
   if (risk_score === undefined || typeof risk_score !== "number") {
@@ -204,6 +204,23 @@ router.get("/dispatchers/phone/:phone_number", async (req, res) => {
     res.json(result.rows[0]);
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+});
+
+// Read a trip by ID
+router.get("/trip/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await db.query(`SELECT * FROM trip WHERE id = $1`, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Trip not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error fetching trip:", err);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -261,7 +278,7 @@ router.get("/risk-events-summary/:driverPhone", async (req, res) => {
 });
 
 const generatePrompt = (driverName, riskEvents) => {
-  console.log("riskEvents", riskEvents);
+  // console.log("riskEvents", riskEvents);
   return `
     Given ${driverName} ‘s risk events (listed below), identify the top two most prevalent patterns in their risky driving. Format your response in two sentences for fleet managers as: 'Name Here tends to exhibit [risk behavior] after [time period/event]' and 'Name Here also frequently [another risk behavior] when [time period/event]'. This information will be used to improve driver safety. These risk events are from a system which provides fleet managers with insights into how their drivers are driving. The response should include some information about their tendencies and behaviors. Your response should be brief and be able to quickly tell the reader the tendencies of this driver. Respond only with the short 2 sentence summary, and nothing else.
 
@@ -328,10 +345,9 @@ router.get("/trips/:phone_number", async (req, res) => {
 // Read trips for a given driver by driver ID
 router.get("/trips/driver/:driver_id", async (req, res) => {
   try {
-    const result = await db.query(
-      `SELECT * FROM trip WHERE driver_id = $1`,
-      [req.params.driver_id]
-    );
+    const result = await db.query(`SELECT * FROM trip WHERE driver_id = $1`, [
+      req.params.driver_id,
+    ]);
     res.json(result.rows);
   } catch (err) {
     res.status(400).json({ error: err.message });

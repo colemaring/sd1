@@ -14,6 +14,8 @@ const api = require("./api");
 const isDev = process.argv.includes("dev");
 
 let httpsServer, httpServer;
+const activeTrips = new Map(); // Map to store active trips and their last message timestamp
+const TRIP_TIMEOUT = 1 * 60 * 1000; // Trips time out after x minutes of no messages (driver activity set to false and trip end_time set to curr time)
 
 if (!isDev) {
   const options = {
@@ -119,20 +121,127 @@ async function handleWebSocketsMessage(message) {
   }
   // Get driverId of messages coming in
   const driverId = await checkIfDriverExistsElseCreate(parsedMessage);
-  console.log("Driver ID: -->>>", driverId);
+  console.log("Message recieved with driverId: ", driverId);
 
   // Get tripId of messages coming in and update driver's activity
   const tripId = await checkIfTripExistsElseCreate(driverId, parsedMessage);
   if (tripId) {
+    // Record timestamp of message for this trip
+    activeTrips.set(tripId, {
+      lastMessageTime: Date.now(),
+      driverId: driverId,
+      timeoutId: activeTrips.get(tripId)?.timeoutId,
+    });
+
+    // Clear any existing timeout for this trip
+    if (activeTrips.get(tripId)?.timeoutId) {
+      clearTimeout(activeTrips.get(tripId).timeoutId);
+    }
+
+    // Set a new timeout
+    const timeoutId = setTimeout(() => {
+      handleTripTimeout(tripId, driverId);
+    }, TRIP_TIMEOUT);
+
+    // Update the timeout ID in the Map
+    activeTrips.set(tripId, {
+      ...activeTrips.get(tripId),
+      timeoutId: timeoutId,
+    });
+
     // Add risk events to trip while trip is active
-    await addRiskEvents(tripId, parsedMessage);
+    await addRiskEvents(tripId, parsedMessage, driverId);
 
     // End trip if LastFlag is true and update driver's activity
     await endTripIfNeeded(driverId, tripId, parsedMessage);
   }
 }
 
-async function addRiskEvents(tripId, parsedMessage) {
+// Set driver activity to false and end trip if no messages received in 10 minutes
+async function handleTripTimeout(tripId, driverId) {
+  console.log(`Trip ${tripId} timed out after 10 minutes of inactivity.`);
+
+  // Get trip data to check if it's already ended
+  try {
+    const tripResponse = await fetch(`https://aifsd.xyz/api/trip/${tripId}`);
+    if (!tripResponse.ok) {
+      console.error("Error fetching trip data:", await tripResponse.text());
+      return;
+    }
+
+    const tripData = await tripResponse.json();
+    if (tripData.end_time) {
+      console.log(`Trip ${tripId} was already ended.`);
+      activeTrips.delete(tripId);
+      return;
+    }
+
+    // End the trip
+    const endTime = new Date().toISOString();
+    const updateTripResponse = await fetch(
+      `https://aifsd.xyz/api/trip/${tripId}/end`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ end_time: endTime }),
+      }
+    );
+
+    if (updateTripResponse.ok) {
+      console.log(`Trip ${tripId} ended due to timeout.`);
+
+      // Get all trips for this driver to calculate average risk score
+      const tripsResponse = await fetch(
+        `https://aifsd.xyz/api/trips/driver/${driverId}`
+      );
+      if (tripsResponse.ok) {
+        // If trip is ended due to a timeout and not lastFlag, that means that a risk_score for that trip was never calculated, as our current logic only sends risk_score when the trip is known to be over on the client side
+        // since we're forcing the trip to end here, the risk_score is unknown, so for now it will default to 100 (as noted in the database schema file (default 100))
+        const trips = await tripsResponse.json();
+        const validTrips = trips.filter((trip) => trip.end_time !== null);
+        const totalRiskScore = validTrips.reduce(
+          (acc, trip) => acc + Number(trip.risk_score),
+          0
+        );
+        const averageRiskScore = validTrips.length
+          ? totalRiskScore / validTrips.length
+          : 100;
+
+        // Update driver's risk score
+        await fetch(`https://aifsd.xyz/api/drivers/${driverId}/risk-score`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ risk_score: averageRiskScore }),
+        });
+      }
+
+      // Set driver as inactive
+      await fetch(`https://aifsd.xyz/api/driver/${driverId}/active`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ active: false }),
+      });
+    } else {
+      console.error(
+        "Error ending trip due to timeout:",
+        await updateTripResponse.text()
+      );
+    }
+  } catch (error) {
+    console.error("Error handling trip timeout:", error);
+  }
+
+  // Clean up the trip from our active trips map
+  activeTrips.delete(tripId);
+}
+
+async function addRiskEvents(tripId, parsedMessage, driverId) {
   // Map parsedMessage to risk_event columns
   const {
     Timestamp: timestamp,
@@ -174,7 +283,9 @@ async function addRiskEvents(tripId, parsedMessage) {
 
     if (response.ok) {
       const result = await response.json();
-      console.log("Risk event added to trip " + tripId);
+      console.log(
+        "Risk event received for driverId: " + driverId + " and trip: " + tripId
+      );
       //console.log("Risk event added", result);
     } else {
       console.error("Error adding risk event:", await response.json());
@@ -186,6 +297,12 @@ async function addRiskEvents(tripId, parsedMessage) {
 
 async function endTripIfNeeded(driverId, tripId, parsedMessage) {
   if (parsedMessage.LastFlag) {
+    // Clear any timeout for this trip and remove from active trips map
+    if (activeTrips.get(tripId)?.timeoutId) {
+      clearTimeout(activeTrips.get(tripId).timeoutId);
+    }
+    activeTrips.delete(tripId);
+
     const endTime = new Date().toISOString();
 
     // Update trip end time
@@ -227,16 +344,24 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       console.log("Trip risk score updated:", updatedTripRiskScore);
 
       // Get all trips for this driver
-      const tripsResponse = await fetch(`https://aifsd.xyz/api/trips/driver/${driverId}`);
+      const tripsResponse = await fetch(
+        `https://aifsd.xyz/api/trips/driver/${driverId}`
+      );
       if (!tripsResponse.ok) {
-        console.error("Error getting trips for driver:", await tripsResponse.json());
+        console.error(
+          "Error getting trips for driver:",
+          await tripsResponse.json()
+        );
         return;
       }
       const trips = await tripsResponse.json();
 
       // Find the average of the risk scores of all trips with a valid end time for this driver
       const validTrips = trips.filter((trip) => trip.end_time !== null);
-      const totalRiskScore = validTrips.reduce((acc, trip) => acc + Number(trip.risk_score), 0);
+      const totalRiskScore = validTrips.reduce(
+        (acc, trip) => acc + Number(trip.risk_score),
+        0
+      );
       const averageRiskScore = totalRiskScore / validTrips.length;
       console.log("Average risk score:", averageRiskScore);
 
@@ -260,7 +385,6 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
           console.log("Driver's risk score updated:", updatedDriver);
 
           // TODO: Add new risk score to driver_risk_history
-          
         } else {
           console.error(
             "Error updating driver's risk score:",
@@ -357,7 +481,7 @@ async function checkIfTripExistsElseCreate(driverId, parsedMessage) {
     }
   } else {
     if (currentTrip) {
-      console.log("trip with this driver id already exists");
+      // console.log("trip with this driver id already exists");
       return currentTrip.id;
     } else {
       console.log("no trip exists and firstflag was false");
