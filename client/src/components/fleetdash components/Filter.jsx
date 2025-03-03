@@ -28,6 +28,17 @@ function Filter({
     );
   };
 
+  // New function to handle risk selection
+  const handleRiskSelection = (risk) => {
+    // If clicking the already active risk, unselect it (set to null)
+    if (activeRisk === risk.toLowerCase()) {
+      setActiveRisk(null);
+    } else {
+      // Otherwise select the new risk
+      setActiveRisk(risk.toLowerCase());
+    }
+  };
+
   const applyFilters = () => {
     // Only close the menu on small screens
     if (!isLargeScreen) {
@@ -86,7 +97,7 @@ function Filter({
             {risks.map((risk) => (
               <div
                 key={risk}
-                onClick={() => setActiveRisk(risk.toLowerCase())}
+                onClick={() => handleRiskSelection(risk)}
                 className={`px-4 py-1 text-sm cursor-pointer rounded-lg ${
                   activeRisk === risk.toLowerCase()
                     ? "bg-card text-card-foreground font-semibold"
@@ -96,6 +107,11 @@ function Filter({
                 {risk} Risk
               </div>
             ))}
+            {activeRisk === null && (
+              <span className="text-xs text-muted-foreground ml-2">
+                (Showing all risk levels)
+              </span>
+            )}
           </div>
 
           {/* Center: Data Filters */}
@@ -132,7 +148,7 @@ function Filter({
               {risks.map((risk) => (
                 <div
                   key={risk}
-                  onClick={() => setActiveRisk(risk.toLowerCase())}
+                  onClick={() => handleRiskSelection(risk)}
                   className={`px-4 py-1 text-sm cursor-pointer rounded-lg ${
                     activeRisk === risk.toLowerCase()
                       ? "bg-card text-card-foreground font-semibold"
@@ -142,6 +158,11 @@ function Filter({
                   {risk} Risk
                 </div>
               ))}
+              {activeRisk === null && (
+                <span className="text-xs text-muted-foreground ml-1 mt-1">
+                  (Showing all risk levels)
+                </span>
+              )}
             </div>
 
             {/* Row 2: Data Filters */}

@@ -8,7 +8,7 @@ import { DriversContext } from "../context/DriversContext"; // Import DriversCon
 
 function FleetDash() {
   const { drivers, isLoading } = useContext(DriversContext);
-  const [activeRisk, setActiveRisk] = useState("low");
+  const [activeRisk, setActiveRisk] = useState(null); // Start with null to show all risk levels
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [update, setUpdate] = useState(false);
   const [filteredDrivers, setFilteredDrivers] = useState([]);
@@ -22,6 +22,8 @@ function FleetDash() {
 
     const filtered = drivers.filter((driver) => {
       const riskLevel = getRiskLevel(driver.risk_score);
+
+      // Apply selected filters
       const isActive = selectedFilters.includes("Active")
         ? driver.active
         : true;
@@ -32,13 +34,14 @@ function FleetDash() {
         ? driver.change < 0
         : true;
 
-      return (
-        riskLevel === activeRisk && isActive && (isIncreasing || isDecreasing)
-      );
+      // Show all risk levels if activeRisk is null, otherwise filter by the specific risk level
+      const matchesRiskLevel = activeRisk === null || riskLevel === activeRisk;
+
+      return matchesRiskLevel && isActive && (isIncreasing || isDecreasing);
     });
 
     setFilteredDrivers(filtered);
-  }, [update, drivers]);
+  }, [update, drivers, activeRisk, selectedFilters]);
 
   return (
     <div className="flex min-h-screen bg-primary">
@@ -59,14 +62,6 @@ function FleetDash() {
           </div>
           <div className="col-span-12">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-              {/* Loading skeleton but it causes flicker due to constant real-time refetching */}
-              {/* {isLoading &&
-                Array.from({ length: 12 }, (_, i) => (
-                  <div key={i}>
-                    <div className="animate-pulse rounded-xl w-72 lg:h-[200px] p-4 bg-gray-300 text-foreground shadow-md"></div>
-                  </div>
-                ))} */}
-
               {filteredDrivers.map((driver) => (
                 <ScoreCard
                   className="bg-card border shadow"
@@ -78,6 +73,12 @@ function FleetDash() {
                   active={driver.active}
                 />
               ))}
+
+              {filteredDrivers.length === 0 && !isLoading && (
+                <div className="col-span-full text-center p-8 text-muted-foreground">
+                  No drivers match the selected filters
+                </div>
+              )}
             </div>
           </div>
         </div>
