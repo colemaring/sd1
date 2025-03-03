@@ -99,7 +99,58 @@ router.post("/trip", async (req, res) => {
   }
 });
 
+// Create a risk score in driver risk history
+router.post("/driver_risk_history", async (req, res) => {
+  const { driver_id, risk_score, from_timestamp } = req.body;
+  try {
+    const result = await db.query(
+      `INSERT INTO driver_risk_history (driver_id, risk_score, from_timestamp, to_timestamp) 
+       VALUES ($1, $2, $3, NULL) RETURNING *`,
+      [driver_id, risk_score, from_timestamp]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // PATCH
+// Update a driver's current risk score in driver risk history with to timestamp
+router.patch("/driver_risk_history/driver/:driver_id/end", async (req, res) => {
+  const { driver_id } = req.params;
+  const { to_timestamp } = req.body;
+  try {
+    // Find the most recent active risk history entry
+    const result = await db.query(
+      `SELECT id 
+       FROM driver_risk_history 
+       WHERE driver_id = $1 AND to_timestamp IS NULL 
+       ORDER BY from_timestamp DESC 
+       LIMIT 1`,
+      [driver_id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Active risk history entry not found" });
+    }
+
+    const riskHistoryId = result.rows[0].id;
+
+    // Update the found entry's to_timestamp
+    const updateResult = await db.query(
+      `UPDATE driver_risk_history 
+       SET to_timestamp = $1 
+       WHERE id = $2 
+       RETURNING *`,
+      [to_timestamp, riskHistoryId]
+    );
+
+    res.status(200).json(updateResult.rows[0]);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // Update a driver's active status
 router.patch("/driver/:id/active", async (req, res) => {
   const { id } = req.params;
