@@ -131,7 +131,9 @@ router.patch("/driver_risk_history/driver/:driver_id/end", async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Active risk history entry not found" });
+      return res
+        .status(404)
+        .json({ error: "Active risk history entry not found" });
     }
 
     const riskHistoryId = result.rows[0].id;
@@ -255,6 +257,27 @@ router.get("/dispatchers/phone/:phone_number", async (req, res) => {
     res.json(result.rows[0]);
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+});
+
+// Get risk score history for a driver
+router.get("/driver_risk_history/driver/:driver_id", async (req, res) => {
+  const { driver_id } = req.params;
+  try {
+    const result = await db.query(
+      `SELECT * FROM driver_risk_history 
+       WHERE driver_id = $1 
+       ORDER BY from_timestamp DESC`,
+      [driver_id]
+    );
+
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error("Error fetching driver risk history:", err);
+    res.status(500).json({
+      error: "Failed to retrieve risk history",
+      details: err.message,
+    });
   }
 });
 
