@@ -260,26 +260,42 @@ router.get("/dispatchers/phone/:phone_number", async (req, res) => {
   }
 });
 
-// Get risk score history for a driver
-router.get("/driver_risk_history/driver/:driver_id", async (req, res) => {
-  const { driver_id } = req.params;
-  try {
-    const result = await db.query(
-      `SELECT * FROM driver_risk_history 
+// Get risk score history for a driver by phone number
+router.get(
+  "/driver_risk_history/driver/phone/:phoneNumber",
+  async (req, res) => {
+    const { phoneNumber } = req.params;
+    try {
+      // First, find the driver ID using the phone number
+      const driverResult = await db.query(
+        "SELECT id FROM driver WHERE phone_number = $1",
+        [phoneNumber]
+      );
+
+      if (driverResult.rows.length === 0) {
+        return res.status(404).json({ error: "Driver not found" });
+      }
+
+      const driverId = driverResult.rows[0].id;
+
+      // Then fetch the risk history using the driver ID
+      const historyResult = await db.query(
+        `SELECT * FROM driver_risk_history 
        WHERE driver_id = $1 
        ORDER BY from_timestamp DESC`,
-      [driver_id]
-    );
+        [driverId]
+      );
 
-    res.status(200).json(result.rows);
-  } catch (err) {
-    console.error("Error fetching driver risk history:", err);
-    res.status(500).json({
-      error: "Failed to retrieve risk history",
-      details: err.message,
-    });
+      res.status(200).json(historyResult.rows);
+    } catch (err) {
+      console.error("Error fetching driver risk history by phone:", err);
+      res.status(500).json({
+        error: "Failed to retrieve risk history",
+        details: err.message,
+      });
+    }
   }
-});
+);
 
 // Read a trip by ID
 router.get("/trip/:id", async (req, res) => {
