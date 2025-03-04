@@ -15,7 +15,7 @@ const isDev = process.argv.includes("dev");
 
 let httpsServer, httpServer;
 const activeTrips = new Map(); // Map to store active trips and their last message timestamp
-const TRIP_TIMEOUT = 1 * 60 * 1000; // Trips time out after x minutes of no messages (driver activity set to false and trip end_time set to curr time)
+const TRIP_TIMEOUT = 10 * 60 * 1000; // Trips time out after x minutes of no messages (driver activity set to false and trip end_time set to curr time)
 
 if (!isDev) {
   const options = {
@@ -209,14 +209,69 @@ async function handleTripTimeout(tripId, driverId) {
           ? totalRiskScore / validTrips.length
           : 100;
 
+        // Update the previous risk history entry with a to_timestamp
+        const prevRiskHistoryResponse = await fetch(
+          `https://aifsd.xyz/api/driver_risk_history/driver/${driverId}/end`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ to_timestamp: endTime }),
+          }
+        );
+
+        if (!prevRiskHistoryResponse.ok) {
+          console.error(
+            "Error updating previous risk history entry for driverId: " + driverId,
+            await prevRiskHistoryResponse.text()
+          );
+        } else {
+          console.log(
+            "Previous risk history entry's to_timestamp updated successfully for driverId: " +
+              driverId
+          );
+        }
+
         // Update driver's risk score
-        await fetch(`https://aifsd.xyz/api/drivers/${driverId}/risk-score`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ risk_score: averageRiskScore }),
-        });
+        const updateRiskScoreResponse = await fetch(
+          `https://aifsd.xyz/api/drivers/${driverId}/risk-score`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ risk_score: averageRiskScore }),
+          }
+        );
+
+        // Create a new risk history entry
+        if (updateRiskScoreResponse.ok) {
+          // Add new risk score entry to driver_risk_history
+          const newRiskHistoryResponse = await fetch(
+            `https://aifsd.xyz/api/driver_risk_history`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                driver_id: driverId,
+                risk_score: averageRiskScore,
+                from_timestamp: endTime,
+              }),
+            }
+          );
+
+          if (!newRiskHistoryResponse.ok) {
+            console.error(
+              "Error adding new risk history entry for driverId:" + driverId,
+              await newRiskHistoryResponse.text()
+            );
+          } else {
+            console.log("New risk history entry added successfully for driverId: " + driverId);
+          }
+        }
       }
 
       // Set driver as inactive
@@ -376,7 +431,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
             },
             body: JSON.stringify({ to_timestamp: endTime }),
           }
-        );        
+        );
 
         if (!prevRiskHistoryResponse.ok) {
           console.error(
