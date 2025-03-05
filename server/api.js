@@ -115,6 +115,25 @@ router.post("/driver_risk_history", async (req, res) => {
 });
 
 // PATCH
+
+// Update a driver's percent change
+router.patch("/drivers/:id/percent-change", async (req, res) => {
+  const { id } = req.params;
+  const { percent_change } = req.body;
+  try {
+    const result = await db.query(
+      `UPDATE driver SET percent_change = $1 WHERE id = $2 RETURNING *`,
+      [percent_change, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Driver not found" });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // Update a driver's current risk score in driver risk history with to timestamp
 router.patch("/driver_risk_history/driver/:driver_id/end", async (req, res) => {
   const { driver_id } = req.params;
@@ -384,6 +403,18 @@ router.get("/fleets/dispatcher/:dispatcher_id", async (req, res) => {
       `SELECT * FROM fleets WHERE dispatcher_id = $1`,
       [req.params.dispatcher_id]
     );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Read a driver by id
+router.get("/drivers/:id", async (req, res) => {
+  try {
+    const result = await db.query(`SELECT * FROM driver WHERE id = $1`, [
+      req.params.id,
+    ]);
     res.json(result.rows[0]);
   } catch (err) {
     res.status(400).json({ error: err.message });

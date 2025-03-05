@@ -276,6 +276,47 @@ async function handleTripTimeout(tripId, driverId) {
             console.log("New risk history entry added successfully for driverId: " + driverId);
           }
         }
+
+        // Get driver's old risk score
+        const driverResponse = await fetch(
+          `https://aifsd.xyz/api/drivers/${driverId}`
+        );
+        if (!driverResponse.ok) {
+          console.error(
+            "Error getting driver:",
+            await driverResponse.json()
+          );
+          return;
+        }
+        const driver = await driverResponse.json();
+        console.log("Driver:", driver);
+        const oldRiskScore = driver.risk_score;
+
+        // Calculate the driver's percent change in risk score between old risk score and new average risk score
+        const percentChange = ((averageRiskScore - oldRiskScore) / oldRiskScore) * 100;
+        console.log("Percent change in risk score:", percentChange);
+
+        // Update the drivers percent change in risk score
+        const updatePercentChangeResponse = await fetch(
+          `https://aifsd.xyz/api/drivers/${driverId}/percent-change`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ percent_change: percentChange }),
+          }
+        );
+
+        if (updatePercentChangeResponse.ok) {
+          const updatedDriver = await updatePercentChangeResponse.json();
+          console.log("Driver's percent change in risk score updated:", updatedDriver);
+        } else {
+          console.error(
+            "Error updating driver's percent change in risk score:",
+            await updatePercentChangeResponse.json()
+          );
+        }
       }
 
       // Set driver as inactive
@@ -428,6 +469,21 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
         validTrips.length > 0 ? totalRiskScore / validTrips.length : 100;
       console.log("Average risk score:", averageRiskScore);
 
+      // Get driver's old risk score
+      const driverResponse = await fetch(
+        `https://aifsd.xyz/api/drivers/${driverId}`
+      );
+      if (!driverResponse.ok) {
+        console.error(
+          "Error getting driver:",
+          await driverResponse.json()
+        );
+        return;
+      }
+      const driver = await driverResponse.json();
+      console.log("Driver:", driver);
+      const oldRiskScore = driver.risk_score;
+
       // Update driver's risk score using the average of all trip risk scores
       if (updatedTrip.risk_score !== undefined) {
         // Update the previous risk history entry with a to_timestamp
@@ -501,6 +557,32 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
           console.error(
             "Error updating driver's risk score:",
             await updateRiskScoreResponse.json()
+          );
+        }
+
+        // Calculate the driver's percent change in risk score between old risk score and new average risk score
+        const percentChange = ((averageRiskScore - oldRiskScore) / oldRiskScore) * 100;
+        console.log("Percent change in risk score:", percentChange);
+
+        //Update the drivers percent change in risk score
+        const updatePercentChangeResponse = await fetch(
+          `https://aifsd.xyz/api/drivers/${driverId}/percent-change`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ percent_change: percentChange }),
+          }
+        );
+
+        if (updatePercentChangeResponse.ok) {
+          const updatedDriver = await updatePercentChangeResponse.json();
+          console.log("Driver's percent change in risk score updated:", updatedDriver);
+        } else {
+          console.error(
+            "Error updating driver's percent change in risk score:",
+            await updatePercentChangeResponse.json()
           );
         }
       }
