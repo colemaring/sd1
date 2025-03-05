@@ -200,14 +200,18 @@ async function handleTripTimeout(tripId, driverId) {
         // If trip is ended due to a timeout and not lastFlag, that means that a risk_score for that trip was never calculated, as our current logic only sends risk_score when the trip is known to be over on the client side
         // since we're forcing the trip to end here, the risk_score is unknown, so for now it will default to 100 (as noted in the database schema file (default 100))
         const trips = await tripsResponse.json();
-        const validTrips = trips.filter((trip) => trip.end_time !== null);
+        // Calculate the average risk score for trips that ended within the past 30 days
+        const THIRTY_DAYS_AGO = new Date();
+        THIRTY_DAYS_AGO.setDate(THIRTY_DAYS_AGO.getDate() - 30);
+        const validTrips = trips.filter(
+          (trip) => trip.end_time !== null && new Date(trip.end_time) >= THIRTY_DAYS_AGO
+        );
         const totalRiskScore = validTrips.reduce(
           (acc, trip) => acc + Number(trip.risk_score),
           0
         );
-        const averageRiskScore = validTrips.length
-          ? totalRiskScore / validTrips.length
-          : 100;
+        const averageRiskScore =
+          validTrips.length > 0 ? totalRiskScore / validTrips.length : 100;
 
         // Update the previous risk history entry with a to_timestamp
         const prevRiskHistoryResponse = await fetch(
@@ -271,6 +275,47 @@ async function handleTripTimeout(tripId, driverId) {
           } else {
             console.log("New risk history entry added successfully for driverId: " + driverId);
           }
+        }
+
+        // Get driver's old risk score
+        const driverResponse = await fetch(
+          `https://aifsd.xyz/api/drivers/${driverId}`
+        );
+        if (!driverResponse.ok) {
+          console.error(
+            "Error getting driver:",
+            await driverResponse.json()
+          );
+          return;
+        }
+        const driver = await driverResponse.json();
+        console.log("Driver:", driver);
+        const oldRiskScore = driver.risk_score;
+
+        // Calculate the driver's percent change in risk score between old risk score and new average risk score
+        const percentChange = ((averageRiskScore - oldRiskScore) / oldRiskScore) * 100;
+        console.log("Percent change in risk score:", percentChange);
+
+        // Update the drivers percent change in risk score
+        const updatePercentChangeResponse = await fetch(
+          `https://aifsd.xyz/api/drivers/${driverId}/percent-change`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ percent_change: percentChange }),
+          }
+        );
+
+        if (updatePercentChangeResponse.ok) {
+          const updatedDriver = await updatePercentChangeResponse.json();
+          console.log("Driver's percent change in risk score updated:", updatedDriver);
+        } else {
+          console.error(
+            "Error updating driver's percent change in risk score:",
+            await updatePercentChangeResponse.json()
+          );
         }
       }
 
@@ -410,14 +455,34 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       }
       const trips = await tripsResponse.json();
 
-      // Find the average of the risk scores of all trips with a valid end time for this driver
-      const validTrips = trips.filter((trip) => trip.end_time !== null);
+      // Calculate the average risk score for trips that ended within the past 30 days
+      const THIRTY_DAYS_AGO = new Date();
+      THIRTY_DAYS_AGO.setDate(THIRTY_DAYS_AGO.getDate() - 30);
+      const validTrips = trips.filter(
+        (trip) => trip.end_time !== null && new Date(trip.end_time) >= THIRTY_DAYS_AGO
+      );
       const totalRiskScore = validTrips.reduce(
         (acc, trip) => acc + Number(trip.risk_score),
         0
       );
-      const averageRiskScore = totalRiskScore / validTrips.length;
+      const averageRiskScore = 
+        validTrips.length > 0 ? totalRiskScore / validTrips.length : 100;
       console.log("Average risk score:", averageRiskScore);
+
+      // Get driver's old risk score
+      const driverResponse = await fetch(
+        `https://aifsd.xyz/api/drivers/${driverId}`
+      );
+      if (!driverResponse.ok) {
+        console.error(
+          "Error getting driver:",
+          await driverResponse.json()
+        );
+        return;
+      }
+      const driver = await driverResponse.json();
+      console.log("Driver:", driver);
+      const oldRiskScore = driver.risk_score;
 
       // Update driver's risk score using the average of all trip risk scores
       if (updatedTrip.risk_score !== undefined) {
@@ -492,6 +557,32 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
           console.error(
             "Error updating driver's risk score:",
             await updateRiskScoreResponse.json()
+          );
+        }
+
+        // Calculate the driver's percent change in risk score between old risk score and new average risk score
+        const percentChange = ((averageRiskScore - oldRiskScore) / oldRiskScore) * 100;
+        console.log("Percent change in risk score:", percentChange);
+
+        //Update the drivers percent change in risk score
+        const updatePercentChangeResponse = await fetch(
+          `https://aifsd.xyz/api/drivers/${driverId}/percent-change`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ percent_change: percentChange }),
+          }
+        );
+
+        if (updatePercentChangeResponse.ok) {
+          const updatedDriver = await updatePercentChangeResponse.json();
+          console.log("Driver's percent change in risk score updated:", updatedDriver);
+        } else {
+          console.error(
+            "Error updating driver's percent change in risk score:",
+            await updatePercentChangeResponse.json()
           );
         }
       }

@@ -22,6 +22,8 @@ create table driver (
     foreign key (fleet_id) references fleet(id) on delete cascade
 );
 
+ALTER TABLE driver ADD COLUMN percent_change decimal(5,2);
+
 create table trip (
 	id serial primary key,
 	risk_score decimal(5,2) default 100,
