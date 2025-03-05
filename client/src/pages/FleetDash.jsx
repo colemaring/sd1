@@ -27,17 +27,19 @@ function FleetDash() {
       const isActive = selectedFilters.includes("Active")
         ? driver.active
         : true;
-      const isIncreasing = selectedFilters.includes("Increasing")
-        ? driver.change > 0
-        : true;
-      const isDecreasing = selectedFilters.includes("Decreasing")
-        ? driver.change < 0
-        : true;
-
+      
+      const isIncreasing = selectedFilters.includes("Increasing") && driver.percent_change > 0;
+      const isDecreasing = selectedFilters.includes("Decreasing") && driver.percent_change < 0;
+      
+      // Only apply the condition if at least one of the filters is selected
+      const matchesChangeFilter =
+        (!selectedFilters.includes("Increasing") && !selectedFilters.includes("Decreasing")) ||
+        isIncreasing || isDecreasing;
+      
       // Show all risk levels if activeRisk is null, otherwise filter by the specific risk level
       const matchesRiskLevel = activeRisk === null || riskLevel === activeRisk;
 
-      return matchesRiskLevel && isActive && (isIncreasing || isDecreasing);
+      return matchesRiskLevel && isActive && matchesChangeFilter;
     });
 
     setFilteredDrivers(filtered);
