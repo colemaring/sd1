@@ -200,14 +200,18 @@ async function handleTripTimeout(tripId, driverId) {
         // If trip is ended due to a timeout and not lastFlag, that means that a risk_score for that trip was never calculated, as our current logic only sends risk_score when the trip is known to be over on the client side
         // since we're forcing the trip to end here, the risk_score is unknown, so for now it will default to 100 (as noted in the database schema file (default 100))
         const trips = await tripsResponse.json();
-        const validTrips = trips.filter((trip) => trip.end_time !== null);
+        // Calculate the average risk score for trips that ended within the past 30 days
+        const THIRTY_DAYS_AGO = new Date();
+        THIRTY_DAYS_AGO.setDate(THIRTY_DAYS_AGO.getDate() - 30);
+        const validTrips = trips.filter(
+          (trip) => trip.end_time !== null && new Date(trip.end_time) >= THIRTY_DAYS_AGO
+        );
         const totalRiskScore = validTrips.reduce(
           (acc, trip) => acc + Number(trip.risk_score),
           0
         );
-        const averageRiskScore = validTrips.length
-          ? totalRiskScore / validTrips.length
-          : 100;
+        const averageRiskScore =
+          validTrips.length > 0 ? totalRiskScore / validTrips.length : 100;
 
         // Update the previous risk history entry with a to_timestamp
         const prevRiskHistoryResponse = await fetch(
@@ -410,13 +414,18 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       }
       const trips = await tripsResponse.json();
 
-      // Find the average of the risk scores of all trips with a valid end time for this driver
-      const validTrips = trips.filter((trip) => trip.end_time !== null);
+      // Calculate the average risk score for trips that ended within the past 30 days
+      const THIRTY_DAYS_AGO = new Date();
+      THIRTY_DAYS_AGO.setDate(THIRTY_DAYS_AGO.getDate() - 30);
+      const validTrips = trips.filter(
+        (trip) => trip.end_time !== null && new Date(trip.end_time) >= THIRTY_DAYS_AGO
+      );
       const totalRiskScore = validTrips.reduce(
         (acc, trip) => acc + Number(trip.risk_score),
         0
       );
-      const averageRiskScore = totalRiskScore / validTrips.length;
+      const averageRiskScore = 
+        validTrips.length > 0 ? totalRiskScore / validTrips.length : 100;
       console.log("Average risk score:", averageRiskScore);
 
       // Update driver's risk score using the average of all trip risk scores
