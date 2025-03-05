@@ -51,5 +51,4 @@ python client_test.py
 
 Include % change on Scorecard <br>
 FCM/Push notifs <br>
-Fix fleet page deselect risk filter bug <br>
 Add error handling for duplicated phone numbers? <br>
