@@ -46,7 +46,19 @@ const DriverInfo = () => {
           <h1 className="text-3xl font-bold">
             {driverData.risk_score || "N/A"}
           </h1>
+
           <h2 className="text-sm">Safety Score</h2>
+          {driverData.percent_change != null && (
+            <span
+              className={`font-bold ${
+                driverData.percent_change >= 0
+                  ? "text-green-500"
+                  : "text-red-500"
+              }`}
+            >
+              {driverData.percent_change}% Change
+            </span>
+          )}
         </div>
       </div>
 

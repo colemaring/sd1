@@ -99,23 +99,51 @@ const EventsLogNew = ({ driverData }) => {
       }
     }
 
-    const sortedEvents = newEvents.sort((a, b) => {
-      if (a.tripId === "Current Trip") return -1; // Current Trip always first
-      if (b.tripId === "Current Trip") return 1;
+    // Merge new events with previously accumulated current trip events.
+    setEvents((prevEvents) => {
+      const prevNonCurrent = prevEvents.filter(
+        (event) => event.tripId !== "Current Trip"
+      );
+      const prevCurrent = prevEvents.filter(
+        (event) => event.tripId === "Current Trip"
+      );
+      const newCurrentTripEvents = newEvents.filter(
+        (event) => event.tripId === "Current Trip"
+      );
+      const newNonCurrentEvents = newEvents.filter(
+        (event) => event.tripId !== "Current Trip"
+      );
 
-      // For numeric trip IDs, sort from highest to lowest
-      const aId = parseInt(a.tripId);
-      const bId = parseInt(b.tripId);
+      // Combine previous non-current with new non-current events,
+      // and add both previously accumulated and newly received current trip events.
+      const merged = [
+        ...newNonCurrentEvents,
+        ...prevCurrent,
+        ...newCurrentTripEvents,
+      ];
 
-      // If parsing fails, fall back to string comparison
-      if (isNaN(aId) || isNaN(bId)) {
-        return String(b.tripId).localeCompare(String(a.tripId)); // Reverse order
-      }
+      // Sort the merged events based on tripId.
+      merged.sort((a, b) => {
+        // If one trip is "Current Trip", prioritize it.
+        if (a.tripId === "Current Trip" && b.tripId !== "Current Trip") {
+          return -1;
+        } else if (b.tripId === "Current Trip" && a.tripId !== "Current Trip") {
+          return 1;
+        } else if (a.tripId === "Current Trip" && b.tripId === "Current Trip") {
+          return 0;
+        } else {
+          // Both are not "Current Trip", so attempt numeric sort.
+          const aId = parseInt(a.tripId);
+          const bId = parseInt(b.tripId);
+          if (isNaN(aId) || isNaN(bId)) {
+            return String(b.tripId).localeCompare(String(a.tripId));
+          }
+          return bId - aId; // Descending order for numeric tripIds.
+        }
+      });
 
-      return bId - aId; // Sort numerically in descending order
+      return merged;
     });
-
-    setEvents(sortedEvents);
   }, [driverData, riskEvents, tripRiskScores]);
 
   const columns = useMemo(
@@ -179,7 +207,7 @@ const EventsLogNew = ({ driverData }) => {
         AggregatedCell: ({ row }) => {
           const tripId = row.groupingValue;
           const tripData = tripRiskScores[tripId];
-          return <span>{tripData ? tripData.risk_score : "-"}</span>;
+          return <span>{tripData ? tripData.risk_score : "TBD"}</span>;
         },
       },
       {
@@ -220,28 +248,24 @@ const EventsLogNew = ({ driverData }) => {
         color: theme === "dark" ? "#fff" : "#000",
       },
     },
-
     muiExpandAllButtonProps: {
       sx: {
         color: theme === "dark" ? "#fff" : "#000",
       },
     },
-
     muiToolbarAlertBannerProps: {
       sx: {
         backgroundColor: theme === "dark" ? "rgb(64,52,28)" : "#f1f1f1",
         color: theme === "dark" ? "#fff" : "#000",
       },
     },
-
     muiToolbarAlertBannerChipProps: {
       sx: {
         backgroundColor: theme === "dark" ? "rgba(29,24,23,255)" : "#fff",
         color: theme === "dark" ? "#fff" : "#000",
       },
     },
-
-    mrtTheme: (theme) => ({
+    mrtTheme: () => ({
       baseBackgroundColor: baseBackgroundColor,
       textColor: textColor,
     }),
