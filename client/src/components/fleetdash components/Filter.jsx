@@ -36,14 +36,6 @@ function Filter({
     }
   };
 
-  // Left this in case you still need to trigger something on updates
-  // const applyFilters = () => {
-  //   if (!isLargeScreen) {
-  //     setIsFilterOpen(false);
-  //   }
-  //   setUpdate(!update);
-  // };
-
   useEffect(() => {
     const handleResize = () => {
       setIsLargeScreen(window.innerWidth >= 768);
