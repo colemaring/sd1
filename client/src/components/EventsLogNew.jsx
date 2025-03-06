@@ -139,7 +139,9 @@ const EventsLogNew = ({ driverData }) => {
                   {tripData.start_time
                     ? new Date(tripData.start_time).toLocaleString()
                     : "N/A"}
-                  , <strong>End:</strong>{" "}
+                </div>
+                <div>
+                  <strong>End:</strong>{" "}
                   {tripData.end_time
                     ? new Date(tripData.end_time).toLocaleString()
                     : "In Progress"}
@@ -214,7 +216,6 @@ const EventsLogNew = ({ driverData }) => {
       sx: { color: theme === "dark" ? "white" : "black" },
     },
     muiExpandButtonProps: {
-      // e.g. set color to white in dark mode, black in light mode
       sx: {
         color: theme === "dark" ? "#fff" : "#000",
       },
