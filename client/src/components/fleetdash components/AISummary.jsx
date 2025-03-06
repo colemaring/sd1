@@ -39,7 +39,7 @@ const AISummary = () => {
     <div className="border col-span-12 md:col-span-6 lg:col-span-3 bg-card shadow rounded-xl p-3 pb-4 m-4 overflow-y-scroll h-[215px]">
       {/* Sticky header */}
 
-      <div className="flex items-center mb-2 sticky bg-white pt-2 top-0 w-full z-10">
+      <div className="flex items-center mb-2 sticky  pt-2 top-0 w-full z-10">
         <FaMagic className="mr-2" />
         <h2 className="font-medium">AI Summary</h2>
       </div>

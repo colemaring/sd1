@@ -9,7 +9,6 @@ import { useParams } from "react-router-dom";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import { DriverRiskEventsContext } from "../context/DriverRiskEventsContext";
 import { useContext } from "react";
-
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -36,16 +35,22 @@ const EventsLogNew = ({ driverData }) => {
         }
 
         const data = await response.json();
-        // console.log(data);
+        console.log(data);
+
         // Convert to lookup object
-        const riskScoreLookup = {};
+        const tripDataLookup = {};
         if (data.trips && Array.isArray(data.trips)) {
           data.trips.forEach((trip) => {
-            riskScoreLookup[trip.id] = trip.risk_score;
+            // Convert the trip id to a string
+            tripDataLookup[trip.id.toString()] = {
+              risk_score: trip.risk_score,
+              start_time: trip.start_time,
+              end_time: trip.end_time,
+            };
           });
         }
 
-        setTripRiskScores(riskScoreLookup);
+        setTripRiskScores(tripDataLookup);
       } catch (error) {
         console.error("Failed to fetch trip risk scores:", error);
       }
@@ -118,6 +123,32 @@ const EventsLogNew = ({ driverData }) => {
       {
         accessorKey: "date",
         header: "Date of Event",
+        Cell: ({ row, cell }) => {
+          // For individual event rows, return the regular date
+          return cell.getValue();
+        },
+        AggregatedCell: ({ row, cell }) => {
+          // This is a grouped row (trip row)
+          const tripId = row.groupingValue;
+          const tripData = tripRiskScores[tripId];
+          if (tripData) {
+            return (
+              <div>
+                <div>
+                  <strong>Start:</strong>{" "}
+                  {tripData.start_time
+                    ? new Date(tripData.start_time).toLocaleString()
+                    : "N/A"}
+                  , <strong>End:</strong>{" "}
+                  {tripData.end_time
+                    ? new Date(tripData.end_time).toLocaleString()
+                    : "In Progress"}
+                </div>
+              </div>
+            );
+          }
+          return cell.getValue(); // fallback if no tripData found
+        },
       },
       {
         accessorKey: "eventType",
@@ -135,7 +166,9 @@ const EventsLogNew = ({ driverData }) => {
           if (row.getIsGrouped()) {
             // We are in a group header (trip row)
             const tripId = row.groupingValue;
-            return <span>{tripRiskScores[tripId] || "-"}</span>;
+            const tripData = tripRiskScores[tripId];
+            console.log(tripData.risk_score + " test");
+            return <span>{tripData ? tripData.risk_score : "-"}</span>;
           }
           // Otherwise, do not display risk score for individual risk event rows
           return null;
@@ -143,7 +176,8 @@ const EventsLogNew = ({ driverData }) => {
         // For grouped rows (trip header), show the safety score
         AggregatedCell: ({ row }) => {
           const tripId = row.groupingValue;
-          return <span>{tripRiskScores[tripId] || "-"}</span>;
+          const tripData = tripRiskScores[tripId];
+          return <span>{tripData ? tripData.risk_score : "-"}</span>;
         },
       },
       {
@@ -155,7 +189,7 @@ const EventsLogNew = ({ driverData }) => {
   );
 
   const baseBackgroundColor =
-    theme === "dark" ? "rgba(19, 19, 19, 0.8)" : "rgba(255, 255, 255, 0.8)";
+    theme === "dark" ? "rgba(25,24,23)" : "rgba(255, 255, 255, 0.8)";
 
   const textColor = theme === "dark" ? "rgba(255, 255, 255, 0.8)" : "#000";
 
@@ -179,6 +213,33 @@ const EventsLogNew = ({ driverData }) => {
     muiTableHeadCellProps: {
       sx: { color: theme === "dark" ? "white" : "black" },
     },
+    muiExpandButtonProps: {
+      // e.g. set color to white in dark mode, black in light mode
+      sx: {
+        color: theme === "dark" ? "#fff" : "#000",
+      },
+    },
+
+    muiExpandAllButtonProps: {
+      sx: {
+        color: theme === "dark" ? "#fff" : "#000",
+      },
+    },
+
+    muiToolbarAlertBannerProps: {
+      sx: {
+        backgroundColor: theme === "dark" ? "rgb(64,52,28)" : "#f1f1f1",
+        color: theme === "dark" ? "#fff" : "#000",
+      },
+    },
+
+    muiToolbarAlertBannerChipProps: {
+      sx: {
+        backgroundColor: theme === "dark" ? "rgba(29,24,23,255)" : "#fff",
+        color: theme === "dark" ? "#fff" : "#000",
+      },
+    },
+
     mrtTheme: (theme) => ({
       baseBackgroundColor: baseBackgroundColor,
       textColor: textColor,
