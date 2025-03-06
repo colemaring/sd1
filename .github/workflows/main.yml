@@ -23,10 +23,7 @@ jobs:
             cd
             rm -r sd1
             git clone https://github.com/colemaring/sd1.git
-            cd sd1/client
-            npm i
-            npm run build
-            cd ../server
+            cd sd1/server
             echo "GOOGLE_GEMINI_API_KEY=${{ secrets.GOOGLE_GEMINI_API_KEY }}" > .env
             echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
             echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
