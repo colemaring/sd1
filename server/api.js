@@ -282,7 +282,7 @@ router.get("/dispatchers/phone/:phone_number", async (req, res) => {
 // Get trip IDs, risk scores, and end times for a driver by phone number
 router.get("/driver-trips/:phoneNumber", async (req, res) => {
   const { phoneNumber } = req.params;
-  
+
   try {
     // First, find the driver ID using the phone number
     const driverResult = await db.query(
@@ -296,9 +296,9 @@ router.get("/driver-trips/:phoneNumber", async (req, res) => {
 
     const driverId = driverResult.rows[0].id;
 
-    // Fetch the trips for this driver, including id, risk_score and end_time
+    // Fetch the trips for this driver, including id, risk_score, start_time, and end_time
     const tripResult = await db.query(
-      `SELECT id, risk_score, end_time 
+      `SELECT id, risk_score, start_time, end_time 
        FROM trip 
        WHERE driver_id = $1
        ORDER BY start_time DESC`,
@@ -307,14 +307,13 @@ router.get("/driver-trips/:phoneNumber", async (req, res) => {
 
     res.status(200).json({
       driver_id: driverId,
-      trips: tripResult.rows
+      trips: tripResult.rows,
     });
-    
   } catch (err) {
     console.error("Error fetching driver trips:", err);
     res.status(500).json({
       error: "Failed to retrieve driver trips",
-      details: err.message
+      details: err.message,
     });
   }
 });
