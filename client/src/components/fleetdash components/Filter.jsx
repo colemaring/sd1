@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { IoFilter } from "react-icons/io5";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../../bootstrap-overrides.css";
 import { Button } from "react-bootstrap";
-import "../../bootstrap-overrides.css"; // Custom overrides
 
 function Filter({
   setActiveRisk,
@@ -12,7 +12,7 @@ function Filter({
   activeRisk,
   selectedFilters,
 }) {
-  const [isFilterOpen, setIsFilterOpen] = useState(false); // For small screen toggle
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 768);
 
   const risks = ["High", "Medium", "Low"];
@@ -28,26 +28,14 @@ function Filter({
     );
   };
 
-  // New function to handle risk selection
   const handleRiskSelection = (risk) => {
-    // If clicking the already active risk, unselect it (set to null)
     if (activeRisk === risk.toLowerCase()) {
       setActiveRisk(null);
     } else {
-      // Otherwise select the new risk
       setActiveRisk(risk.toLowerCase());
     }
   };
 
-  const applyFilters = () => {
-    // Only close the menu on small screens
-    if (!isLargeScreen) {
-      setIsFilterOpen(false);
-    }
-    setUpdate(!update);
-  };
-
-  // Watch for screen resize
   useEffect(() => {
     const handleResize = () => {
       setIsLargeScreen(window.innerWidth >= 768);
@@ -56,7 +44,6 @@ function Filter({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Always open on desktop
   useEffect(() => {
     if (isLargeScreen) {
       setIsFilterOpen(true);
@@ -65,7 +52,7 @@ function Filter({
 
   return (
     <div className="w-full">
-      {/* Mobile-only button to open/close filters */}
+      {/* Mobile Toggle */}
       <div className="flex justify-between items-center md:hidden p-2">
         <h1 className="font-bold text-primary text-lg">Filters</h1>
         <button
@@ -131,19 +118,15 @@ function Filter({
             ))}
           </div>
 
-          {/* Right: Apply Filters*/}
-          <div className="flex-1 pl-4 flex items-center">
-            <Button onClick={applyFilters}>Apply Filters</Button>
-          </div>
+          <div className="flex-1 pl-4 flex items-center" />
         </div>
       ) : (
-        //  MOBILE LAYOUT
+        // MOBILE LAYOUT
         isFilterOpen && (
           <div
             className="flex flex-col gap-4 p-3 rounded-xl"
             style={{ backgroundColor: "hsl(var(--background))" }}
           >
-            {/* Row 1: Risk Filters */}
             <div className="flex flex-wrap gap-2">
               {risks.map((risk) => (
                 <div
@@ -164,8 +147,6 @@ function Filter({
                 </span>
               )}
             </div>
-
-            {/* Row 2: Data Filters */}
             <div className="flex flex-wrap gap-2">
               {filters.map((filter) => (
                 <div
@@ -181,11 +162,6 @@ function Filter({
                 </div>
               ))}
             </div>
-
-            {/* Row 3: Apply Filters*/}
-            <Button variant="success" onClick={applyFilters}>
-              Apply Filters
-            </Button>
           </div>
         )
       )}
