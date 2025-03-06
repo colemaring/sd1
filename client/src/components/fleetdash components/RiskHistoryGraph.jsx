@@ -57,7 +57,7 @@ function RiskHistoryGraph() {
       },
       title: {
         display: true,
-        text: "Risk Score History (7 Days)",
+        text: "Risk Score History (30 Days)",
         font: {
           size: 15,
         },
@@ -127,7 +127,7 @@ function RiskHistoryGraph() {
     // Function to fetch risk history data
     const fetchRiskHistory = async () => {
       try {
-        console.log("Fetching risk history for phone:", driverPhone);
+        //console.log("Fetching risk history for phone:", driverPhone);
         setLoading(false); // Don't show loading indicator on refreshes
         setError(null);
 
@@ -145,14 +145,14 @@ function RiskHistoryGraph() {
 
         const data = await response.json();
 
-        // Calculate date from one week ago
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        // Calculate date from one month ago
+        const oneMongthAgo = new Date();
+        oneMongthAgo.setDate(oneMongthAgo.getDate() - 30);
 
-        // Filter data to only include entries from the past week
+        // Filter data to only include entries from the past month
         const filteredData = data.filter((item) => {
           const itemDate = new Date(item.from_timestamp);
-          return itemDate >= oneWeekAgo;
+          return itemDate >= oneMongthAgo;
         });
 
         // Sort by from_timestamp in ascending order for the chart

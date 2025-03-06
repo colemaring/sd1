@@ -49,6 +49,9 @@ python client_test.py
 
 ## TODO:
 
-Include % change on Scorecard <br>
 FCM/Push notifs <br>
-Add error handling for duplicated phone numbers? <br>
+Implement filtering on home page and create necessary APIs <br>
+Display trip risk scores somewhere on driver page <br>
+Display percent change somewhere on driver page <br>
+Remove apply filters button on fleet page <br>
+Stretch: Allow home page chart to display events for specific drivers <br>
