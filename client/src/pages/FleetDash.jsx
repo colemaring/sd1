@@ -71,7 +71,7 @@ function FleetDash() {
                   name={driver.name}
                   phone={driver.phone_number}
                   score={driver.risk_score}
-                  change={driver.change}
+                  change={driver.percent_change}
                   active={driver.active}
                 />
               ))}
