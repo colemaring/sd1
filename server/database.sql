@@ -18,11 +18,10 @@ create table driver (
     active boolean default false,
     phone_number varchar(15) unique not null,
     risk_score decimal(5,2) default 100,
+    percent_change decimal(5,2),
     fleet_id integer not null,
     foreign key (fleet_id) references fleet(id) on delete cascade
 );
-
-ALTER TABLE driver ADD COLUMN percent_change decimal(5,2);
 
 create table trip (
 	id serial primary key,
