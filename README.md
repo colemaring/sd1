@@ -53,6 +53,4 @@ FCM/Push notifs <br>
 fix Current Trip table logic <br>
 ensure all events are properly matched to inside or outside ai in table <br>
 Implement filtering on home page and create necessary APIs <br>
-Display percent change somewhere on driver page <br>
-Remove apply filters button on fleet page <br>
 Stretch: Allow home page chart to display events for specific drivers <br>
