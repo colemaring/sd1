@@ -49,6 +49,5 @@ python client_test.py
 
 ## TODO:
 
-Include % change on Scorecard <br>
 FCM/Push notifs <br>
 Add error handling for duplicated phone numbers? <br>
