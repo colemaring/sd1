@@ -229,16 +229,21 @@ export default function Notifications() {
       </Modal>
 
       <Modal show={!!alertEvent} onHide={dismissAlert} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>High Risk Event Detected</Modal.Title>
+        <Modal.Header className="border-0">
+          <Modal.Title className="fs-4 fw-bold text-danger">
+            High Risk Event Detected
+          </Modal.Title>
         </Modal.Header>
         {alertEvent && (
-          <Modal.Body>
-            <p>
-              <strong>{alertEvent.driver_name}</strong> is currently{" "}
-              <strong>sleeping</strong>. Please contact them at:
+          <Modal.Body className="text-center">
+            <p className="mb-2 fw-semibold">
+              {alertEvent.driver_name} is currently <strong>sleeping</strong>.
             </p>
-            <p>
+            <p className="mb-0 fw-light">Please contact them at:</p>
+            <p
+              className="fw-bold mt-3"
+              style={{ fontSize: "1.5rem", lineHeight: 1.2 }}
+            >
               {alertEvent.phone_number
                 ? alertEvent.phone_number.replace(
                     /(\d{3})(\d{3})(\d{4})/,
@@ -248,11 +253,20 @@ export default function Notifications() {
             </p>
           </Modal.Body>
         )}
-        <Modal.Footer>
-          <Button variant="secondary" onClick={dismissAlert}>
+
+        <Modal.Footer className="border-0 d-flex justify-content-center">
+          <Button
+            variant="secondary"
+            onClick={dismissAlert}
+            style={{ width: "100px" }}
+          >
             Dismiss
           </Button>
-          <Button variant="danger" onClick={dismissAlert}>
+          <Button
+            variant="danger"
+            onClick={dismissAlert}
+            style={{ width: "100px" }}
+          >
             Resolved
           </Button>
         </Modal.Footer>
