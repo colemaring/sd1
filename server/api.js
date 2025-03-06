@@ -279,6 +279,46 @@ router.get("/dispatchers/phone/:phone_number", async (req, res) => {
   }
 });
 
+// Get trip IDs, risk scores, and end times for a driver by phone number
+router.get("/driver-trips/:phoneNumber", async (req, res) => {
+  const { phoneNumber } = req.params;
+  
+  try {
+    // First, find the driver ID using the phone number
+    const driverResult = await db.query(
+      "SELECT id FROM driver WHERE phone_number = $1",
+      [phoneNumber]
+    );
+
+    if (driverResult.rows.length === 0) {
+      return res.status(404).json({ error: "Driver not found" });
+    }
+
+    const driverId = driverResult.rows[0].id;
+
+    // Fetch the trips for this driver, including id, risk_score and end_time
+    const tripResult = await db.query(
+      `SELECT id, risk_score, end_time 
+       FROM trip 
+       WHERE driver_id = $1
+       ORDER BY start_time DESC`,
+      [driverId]
+    );
+
+    res.status(200).json({
+      driver_id: driverId,
+      trips: tripResult.rows
+    });
+    
+  } catch (err) {
+    console.error("Error fetching driver trips:", err);
+    res.status(500).json({
+      error: "Failed to retrieve driver trips",
+      details: err.message
+    });
+  }
+});
+
 // Get risk score history for a driver by phone number
 router.get(
   "/driver_risk_history/driver/phone/:phoneNumber",
