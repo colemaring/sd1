@@ -57,7 +57,7 @@ function RiskHistoryGraph() {
       },
       title: {
         display: true,
-        text: "Risk Score History (30 Days)",
+        text: "Safety Score History (30 Days)",
         font: {
           size: 15,
         },
@@ -66,15 +66,21 @@ function RiskHistoryGraph() {
       tooltip: {
         callbacks: {
           label: function (context) {
-            return `Risk Score: ${context.formattedValue}`;
+            return `Safety Score: ${context.formattedValue}`;
           },
           afterLabel: function (context) {
-            const item = riskHistory[context.dataIndex];
-            const from = new Date(item.from_timestamp).toLocaleString(); // Shows both date and time
-            const to = item.to_timestamp
-              ? new Date(item.to_timestamp).toLocaleString() // Shows both date and time
-              : "Present";
-            return [`From: ${from}`, `To: ${to}`];
+            const item = context.raw;
+            const startTime = item.startTime
+              ? new Date(item.startTime).toLocaleString()
+              : "N/A";
+            const endTime = item.endTime
+              ? new Date(item.endTime).toLocaleString()
+              : "In Progress";
+            return [
+              `Trip ID: ${item.tripId}`,
+              `Start Time: ${startTime}`,
+              `End Time: ${endTime}`,
+            ];
           },
         },
       },
@@ -101,7 +107,7 @@ function RiskHistoryGraph() {
       },
       y: {
         min: 60,
-        max: 104,
+        max: 100,
         title: {
           display: false,
         },
@@ -111,24 +117,15 @@ function RiskHistoryGraph() {
         beginAtZero: false,
         ticks: {
           color: theme === "dark" ? "#ffffff" : "#000000",
-          callback: function (value) {
-            if (value <= 100) {
-              return value;
-            } else {
-              return "";
-            }
-          },
         },
       },
     },
   };
 
   useEffect(() => {
-    // Function to fetch risk history data
-    const fetchRiskHistory = async () => {
+    // Fectch trip data every second
+    const fetchTripData = async () => {
       try {
-        //console.log("Fetching risk history for phone:", driverPhone);
-        setLoading(false); // Don't show loading indicator on refreshes
         setError(null);
 
         if (!driverPhone) {
@@ -136,7 +133,7 @@ function RiskHistoryGraph() {
         }
 
         const response = await fetch(
-          `https://aifsd.xyz/api/driver_risk_history/driver/phone/${driverPhone}`
+          `https://aifsd.xyz/api/driver-trips/${driverPhone}`
         );
 
         if (!response.ok) {
@@ -145,22 +142,34 @@ function RiskHistoryGraph() {
 
         const data = await response.json();
 
+        if (!data.trips || !Array.isArray(data.trips)) {
+          throw new Error("Invalid response format");
+        }
+
         // Calculate date from one month ago
-        const oneMongthAgo = new Date();
-        oneMongthAgo.setDate(oneMongthAgo.getDate() - 30);
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
 
-        // Filter data to only include entries from the past month
-        const filteredData = data.filter((item) => {
-          const itemDate = new Date(item.from_timestamp);
-          return itemDate >= oneMongthAgo;
-        });
+        // Format and filter trips data for the chart
+        const formattedTrips = data.trips
+          .filter((trip) => {
+            // If no end_time, it's current and should be included
+            if (!trip.end_time) return true;
 
-        // Sort by from_timestamp in ascending order for the chart
-        const sortedData = filteredData.sort(
-          (a, b) => new Date(a.from_timestamp) - new Date(b.from_timestamp)
-        );
+            const tripDate = new Date(trip.end_time);
+            return tripDate >= oneMonthAgo;
+          })
+          .map((trip) => ({
+            tripId: trip.id,
+            y: parseFloat(trip.risk_score),
+            x: new Date(trip.end_time || new Date()), // Use current time if trip hasn't ended
+            timestamp: trip.end_time || new Date().toISOString(),
+            endTime: trip.end_time,
+            startTime: trip.start_time,
+          }))
+          .sort((a, b) => a.tripId - b.tripId); // Sort ascending
 
-        setRiskHistory(sortedData);
+        setRiskHistory(formattedTrips);
       } catch (err) {
         console.error("Error:", err);
         setError(err.message);
@@ -169,15 +178,12 @@ function RiskHistoryGraph() {
       }
     };
 
-    // Initial fetch
-    fetchRiskHistory();
+    fetchTripData();
 
-    // Set up interval to fetch data every second
     const intervalId = setInterval(() => {
-      fetchRiskHistory();
+      fetchTripData();
     }, 1000);
 
-    // Clean up the interval when component unmounts
     return () => clearInterval(intervalId);
   }, [driverPhone]);
 
@@ -209,10 +215,7 @@ function RiskHistoryGraph() {
     datasets: [
       {
         label: "Risk Score",
-        data: riskHistory.map((item) => ({
-          x: new Date(item.from_timestamp),
-          y: parseFloat(item.risk_score),
-        })),
+        data: riskHistory,
         borderColor: primaryColor,
         backgroundColor: hexToRgba(primaryColor),
         borderWidth: 2,
