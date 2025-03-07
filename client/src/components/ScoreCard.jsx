@@ -108,7 +108,7 @@ function ScoreCard({ style, name, phone, score, change, active }) {
             <div className="flex items-baseline">
               <h1 className="text-4xl font-bold">{score}</h1>
               <h3 className={`text-sm font-medium pl-2 ${change < 0 ? 'text-destructive' : change > 0 ? 'text-green-500' : ''}`}>
-                {`${change >= 0 ? '+' : ''}${change}%`}
+                {`${change === null ? '+0%' : `${change >= 0 ? '+' : ''}${change}%`}`}
               </h3>
             </div>
             <h3 className="text-xs text-muted-foreground">Safety Score</h3>
