@@ -147,7 +147,9 @@ const AllStats = () => {
           });
 
           return {
-            label: eventType,
+            label: eventType
+              .replace(/_/g, " ")
+              .replace(/\b\w/g, (char) => char.toUpperCase()),
             data: dailyCounts,
             borderColor: colors[index % colors.length],
             backgroundColor: hexToRgba(colors[index % colors.length], 0.15),

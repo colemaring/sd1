@@ -14,8 +14,15 @@ const riskEventKeys = [
 ];
 
 const getRiskEventType = (event) => {
-  const types = riskEventKeys.filter((key) => event[key]);
-  return types.length > 0 ? types.join(", ") : "N/A";
+  return riskEventKeys
+    .filter((key) => event[key])
+    .map((key) => 
+      key
+        .split("_")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")
+    )
+    .join(", ");
 };
 
 export default function Notifications() {
