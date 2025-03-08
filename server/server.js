@@ -15,7 +15,7 @@ const isDev = process.argv.includes("dev");
 
 let httpsServer, httpServer;
 const activeTrips = new Map(); // Map to store active trips and their last message timestamp
-const TRIP_TIMEOUT = 10 * 60 * 1000; // Trips time out after x minutes of no messages (driver activity set to false and trip end_time set to curr time)
+const TRIP_TIMEOUT = 1 * 60 * 1000; // Trips time out after x minutes of no messages (driver activity set to false and trip end_time set to curr time)
 
 if (!isDev) {
   const options = {
