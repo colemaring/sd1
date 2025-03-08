@@ -1,24 +1,25 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../bootstrap-overrides.css"; // Custom overrides
+import "../bootstrap-overrides.css";
 import "../App.css";
 import WarningCount from "../components/WarningCount";
 import DriverInfo from "../components/DriverInfo";
 import EventsLogNew from "../components/EventsLogNew";
 import NavBar from "../components/NavBar";
-import { WebSocketsContext } from "../context/WebSocketsContext";
 import RiskHistoryGraph from "../components/fleetdash components/RiskHistoryGraph";
 import AISummary from "../components/fleetdash components/AISummary";
+import { DriverRiskEventsContext } from "../context/DriverRiskEventsContext";
 
 export default function DriverDash() {
-  const { driverPhone } = useParams();
-  const messages = useContext(WebSocketsContext);
-  const [driverData, setDriverData] = useState({});
+  const { riskEvents, updateRiskEvents } = useContext(DriverRiskEventsContext);
 
   useEffect(() => {
-    setDriverData(messages[driverPhone] || {});
-  }, [driverPhone, messages]);
+    const interval = setInterval(() => {
+      updateRiskEvents();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [updateRiskEvents]);
 
   return (
     <>
@@ -29,22 +30,19 @@ export default function DriverDash() {
             <div className="col-span-12 border">
               <NavBar />
             </div>
-
             {/* Driver Info */}
             <div className="col-span-12 md:col-span-6 lg:col-span-5 p-4">
               <DriverInfo />
             </div>
-
-            <RiskHistoryGraph driverData={driverData} />
+            <RiskHistoryGraph riskEvents={riskEvents} />
             <AISummary />
-
             {/* Warning Count */}
             <div className="col-span-12 md:col-span-6 lg:col-span-3 p-4 ">
-              <WarningCount driverData={driverData} />
+              <WarningCount riskEvents={riskEvents} />
             </div>
             {/* Events Log */}
             <div className="col-span-12 md:col-span-6 lg:col-span-9 p-4">
-              <EventsLogNew driverData={driverData} />
+              <EventsLogNew riskEvents={riskEvents} />
             </div>
           </div>
         </div>

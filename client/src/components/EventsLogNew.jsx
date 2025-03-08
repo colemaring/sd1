@@ -1,89 +1,59 @@
-import React, {
-  useEffect,
-  useMemo,
-  useState,
-  useRef,
-  useCallback,
-} from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { ThemeProvider, useTheme } from "../context/ThemeContext";
-import { DriverRiskEventsContext } from "../context/DriverRiskEventsContext";
-import { useContext } from "react";
+import { useTheme } from "../context/ThemeContext";
+
 import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
 
-const EventsLogNew = ({ driverData }) => {
+const EventsLogNew = ({ riskEvents }) => {
   const { driverPhone } = useParams();
   const { theme } = useTheme();
-  const riskEvents = useContext(DriverRiskEventsContext);
   const [events, setEvents] = useState([]);
   const [tripRiskScores, setTripRiskScores] = useState({});
 
-  // Fetch trip risk scores
+  // For the table trip rows
   useEffect(() => {
-    const fetchTripRiskScores = async () => {
-      if (!driverPhone) return;
-
-      try {
-        const response = await fetch(
-          `https://aifsd.xyz/api/driver-trips/${driverPhone}`
-        );
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
+    const interval = setInterval(() => {
+      const fetchTripRiskScores = async () => {
+        if (!driverPhone) return;
+        try {
+          const response = await fetch(
+            `https://aifsd.xyz/api/driver-trips/${driverPhone}`
+          );
+          if (!response.ok) throw new Error(`Error: ${response.status}`);
+          const data = await response.json();
+          const tripDataLookup = {};
+          if (data.trips && Array.isArray(data.trips)) {
+            data.trips.forEach((trip) => {
+              tripDataLookup[trip.id.toString()] = {
+                risk_score: trip.risk_score,
+                start_time: trip.start_time,
+                end_time: trip.end_time,
+              };
+            });
+          }
+          setTripRiskScores(tripDataLookup);
+        } catch (error) {
+          console.error("Failed to fetch trip risk scores:", error);
         }
-
-        const data = await response.json();
-        console.log(data);
-
-        // Convert to lookup object
-        const tripDataLookup = {};
-        if (data.trips && Array.isArray(data.trips)) {
-          data.trips.forEach((trip) => {
-            // Convert the trip id to a string
-            tripDataLookup[trip.id.toString()] = {
-              risk_score: trip.risk_score,
-              start_time: trip.start_time,
-              end_time: trip.end_time,
-            };
-          });
-        }
-
-        setTripRiskScores(tripDataLookup);
-      } catch (error) {
-        console.error("Failed to fetch trip risk scores:", error);
-      }
-    };
-
-    fetchTripRiskScores();
+      };
+      fetchTripRiskScores();
+    }, 1000);
+    return () => clearInterval(interval);
   }, [driverPhone]);
 
+  // Build events using the riskEvents passed from parent
   useEffect(() => {
     let newEvents = [];
 
-    // Convert driverData to events.
-    if (driverData) {
-      for (const [key, value] of Object.entries(driverData)) {
-        if (value === true && key !== "FirstFlag" && key !== "LastFlag") {
-          newEvents.push({
-            date: new Date(driverData.Timestamp).toLocaleString(),
-            eventType: key,
-            durationOrLocation: "...",
-            aiType: "Inside",
-            tripId: "Current Trip",
-            riskScore: "Current",
-          });
-        }
-      }
-    }
-
-    // Parse risk events from context.
+    // Process riskEvents passed as a prop
     if (riskEvents && riskEvents.length > 0) {
       for (const event of riskEvents) {
         for (const [key, value] of Object.entries(event)) {
-          if (value === true) {
-            const tripId = event.trip_id || "Current Trip";
+          if (value === true && key !== "LastFlag") {
+            const tripId = event.trip_id || "";
             newEvents.push({
               date: new Date(event.timestamp).toLocaleString(),
               eventType: key
@@ -92,71 +62,33 @@ const EventsLogNew = ({ driverData }) => {
               durationOrLocation: event.durationOrLocation || "...",
               aiType: event.aiType || "Inside",
               tripId: tripId,
-              riskScore: tripRiskScores[tripId] || "bruh",
+              riskScore: tripRiskScores[tripId] || "N/A",
             });
           }
         }
       }
     }
 
-    // Merge new events with previously accumulated current trip events.
-    setEvents((prevEvents) => {
-      const prevNonCurrent = prevEvents.filter(
-        (event) => event.tripId !== "Current Trip"
-      );
-      const prevCurrent = prevEvents.filter(
-        (event) => event.tripId === "Current Trip"
-      );
-      const newCurrentTripEvents = newEvents.filter(
-        (event) => event.tripId === "Current Trip"
-      );
-      const newNonCurrentEvents = newEvents.filter(
-        (event) => event.tripId !== "Current Trip"
-      );
-
-      // Combine previous non-current with new non-current events,
-      // and add both previously accumulated and newly received current trip events.
-      const merged = [
-        ...newNonCurrentEvents,
-        ...prevCurrent,
-        ...newCurrentTripEvents,
-      ];
-
-      // Sort the merged events based on tripId.
-      merged.sort((a, b) => {
-        // If one trip is "Current Trip", prioritize it.
-        if (a.tripId === "Current Trip" && b.tripId !== "Current Trip") {
-          return -1;
-        } else if (b.tripId === "Current Trip" && a.tripId !== "Current Trip") {
-          return 1;
-        } else if (a.tripId === "Current Trip" && b.tripId === "Current Trip") {
-          return 0;
-        } else {
-          // Both are not "Current Trip", so attempt numeric sort.
-          const aId = parseInt(a.tripId);
-          const bId = parseInt(b.tripId);
-          if (isNaN(aId) || isNaN(bId)) {
-            return String(b.tripId).localeCompare(String(a.tripId));
-          }
-          return bId - aId; // Descending order for numeric tripIds.
-        }
-      });
-
-      return merged;
+    // Sort events descending by numeric tripId when possible.
+    newEvents.sort((a, b) => {
+      const aId = parseInt(a.tripId);
+      const bId = parseInt(b.tripId);
+      if (isNaN(aId) || isNaN(bId)) {
+        return String(b.tripId).localeCompare(String(a.tripId));
+      }
+      return bId - aId;
     });
-  }, [driverData, riskEvents, tripRiskScores]);
+
+    setEvents(newEvents);
+  }, [riskEvents, tripRiskScores]);
 
   const columns = useMemo(
     () => [
       {
         accessorKey: "date",
         header: "Date of Event",
-        Cell: ({ row, cell }) => {
-          // For individual event rows, return the regular date
-          return cell.getValue();
-        },
+        Cell: ({ row, cell }) => cell.getValue(),
         AggregatedCell: ({ row, cell }) => {
-          // This is a grouped row (trip row)
           const tripId = row.groupingValue;
           const tripData = tripRiskScores[tripId];
           if (tripData) {
@@ -170,14 +102,16 @@ const EventsLogNew = ({ driverData }) => {
                 </div>
                 <div>
                   <strong>End:</strong>{" "}
-                  {tripData.end_time
-                    ? new Date(tripData.end_time).toLocaleString()
-                    : "In Progress"}
+                  {tripData.end_time ? (
+                    new Date(tripData.end_time).toLocaleString()
+                  ) : (
+                    <strong style={{ color: "green" }}>In Progress</strong>
+                  )}
                 </div>
               </div>
             );
           }
-          return cell.getValue(); // fallback if no tripData found
+          return cell.getValue();
         },
       },
       {
@@ -191,23 +125,34 @@ const EventsLogNew = ({ driverData }) => {
       {
         accessorKey: "riskScore",
         header: "Safety Score",
-        // For regular (non-grouped) rows, hide risk score
         Cell: ({ row, cell }) => {
           if (row.getIsGrouped()) {
-            // We are in a group header (trip row)
             const tripId = row.groupingValue;
             const tripData = tripRiskScores[tripId];
-            console.log(tripData.risk_score + " test");
-            return <span>{tripData ? tripData.risk_score : "-"}</span>;
+            return (
+              <span>
+                {tripData
+                  ? tripData.end_time
+                    ? tripData.risk_score
+                    : "..."
+                  : "-"}
+              </span>
+            );
           }
-          // Otherwise, do not display risk score for individual risk event rows
           return null;
         },
-        // For grouped rows (trip header), show the safety score
         AggregatedCell: ({ row }) => {
           const tripId = row.groupingValue;
           const tripData = tripRiskScores[tripId];
-          return <span>{tripData ? tripData.risk_score : "TBD"}</span>;
+          return (
+            <span>
+              {tripData
+                ? tripData.end_time
+                  ? tripData.risk_score
+                  : "-"
+                : "TBD"}
+            </span>
+          );
         },
       },
       {
@@ -219,9 +164,8 @@ const EventsLogNew = ({ driverData }) => {
   );
 
   const baseBackgroundColor =
-    theme === "dark" ? "rgba(25,24,23)" : "rgba(255, 255, 255, 0.8)";
-
-  const textColor = theme === "dark" ? "rgba(255, 255, 255, 0.8)" : "#000";
+    theme === "dark" ? "rgba(25,24,23)" : "rgba(255,255,255,0.8)";
+  const textColor = theme === "dark" ? "rgba(255,255,255,0.8)" : "#000";
 
   const table = useMaterialReactTable({
     columns,
@@ -243,15 +187,9 @@ const EventsLogNew = ({ driverData }) => {
     muiTableHeadCellProps: {
       sx: { color: theme === "dark" ? "white" : "black" },
     },
-    muiExpandButtonProps: {
-      sx: {
-        color: theme === "dark" ? "#fff" : "#000",
-      },
-    },
+    muiExpandButtonProps: { sx: { color: theme === "dark" ? "#fff" : "#000" } },
     muiExpandAllButtonProps: {
-      sx: {
-        color: theme === "dark" ? "#fff" : "#000",
-      },
+      sx: { color: theme === "dark" ? "#fff" : "#000" },
     },
     muiToolbarAlertBannerProps: {
       sx: {
@@ -266,8 +204,8 @@ const EventsLogNew = ({ driverData }) => {
       },
     },
     mrtTheme: () => ({
-      baseBackgroundColor: baseBackgroundColor,
-      textColor: textColor,
+      baseBackgroundColor,
+      textColor,
     }),
   });
 

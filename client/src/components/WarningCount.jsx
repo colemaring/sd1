@@ -1,14 +1,12 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Dropdown, DropdownButton } from "react-bootstrap";
 import { IoMdCheckmarkCircle, IoMdCloseCircle } from "react-icons/io";
 import { IoAlertCircle } from "react-icons/io5";
 import { useTheme } from "../context/ThemeContext";
-import { DriverRiskEventsContext } from "../context/DriverRiskEventsContext";
 import "../bootstrap-overrides.css";
 
-const WarningCount = ({ driverData }) => {
+const WarningCount = ({ riskEvents }) => {
   const { theme } = useTheme();
-  const riskEvents = useContext(DriverRiskEventsContext);
   const [selectedFilter, setSelectedFilter] = useState("7 Day");
   const [warningCounts, setWarningCounts] = useState({
     drinking: 0,
@@ -54,9 +52,7 @@ const WarningCount = ({ driverData }) => {
     ),
   };
 
-  // Use risk events from context to compute warning counts based on the selected filter.
   useEffect(() => {
-    // Initialize counts to zero when no events exist
     const initializeCounts = () => {
       setWarningCounts({
         drinking: 0,
@@ -72,7 +68,6 @@ const WarningCount = ({ driverData }) => {
       });
     };
 
-    // Handle empty or invalid risk events
     if (!riskEvents || !Array.isArray(riskEvents) || riskEvents.length === 0) {
       initializeCounts();
       return;
@@ -91,7 +86,6 @@ const WarningCount = ({ driverData }) => {
         return false;
       });
 
-      // Rest of your existing code...
       const newCounts = {
         drinking: 0,
         eating: 0,
@@ -107,7 +101,7 @@ const WarningCount = ({ driverData }) => {
 
       for (const event of filteredEvents) {
         for (const [key, value] of Object.entries(event)) {
-          if (value === true && newCounts[key] !== undefined) {
+          if (value === true && newCounts.hasOwnProperty(key)) {
             newCounts[key] += 1;
           }
         }
@@ -119,39 +113,6 @@ const WarningCount = ({ driverData }) => {
       initializeCounts();
     }
   }, [riskEvents, selectedFilter]);
-
-  // Merge in additional counts based on driverData coming from props.
-  useEffect(() => {
-    if (!driverData) return;
-
-    const updateCounts = () => {
-      const newCounts = { ...warningCounts };
-
-      const keyMapping = {
-        Drinking: "drinking",
-        Eating: "eating",
-        OnPhone: "phone",
-        SeatbeltOff: "seatbelt_off",
-        Sleeping: "sleeping",
-        Smoking: "smoking",
-        OutOfLane: "out_of_lane",
-        RiskyDrivers: "risky_drivers",
-        UnsafeDistance: "unsafe_distance",
-        HandsOffWheel: "hands_off_wheel",
-      };
-
-      for (const [key, value] of Object.entries(driverData)) {
-        const mappedKey = keyMapping[key];
-        if (value === true && mappedKey && newCounts[mappedKey] !== undefined) {
-          newCounts[mappedKey] += 1;
-        }
-      }
-
-      setWarningCounts(newCounts);
-    };
-
-    updateCounts();
-  }, [driverData]);
 
   const handleFilterClick = (filter) => {
     setSelectedFilter(filter);
@@ -181,7 +142,7 @@ const WarningCount = ({ driverData }) => {
                 warningCounts[a.key] !== undefined ? warningCounts[a.key] : 0;
               const countB =
                 warningCounts[b.key] !== undefined ? warningCounts[b.key] : 0;
-              return countB - countA; // Sorting in descending order
+              return countB - countA;
             })
             .map(({ label, key }) => {
               const count =

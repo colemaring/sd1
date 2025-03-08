@@ -1,11 +1,13 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useCallback } from "react";
 
 export const DriverRiskEventsContext = createContext();
 
 export const DriverRiskEventsProvider = ({ children, selectedFilters }) => {
   const { driverPhone } = useParams();
   const [riskEvents, setRiskEvents] = useState([]);
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
     if (!driverPhone) return;
@@ -36,10 +38,14 @@ export const DriverRiskEventsProvider = ({ children, selectedFilters }) => {
     };
 
     fetchRiskEvents();
-  }, [driverPhone, selectedFilters]);
+  }, [driverPhone, selectedFilters, update]);
+
+  const updateRiskEvents = useCallback(() => {
+    setUpdate((prevUpdate) => !prevUpdate);
+  }, []);
 
   return (
-    <DriverRiskEventsContext.Provider value={riskEvents}>
+    <DriverRiskEventsContext.Provider value={{ riskEvents, updateRiskEvents }}>
       {children}
     </DriverRiskEventsContext.Provider>
   );
