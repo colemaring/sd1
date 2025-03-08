@@ -33,7 +33,7 @@ const DriverInfo = () => {
   return (
     <div className=" relative flex flex-row items-center rounded-xl w-full p-6 bg-chart-4 text-card-foreground shadow border bg1 bg-top bg-contain ">
       {/* Left: Avatar + Risk Score */}
-      <div className="flex flex-col items-center w-1/5 pr-4">
+      <div className="flex flex-col items-center w-2/5 pr-4">
         {/* Avatar Placeholder */}
         <div className="rounded-full bg-muted w-20 h-20 overflow-hidden flex items-center justify-center">
           <img
@@ -42,7 +42,7 @@ const DriverInfo = () => {
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="pt-4 text-center mb-1">
+        <div className="pt-4 text-center w-100 mb-1">
           <h1 className="text-3xl font-bold">
             {driverData.risk_score || "N/A"}
           </h1>
@@ -58,11 +58,30 @@ const DriverInfo = () => {
                   : ""
               }`}
             >
-              {driverData.percent_change}% Change
+              {driverData.percent_change}%
             </span>
           ) : (
-            <span className="font-bold">+0% Change</span>
+            <span className="font-bold">+0%</span>
           )}
+
+          <div className="flex items-center w-full">
+              <span className="text-xs text-muted-foreground">Unsafe</span>
+              
+              <div className="relative flex-grow mx-2 bg-gray-300 rounded-full h-2">
+                <div
+                  className={`h-full rounded-full ${
+                    driverData.risk_score > 80
+                      ? 'bg-green-500'
+                      : driverData.risk_score > 60
+                      ? 'bg-yellow-500'
+                      : 'bg-red-500'
+                  }`}
+                  style={{ width: `${driverData.risk_score}%` }}
+                ></div>
+              </div>
+              
+              <span className="text-xs text-muted-foreground">Safe</span>
+            </div>
         </div>
       </div>
 

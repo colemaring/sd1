@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom"; 
 import { FaTrash } from "react-icons/fa";
 import { Modal, Button, Form } from "react-bootstrap";
 
 function ScoreCard({ style, name, phone, score, change, active }) {
-  const navigate = useNavigate(); // Initialize useNavigate
-  const [activeDropdown, setActiveDropdown] = useState(null); // State to track the active dropdown
+  const navigate = useNavigate(); 
+  const [activeDropdown, setActiveDropdown] = useState(null); 
   const [showModal, setShowModal] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const toggleDropdown = (name) => {
-    // If the clicked dropdown is already open, close it. Otherwise, open the new one.
     setActiveDropdown((prev) => (prev === name ? null : name));
   };
 
@@ -66,7 +65,7 @@ function ScoreCard({ style, name, phone, score, change, active }) {
       <div
         key={name}
         className={`${style != null ? style : "relative cardBorder flex rounded-xl w-72 lg:h-[200px] p-4 bg-card text-foreground shadow-md cursor-pointer border transition-transform duration-300 ease-in-out hover:scale-[1.02]"}`}
-        onClick={handleCardClick} // Add onClick handler
+        onClick={handleCardClick}
       >
         {/* Profile Picture */}
         <div className="flex flex-col items-center">
@@ -112,6 +111,29 @@ function ScoreCard({ style, name, phone, score, change, active }) {
               </h3>
             </div>
             <h3 className="text-xs text-muted-foreground">Safety Score</h3>
+
+            {/* Safety Score Line */}
+            <div className="flex items-center w-full">
+              {/* Unsafe Label */}
+              <span className="text-xs text-muted-foreground">Unsafe</span>
+              
+              {/* Safety Line */}
+              <div className="relative flex-grow mx-2 bg-gray-300 rounded-full h-2">
+                <div
+                  className={`h-full rounded-full ${
+                    score > 80
+                      ? 'bg-green-500'
+                      : score > 60
+                      ? 'bg-yellow-500'
+                      : 'bg-red-500'
+                  }`}
+                  style={{ width: `${score}%` }}
+                ></div>
+              </div>
+              
+              {/* Safe Label */}
+              <span className="text-xs text-muted-foreground">Safe</span>
+            </div>
           </div>
         </div>
 
@@ -130,8 +152,6 @@ function ScoreCard({ style, name, phone, score, change, active }) {
             setPassword("");
           }}
           onClick={(e) => e.stopPropagation()}
-          // backdrop="static"
-          // keyboard={false}
         >
           <Modal.Header closeButton>
             <Modal.Title>Confirm Driver Deletion</Modal.Title>
