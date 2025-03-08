@@ -58,7 +58,7 @@ const DriverInfo = () => {
                   : ""
               }`}
             >
-              {driverData.percent_change}%
+              {driverData.percent_change >= 0 ? `+${driverData.percent_change}%` : `${driverData.percent_change}%`}
             </span>
           ) : (
             <span className="font-bold">+0%</span>
