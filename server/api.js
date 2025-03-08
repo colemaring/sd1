@@ -184,12 +184,14 @@ router.patch("/driver/:id/active", async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Driver not found" });
     }
-    // End any active trips with no end_time
-    const now = new Date();
-    await db.query(
-      `UPDATE trip SET end_time = $1 WHERE driver_id = $2 AND end_time IS NULL`,
-      [now, id]
-    );
+    // Only end active trips when active is false
+    if (active === false) {
+      const now = new Date();
+      await db.query(
+        `UPDATE trip SET end_time = $1 WHERE driver_id = $2 AND end_time IS NULL`,
+        [now, id]
+      );
+    }
     res.status(200).json(result.rows[0]);
   } catch (err) {
     res.status(400).json({ error: err.message });
