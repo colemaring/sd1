@@ -88,6 +88,13 @@ router.post("/risk-events", async (req, res) => {
 router.post("/trip", async (req, res) => {
   const { driver_id, start_time } = req.body;
   try {
+    const now = new Date();
+    await db.query(
+      `UPDATE trip SET end_time = $1 WHERE driver_id = $2 AND end_time IS NULL`,
+      [now, driver_id]
+    );
+
+    // Create a new trip
     const result = await db.query(
       `INSERT INTO trip (driver_id, start_time) 
               VALUES ($1, $2) RETURNING *`,
