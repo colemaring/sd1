@@ -50,7 +50,7 @@ python client_test.py
 ## TODO:
 
 FCM/Push notifs <br>
-fix Current Trip table logic <br>
+outside ai events not mapped for warning count & table <br>
 ensure all events are properly matched to inside or outside ai in table <br>
 Implement filtering on home page and create necessary APIs <br>
 Stretch: Allow home page chart to display events for specific drivers <br>
