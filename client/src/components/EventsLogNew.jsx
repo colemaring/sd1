@@ -59,8 +59,8 @@ const EventsLogNew = ({ riskEvents }) => {
               eventType: key
                 .replace(/_/g, " ")
                 .replace(/\b\w/g, (char) => char.toUpperCase()),
-              durationOrLocation: event.durationOrLocation || "...",
-              aiType: event.aiType || "Inside",
+              durationOrLocation: event.durationOrLocation || "...", // Unused?
+              aiType: (["unsafe_distance", "out_of_lane", "risky_drivers"].includes(key) ? "Outside" : "Inside"),
               tripId: tripId,
               riskScore: tripRiskScores[tripId] || "N/A",
             });
