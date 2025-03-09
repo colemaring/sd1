@@ -50,7 +50,7 @@ python client_test.py
 ## TODO:
 
 FCM/Push notifs <br>
-outside ai events not mapped for warning count & table <br>
-ensure all events are properly matched to inside or outside ai in table <br>
+Look into why risky drivers events are not appearing in warning count or events log <br>
+Make visual updates to safety score history graph <br>
 Implement filtering on home page and create necessary APIs <br>
 Stretch: Allow home page chart to display events for specific drivers <br>
