@@ -261,6 +261,19 @@ async function handleTripTimeout(tripId, driverId) {
       }
     );
 
+    // Get driver's old risk score
+    const driverResponse = await fetch(
+      `https://aifsd.xyz/api/drivers/${driverId}`
+    );
+    if (!driverResponse.ok) {
+      console.error("Error getting driver:", await driverResponse.json());
+      return;
+    }
+
+    const driver = await driverResponse.json();
+    console.log("Driver:", driver);
+    const oldRiskScore = driver.risk_score;
+
     if (updateTripResponse.ok) {
       console.log(`Trip ${tripId} ended due to timeout.`);
 
@@ -377,18 +390,6 @@ async function handleTripTimeout(tripId, driverId) {
             );
           }
         }
-
-        // Get driver's old risk score
-        const driverResponse = await fetch(
-          `https://aifsd.xyz/api/drivers/${driverId}`
-        );
-        if (!driverResponse.ok) {
-          console.error("Error getting driver:", await driverResponse.json());
-          return;
-        }
-        const driver = await driverResponse.json();
-        console.log("Driver:", driver);
-        const oldRiskScore = driver.risk_score;
 
         // Calculate the driver's percent change in risk score between old risk score and new average risk score
         const percentChange =
