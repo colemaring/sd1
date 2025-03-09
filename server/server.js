@@ -30,12 +30,11 @@ const MULTIPLIERS = {
   Smoking: 1.02,
   OutOfLane: 1.2,
   UnsafeDistance: 1.00431643,
-  HandsOnWheel_1: 1.10,
-  HandsOnWheel_0: 1.30,
+  HandsOnWheel_1: 1.1,
+  HandsOnWheel_0: 1.3,
 };
 
 const eventFrequencies = new Map(); // To track event frequencies per trip
-
 
 if (!isDev) {
   const options = {
@@ -147,7 +146,7 @@ function calculatePCF(eventFrequencies) {
 }
 
 function calculateSafetyScore(pcf) {
-  let score = SAFETY_SCORE_BASE - (SAFETY_SCORE_SCALING * pcf);
+  let score = SAFETY_SCORE_BASE - SAFETY_SCORE_SCALING * pcf;
   return Math.max(0, Math.min(score, 100));
 }
 
@@ -163,7 +162,7 @@ async function handleWebSocketsMessage(message) {
 
   const driverId = await checkIfDriverExistsElseCreate(parsedMessage);
   const tripId = await checkIfTripExistsElseCreate(driverId, parsedMessage);
-  
+
   if (tripId) {
     // Record timestamp of message for this trip
     activeTrips.set(tripId, {
@@ -229,8 +228,9 @@ async function handleWebSocketsMessage(message) {
 
 // Set driver activity to false and end trip if no messages received in 10 minutes
 async function handleTripTimeout(tripId, driverId) {
-  console.log(`Trip ${tripId} timed out after 10 minutes of inactivity.`);
+  console.log(`Trip ${tripId} timed out after 1 minutes of inactivity.`);
 
+  const tripEvents = eventFrequencies.get(tripId) || {};
   eventFrequencies.delete(tripId);
 
   // Get trip data to check if it's already ended
@@ -264,6 +264,30 @@ async function handleTripTimeout(tripId, driverId) {
     if (updateTripResponse.ok) {
       console.log(`Trip ${tripId} ended due to timeout.`);
 
+      // After ending the trip, calculate the risk score from the stored trip events
+      const pcf = calculatePCF(tripEvents);
+      const safetyScore = Math.round(calculateSafetyScore(pcf) * 100) / 100;
+
+      const updateTripRiskScoreResponse = await fetch(
+        `https://aifsd.xyz/api/trip/${tripId}/risk-score`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ risk_score: safetyScore }),
+        }
+      );
+
+      if (updateTripRiskScoreResponse.ok) {
+        console.log(`Trip ${tripId} risk score updated to ${safetyScore}`);
+      } else {
+        console.error(
+          "Failed to update trip risk score:",
+          await updateTripRiskScoreResponse.text()
+        );
+      }
+
       // Get all trips for this driver to calculate average risk score
       const tripsResponse = await fetch(
         `https://aifsd.xyz/api/trips/driver/${driverId}`
@@ -276,7 +300,8 @@ async function handleTripTimeout(tripId, driverId) {
         const THIRTY_DAYS_AGO = new Date();
         THIRTY_DAYS_AGO.setDate(THIRTY_DAYS_AGO.getDate() - 30);
         const validTrips = trips.filter(
-          (trip) => trip.end_time !== null && new Date(trip.end_time) >= THIRTY_DAYS_AGO
+          (trip) =>
+            trip.end_time !== null && new Date(trip.end_time) >= THIRTY_DAYS_AGO
         );
         const totalRiskScore = validTrips.reduce(
           (acc, trip) => acc + Number(trip.risk_score),
@@ -299,7 +324,8 @@ async function handleTripTimeout(tripId, driverId) {
 
         if (!prevRiskHistoryResponse.ok) {
           console.error(
-            "Error updating previous risk history entry for driverId: " + driverId,
+            "Error updating previous risk history entry for driverId: " +
+              driverId,
             await prevRiskHistoryResponse.text()
           );
         } else {
@@ -345,7 +371,10 @@ async function handleTripTimeout(tripId, driverId) {
               await newRiskHistoryResponse.text()
             );
           } else {
-            console.log("New risk history entry added successfully for driverId: " + driverId);
+            console.log(
+              "New risk history entry added successfully for driverId: " +
+                driverId
+            );
           }
         }
 
@@ -354,10 +383,7 @@ async function handleTripTimeout(tripId, driverId) {
           `https://aifsd.xyz/api/drivers/${driverId}`
         );
         if (!driverResponse.ok) {
-          console.error(
-            "Error getting driver:",
-            await driverResponse.json()
-          );
+          console.error("Error getting driver:", await driverResponse.json());
           return;
         }
         const driver = await driverResponse.json();
@@ -365,7 +391,8 @@ async function handleTripTimeout(tripId, driverId) {
         const oldRiskScore = driver.risk_score;
 
         // Calculate the driver's percent change in risk score between old risk score and new average risk score
-        const percentChange = ((averageRiskScore - oldRiskScore) / oldRiskScore) * 100;
+        const percentChange =
+          ((averageRiskScore - oldRiskScore) / oldRiskScore) * 100;
         console.log("Percent change in risk score:", percentChange);
 
         // Update the drivers percent change in risk score
@@ -382,7 +409,10 @@ async function handleTripTimeout(tripId, driverId) {
 
         if (updatePercentChangeResponse.ok) {
           const updatedDriver = await updatePercentChangeResponse.json();
-          console.log("Driver's percent change in risk score updated:", updatedDriver);
+          console.log(
+            "Driver's percent change in risk score updated:",
+            updatedDriver
+          );
         } else {
           console.error(
             "Error updating driver's percent change in risk score:",
@@ -532,13 +562,14 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       const THIRTY_DAYS_AGO = new Date();
       THIRTY_DAYS_AGO.setDate(THIRTY_DAYS_AGO.getDate() - 30);
       const validTrips = trips.filter(
-        (trip) => trip.end_time !== null && new Date(trip.end_time) >= THIRTY_DAYS_AGO
+        (trip) =>
+          trip.end_time !== null && new Date(trip.end_time) >= THIRTY_DAYS_AGO
       );
       const totalRiskScore = validTrips.reduce(
         (acc, trip) => acc + Number(trip.risk_score),
         0
       );
-      const averageRiskScore = 
+      const averageRiskScore =
         validTrips.length > 0 ? totalRiskScore / validTrips.length : 100;
       console.log("Average risk score:", averageRiskScore);
 
@@ -547,10 +578,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
         `https://aifsd.xyz/api/drivers/${driverId}`
       );
       if (!driverResponse.ok) {
-        console.error(
-          "Error getting driver:",
-          await driverResponse.json()
-        );
+        console.error("Error getting driver:", await driverResponse.json());
         return;
       }
       const driver = await driverResponse.json();
@@ -634,7 +662,8 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
         }
 
         // Calculate the driver's percent change in risk score between old risk score and new average risk score
-        const percentChange = ((averageRiskScore - oldRiskScore) / oldRiskScore) * 100;
+        const percentChange =
+          ((averageRiskScore - oldRiskScore) / oldRiskScore) * 100;
         console.log("Percent change in risk score:", percentChange);
 
         //Update the drivers percent change in risk score
@@ -651,7 +680,10 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
 
         if (updatePercentChangeResponse.ok) {
           const updatedDriver = await updatePercentChangeResponse.json();
-          console.log("Driver's percent change in risk score updated:", updatedDriver);
+          console.log(
+            "Driver's percent change in risk score updated:",
+            updatedDriver
+          );
         } else {
           console.error(
             "Error updating driver's percent change in risk score:",
