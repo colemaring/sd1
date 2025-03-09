@@ -7,6 +7,7 @@ from datetime import datetime
 numMessages = 10 # Number of messages to send (exists to simulate first/last flags)
 timeoutSec = 1 # Time to wait between generating new data
 
+"""
 eventFrequencies = {}
 
 # Constants
@@ -27,7 +28,7 @@ MULTIPLIERS = {
 }
 
 def calculate_risky_drivers_multiplier(risky_drivers):
-    """
+    \"""
     Calculate the multiplier for RiskyDrivers based on their count.
     
     Parameters:
@@ -35,12 +36,12 @@ def calculate_risky_drivers_multiplier(risky_drivers):
 
     Returns:
     - float: RiskyDrivers multiplier.
-    """
+    \"""
     # Linear scaling: Each risky driver adds 0.1 to the multiplier
     return 1 + 0.1 * risky_drivers
 
 def calculate_pcf(eventFrequencies):
-    """
+    \"""
     Calculate the Predicted Collision Frequency (PCF) based on event frequencies.
     
     Parameters:
@@ -48,7 +49,7 @@ def calculate_pcf(eventFrequencies):
 
     Returns:
     - float: Predicted Collision Frequency (PCF).
-    """
+    \"""
     pcf = BASE_PCF
     for event, frequency in eventFrequencies.items():
         if event == "RiskyDrivers":
@@ -61,7 +62,7 @@ def calculate_pcf(eventFrequencies):
     return pcf
 
 def calculate_safety_score(pcf):
-    """
+    \"""
     Calculate the Safety Score based on PCF.
     
     Parameters:
@@ -69,15 +70,16 @@ def calculate_safety_score(pcf):
 
     Returns:
     - float: Safety Score (0-100, higher is safer).
-    """
+    \"""
     score = SAFETY_SCORE_BASE - (SAFETY_SCORE_SCALING * pcf)
     return max(0, min(score, 100))  # Clamp the score between 0 and 100
+"""
 
 async def generate_data():
     return {
         "Timestamp": datetime.utcnow().isoformat() + "Z", 
-        "Driver": "Test Dude2",
-        "Phone": "2211524256",
+        "Driver": "Steven Darrell",
+        "Phone": "0101012222",
         "Drinking": random.choices([True, False], weights=[1, 15])[0],
         "Eating": random.choices([True, False], weights=[1, 15])[0],
         "OnPhone": random.choices([True, False], weights=[1, 5])[0],
@@ -116,6 +118,7 @@ async def connect():
                 data["FirstFlag"] = messageCount == 1
                 data["LastFlag"] = messageCount == numMessages
 
+                """
                 # On trip end send the calculated risk score
                 if data["LastFlag"]:
                     pcf = calculate_pcf(eventFrequencies)
@@ -128,12 +131,14 @@ async def connect():
 
                     # Reset for the next trip
                     eventFrequencies = {}
+                """
 
                 # Send data to server   
                 await websocket.send(json.dumps(data))
                 print("Sent message to server")
                 await websocket.recv() # Tells ws server we still exist
-                
+            
+            """
             # Update event frequencies
             for key, value in data.items():
                 if key == "HandsOnWheel":
@@ -145,6 +150,7 @@ async def connect():
                     eventFrequencies["RiskyDrivers"] = eventFrequencies.get("RiskyDrivers", 0) + value
                 elif isinstance(value, bool) and value:
                     eventFrequencies[key] = eventFrequencies.get(key, 0) + 1
+            """
 
             await asyncio.sleep(timeoutSec)
         

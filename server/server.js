@@ -17,6 +17,26 @@ let httpsServer, httpServer;
 const activeTrips = new Map(); // Map to store active trips and their last message timestamp
 const TRIP_TIMEOUT = 1 * 60 * 1000; // Trips time out after x minutes of no messages (driver activity set to false and trip end_time set to curr time)
 
+const BASE_PCF = 0.50243837;
+const SAFETY_SCORE_BASE = 113.96245249;
+const SAFETY_SCORE_SCALING = 27.78938322;
+
+const MULTIPLIERS = {
+  Drinking: 1.18282601,
+  Eating: 1.01,
+  Phone: 1.04,
+  SeatbeltOff: 1.01500342,
+  Sleeping: 1.5,
+  Smoking: 1.02,
+  OutOfLane: 1.2,
+  UnsafeDistance: 1.00431643,
+  HandsOnWheel_1: 1.10,
+  HandsOnWheel_0: 1.30,
+};
+
+const eventFrequencies = new Map(); // To track event frequencies per trip
+
+
 if (!isDev) {
   const options = {
     key: fs.readFileSync("/etc/letsencrypt/live/aifsd.xyz/privkey.pem"),
@@ -108,10 +128,31 @@ if (!isDev) {
   });
 }
 
+function calculateRiskyDriversMultiplier(riskyDrivers) {
+  return 1 + 0.1 * riskyDrivers;
+}
+
+function calculatePCF(eventFrequencies) {
+  let pcf = BASE_PCF;
+  for (const [event, frequency] of Object.entries(eventFrequencies)) {
+    if (event === "RiskyDrivers") {
+      pcf *= calculateRiskyDriversMultiplier(frequency);
+    } else if (MULTIPLIERS[event]) {
+      let multiplier = MULTIPLIERS[event];
+      let adjustedMultiplier = 1 + (multiplier - 1) * frequency;
+      pcf *= adjustedMultiplier;
+    }
+  }
+  return pcf;
+}
+
+function calculateSafetyScore(pcf) {
+  let score = SAFETY_SCORE_BASE - (SAFETY_SCORE_SCALING * pcf);
+  return Math.max(0, Math.min(score, 100));
+}
+
 // Handles backend application logic
 async function handleWebSocketsMessage(message) {
-  // console.log("Received message:", message + " handlewebsocketsmessage");
-
   let parsedMessage;
   try {
     parsedMessage = JSON.parse(message);
@@ -119,12 +160,10 @@ async function handleWebSocketsMessage(message) {
     console.error("Failed to parse message:", message);
     return;
   }
-  // Get driverId of messages coming in
-  const driverId = await checkIfDriverExistsElseCreate(parsedMessage);
-  // console.log("Message recieved with driverId: ", driverId);
 
-  // Get tripId of messages coming in and update driver's activity
+  const driverId = await checkIfDriverExistsElseCreate(parsedMessage);
   const tripId = await checkIfTripExistsElseCreate(driverId, parsedMessage);
+  
   if (tripId) {
     // Record timestamp of message for this trip
     activeTrips.set(tripId, {
@@ -149,6 +188,37 @@ async function handleWebSocketsMessage(message) {
       timeoutId: timeoutId,
     });
 
+    // Ensure eventFrequencies exists for this trip
+    if (!eventFrequencies.has(tripId)) {
+      eventFrequencies.set(tripId, {});
+    }
+    let tripEvents = eventFrequencies.get(tripId);
+
+    // Update event frequencies
+    for (const [key, value] of Object.entries(parsedMessage)) {
+      if (key === "HandsOnWheel") {
+        const eventKey = value === 1 ? "HandsOnWheel_1" : "HandsOnWheel_0";
+        tripEvents[eventKey] = (tripEvents[eventKey] || 0) + 1;
+      } else if (key === "RiskyDrivers" && value > 0) {
+        tripEvents["RiskyDrivers"] = (tripEvents["RiskyDrivers"] || 0) + value;
+      } else if (typeof value === "boolean" && value) {
+        tripEvents[key] = (tripEvents[key] || 0) + 1;
+      }
+    }
+
+    // Calculate risk score
+    const pcf = calculatePCF(tripEvents);
+    const safetyScore = calculateSafetyScore(pcf);
+
+    console.log(`Trip Event Frequencies:`, tripEvents);
+    console.log(`Calculated PCF: ${pcf}`);
+    console.log(`Trip Safety Score: ${safetyScore}`);
+
+    parsedMessage["risk_score"] = Math.round(safetyScore * 100) / 100;
+
+    // Store updated frequencies
+    eventFrequencies.set(tripId, tripEvents);
+
     // Add risk events to trip while trip is active
     await addRiskEvents(tripId, parsedMessage, driverId);
 
@@ -160,6 +230,8 @@ async function handleWebSocketsMessage(message) {
 // Set driver activity to false and end trip if no messages received in 10 minutes
 async function handleTripTimeout(tripId, driverId) {
   console.log(`Trip ${tripId} timed out after 10 minutes of inactivity.`);
+
+  eventFrequencies.delete(tripId);
 
   // Get trip data to check if it's already ended
   try {
@@ -401,6 +473,7 @@ async function endTripIfNeeded(driverId, tripId, parsedMessage) {
       clearTimeout(activeTrips.get(tripId).timeoutId);
     }
     activeTrips.delete(tripId);
+    eventFrequencies.delete(tripId);
 
     const endTime = new Date().toISOString();
 
