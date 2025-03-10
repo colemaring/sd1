@@ -52,5 +52,4 @@ python client_test.py
 FCM/Push notifs <br>
 Look into why risky drivers events are not appearing in warning count or events log <br>
 Make visual updates to safety score history graph <br>
-Implement filtering on home page and create necessary APIs <br>
 Stretch: Allow home page chart to display events for specific drivers <br>
