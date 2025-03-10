@@ -174,8 +174,11 @@ async function handleWebSocketsMessage(message) {
     delete lastMessageWithoutTimestamp.Timestamp;
     delete currentMessageWithoutTimestamp.Timestamp;
 
-    // Compare the current message with the last message
-    if (JSON.stringify(parsedMessage) === JSON.stringify(lastMessage)) {
+    // Compare the copies WITHOUT timestamps (not the original messages)
+    if (
+      JSON.stringify(currentMessageWithoutTimestamp) ===
+      JSON.stringify(lastMessageWithoutTimestamp)
+    ) {
       console.log(`Ignoring duplicate message from driver ${driverPhone}`);
       return;
     }
