@@ -35,6 +35,7 @@ const MULTIPLIERS = {
 };
 
 const eventFrequencies = new Map(); // To track event frequencies per trip
+const lastDriverMessages = new Map(); // Store the last message received for each driver
 
 if (!isDev) {
   const options = {
@@ -158,6 +159,24 @@ async function handleWebSocketsMessage(message) {
   } catch (e) {
     console.error("Failed to parse message:", message);
     return;
+  }
+
+  const driverPhone = parsedMessage.Phone;
+  
+  // Skip processing if this message is identical to the last one received for this driver
+  if (driverPhone && lastDriverMessages.has(driverPhone)) {
+    const lastMessage = lastDriverMessages.get(driverPhone);
+    
+    // Compare the current message with the last message
+    if (JSON.stringify(parsedMessage) === JSON.stringify(lastMessage)) {
+      console.log(`Ignoring duplicate message from driver ${driverPhone}`);
+      return;
+    }
+  }
+  
+  // Update the last message received for this driver
+  if (driverPhone) {
+    lastDriverMessages.set(driverPhone, parsedMessage);
   }
 
   const driverId = await checkIfDriverExistsElseCreate(parsedMessage);
