@@ -162,18 +162,25 @@ async function handleWebSocketsMessage(message) {
   }
 
   const driverPhone = parsedMessage.Phone;
-  
+
   // Skip processing if this message is identical to the last one received for this driver
   if (driverPhone && lastDriverMessages.has(driverPhone)) {
     const lastMessage = lastDriverMessages.get(driverPhone);
-    
+
+    const lastMessageWithoutTimestamp = { ...lastMessage };
+    const currentMessageWithoutTimestamp = { ...parsedMessage };
+
+    // Delete the Timestamp fields from both copies
+    delete lastMessageWithoutTimestamp.Timestamp;
+    delete currentMessageWithoutTimestamp.Timestamp;
+
     // Compare the current message with the last message
     if (JSON.stringify(parsedMessage) === JSON.stringify(lastMessage)) {
       console.log(`Ignoring duplicate message from driver ${driverPhone}`);
       return;
     }
   }
-  
+
   // Update the last message received for this driver
   if (driverPhone) {
     lastDriverMessages.set(driverPhone, parsedMessage);
