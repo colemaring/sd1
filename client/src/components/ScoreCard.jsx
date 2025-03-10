@@ -96,7 +96,9 @@ function ScoreCard({ style, name, phone, score, change, active }) {
             <h3 className="text-sm text-muted-foreground">
               {getRiskLevel(score)}
             </h3>
-            <h1 className="text-lg font-semibold">{name}</h1>
+            <h1 className="text-lg font-semibold truncate">
+              {name.length > 17 ? name.slice(0, 17) + "..." : name} {/* Truncate name if too long */}
+            </h1>
             <h3 className="text-sm">
               {phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3")}
             </h3>
