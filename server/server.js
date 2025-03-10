@@ -174,6 +174,20 @@ async function handleWebSocketsMessage(message) {
     delete lastMessageWithoutTimestamp.Timestamp;
     delete currentMessageWithoutTimestamp.Timestamp;
 
+    console.log(
+      "Last message (no timestamp):",
+      JSON.stringify(lastMessageWithoutTimestamp)
+    );
+    console.log(
+      "Current message (no timestamp):",
+      JSON.stringify(currentMessageWithoutTimestamp)
+    );
+    console.log(
+      "Are equal:",
+      JSON.stringify(currentMessageWithoutTimestamp) ===
+        JSON.stringify(lastMessageWithoutTimestamp)
+    );
+
     // Compare the copies WITHOUT timestamps (not the original messages)
     if (
       JSON.stringify(currentMessageWithoutTimestamp) ===
