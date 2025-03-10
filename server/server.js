@@ -170,25 +170,25 @@ async function handleWebSocketsMessage(message) {
     const lastMessageWithoutTimestamp = { ...lastMessage };
     const currentMessageWithoutTimestamp = { ...parsedMessage };
 
-    // Delete the Timestamp fields from both copies
     delete lastMessageWithoutTimestamp.Timestamp;
+    delete lastMessageWithoutTimestamp.risk_score;
     delete currentMessageWithoutTimestamp.Timestamp;
 
-    console.log(
-      "Last message (no timestamp):",
-      JSON.stringify(lastMessageWithoutTimestamp)
-    );
-    console.log(
-      "Current message (no timestamp):",
-      JSON.stringify(currentMessageWithoutTimestamp)
-    );
-    console.log(
-      "Are equal:",
-      JSON.stringify(currentMessageWithoutTimestamp) ===
-        JSON.stringify(lastMessageWithoutTimestamp)
-    );
+    // console.log(
+    //   "Last message (no timestamp):",
+    //   JSON.stringify(lastMessageWithoutTimestamp)
+    // );
+    // console.log(
+    //   "Current message (no timestamp):",
+    //   JSON.stringify(currentMessageWithoutTimestamp)
+    // );
+    // console.log(
+    //   "Are equal:",
+    //   JSON.stringify(currentMessageWithoutTimestamp) ===
+    //     JSON.stringify(lastMessageWithoutTimestamp)
+    // );
 
-    // Compare the copies WITHOUT timestamps (not the original messages)
+    // Compare the copies WITHOUT timestamps or risk score
     if (
       JSON.stringify(currentMessageWithoutTimestamp) ===
       JSON.stringify(lastMessageWithoutTimestamp)
