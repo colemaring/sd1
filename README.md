@@ -49,7 +49,4 @@ python client_test.py
 
 ## TODO:
 
-FCM/Push notifs <br>
-Look into why risky drivers events are not appearing in warning count or events log <br>
-Make visual updates to safety score history graph <br>
-Stretch: Allow home page chart to display events for specific drivers <br>
+See Jira backlog.
