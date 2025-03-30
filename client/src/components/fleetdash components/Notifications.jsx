@@ -155,9 +155,9 @@ export default function Notifications() {
           onClick={() => handleCardClick(event.phone_number)}
         >
           <div className="flex items-start gap-3">
-            <div className="w-9 h-9 flex-shrink-0">
+          <div className="rounded-full bg-muted w-9 h-9 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
-                src={`https://api.dicebear.com/9.x/micah/svg?seed=${event.phone_number}&mouth=laughing,smile,smirk`}
+                src={`https://api.dicebear.com/9.x/initials/svg?seed=${event.driver_name}`}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
@@ -201,9 +201,9 @@ export default function Notifications() {
               onClick={() => handleCardClick(event.phone_number)}
             >
               <div className="flex items-start gap-3">
-                <div className="w-9 h-9 flex-shrink-0">
+              <div className="rounded-full bg-muted w-9 h-9 overflow-hidden flex items-center justify-center flex-shrink-0">
                   <img
-                    src={`https://api.dicebear.com/9.x/micah/svg?seed=${event.phone_number}&mouth=laughing,smile,smirk`}
+                    src={`https://api.dicebear.com/9.x/initials/svg?seed=${event.driver_name}`}
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />

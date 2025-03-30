@@ -161,6 +161,9 @@ async function handleWebSocketsMessage(message) {
     return;
   }
 
+  console.log("Parsed message:", parsedMessage); // For debugging
+
+
   const driverPhone = parsedMessage.Phone;
 
   // Skip processing if this message is identical to the last one received for this driver
