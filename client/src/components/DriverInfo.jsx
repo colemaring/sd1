@@ -31,13 +31,13 @@ const DriverInfo = () => {
   }
 
   return (
-    <div className=" relative flex flex-row items-center rounded-xl w-full p-6 bg-chart-4 text-card-foreground shadow border bg1 bg-top bg-contain ">
+    <div className=" relative flex flex-row items-center rounded-xl w-full p-6 text-card-foreground shadow border bg1 bg-top bg-contain ">
       {/* Left: Avatar + Risk Score */}
       <div className="flex flex-col items-center w-2/5 pr-4">
         {/* Avatar Placeholder */}
         <div className="rounded-full bg-muted w-20 h-20 overflow-hidden flex items-center justify-center">
           <img
-            src={`https://api.dicebear.com/9.x/micah/svg?seed=${driverData.phone_number}&mouth=laughing,smile,smirk`}
+            src={`https://api.dicebear.com/9.x/initials/svg?seed=${driverData.name}`}
             alt="Profile"
             className="w-full h-full object-cover"
           />
