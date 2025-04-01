@@ -106,7 +106,7 @@ function RiskHistoryGraph() {
         },
       },
       y: {
-        min: 60,
+        min: 0,
         max: 100,
         title: {
           display: false,
