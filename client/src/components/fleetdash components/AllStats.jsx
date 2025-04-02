@@ -50,7 +50,7 @@ const colors = [
   "#00bcd4",
 ];
 
-export const options = {
+export const options = (labels) => ({
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
@@ -71,24 +71,49 @@ export const options = {
   scales: {
     x: {
       type: "category",
-      labels: Array.from({ length: 30 }, (_, i) =>
-        String(i + 1).padStart(2, "0")
-      ),
+      labels: labels,
       grid: {
         display: false,
       },
+      title: {
+        display: true,
+        text: 'Day of the Month',
+        font: {
+          size: 14,
+          family: "'Arial', sans-serif",
+          weight: "bold",
+        },
+      },
     },
     y: {
-      title: { display: false },
+      title: {
+        display: true,
+        text: 'Risk Event Count',
+        font: {
+          size: 14,
+          family: "'Arial', sans-serif",
+          weight: "bold",
+        },
+      },
       grid: { display: false },
+      ticks: {
+        beginAtZero: true,
+        min: 0,
+      },
     },
   },
-};
+});
 
 const AllStats = () => {
   const [chartData, setChartData] = useState(null);
   const [displayedMonth, setDisplayedMonth] = useState(new Date());
   const [selectedMonth, setSelectedMonth] = useState(new Date());
+
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    return new Date(year, month + 1, 0).getDate(); // Returns the last date of the month
+  };
 
   const handlePrevMonth = () => {
     const newMonth = new Date(displayedMonth);
@@ -131,7 +156,7 @@ const AllStats = () => {
         ];
 
         const dailyDatasets = eventTypes.map((eventType, index) => {
-          const dailyCounts = Array(30).fill(0);
+          const dailyCounts = Array(getDaysInMonth(displayedMonth)).fill(0);
 
           allRiskEvents.forEach((event) => {
             const eventDate = new Date(event.timestamp);
@@ -140,7 +165,7 @@ const AllStats = () => {
               eventDate.getFullYear() === selectedMonth.getFullYear()
             ) {
               const day = eventDate.getDate();
-              if (day >= 1 && day <= 30 && event[eventType]) {
+              if (day >= 1 && day <= dailyCounts.length && event[eventType]) {
                 dailyCounts[day - 1]++;
               }
             }
@@ -159,10 +184,13 @@ const AllStats = () => {
           };
         });
 
+        const daysInMonth = getDaysInMonth(displayedMonth);
+        const labels = Array.from({ length: daysInMonth }, (_, i) =>
+          String(i + 1).padStart(2, "0")
+        );
+
         setChartData({
-          labels: Array.from({ length: 30 }, (_, i) =>
-            String(i + 1).padStart(2, "0")
-          ),
+          labels,
           datasets: dailyDatasets,
         });
       } catch (error) {
@@ -173,7 +201,7 @@ const AllStats = () => {
     fetchRiskEvents();
     const interval = setInterval(fetchRiskEvents, 1000);
     return () => clearInterval(interval);
-  }, [selectedMonth]);
+  }, [selectedMonth, displayedMonth]);
 
   if (!chartData) {
     return (
@@ -207,7 +235,7 @@ const AllStats = () => {
         </Button>
       </div>
       <div style={{ height: "380px" }}>
-        <Line options={options} data={chartData} />
+        <Line options={options(chartData.labels)} data={chartData} />
       </div>
     </div>
   );

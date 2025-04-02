@@ -191,7 +191,7 @@ export default function Notifications() {
         centered
       >
         <Modal.Header>
-          <Modal.Title>All High Risk Event Notifications</Modal.Title>
+          <Modal.Title>All Risk Event Notifications</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ maxHeight: "70vh", overflowY: "auto" }}>
           {sortedDesc.map((event) => (
