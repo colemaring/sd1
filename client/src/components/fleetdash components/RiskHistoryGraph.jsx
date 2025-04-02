@@ -50,14 +50,13 @@ function RiskHistoryGraph() {
   const riskGraphOptions = {
     responsive: true,
     maintainAspectRatio: false,
-
     plugins: {
       legend: {
         display: false,
       },
       title: {
         display: true,
-        text: "Safety Score History (30 Days)",
+        text: "Trip Safety Score History (7 Days)",
         font: {
           size: 15,
         },
@@ -102,14 +101,34 @@ function RiskHistoryGraph() {
           color: theme === "dark" ? "#ffffff" : "#000000",
         },
         title: {
-          display: false,
+          display: true,
+          text: "Date", // X-axis label
+          color: theme === "dark" ? "#ffffff" : "#000000",
+          font: {
+            size: 12,
+          },
+        },
+        min: (context) => {
+          // Set the leftmost value to 7 days ago
+          const sevenDaysAgo = new Date();
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+          return sevenDaysAgo;
+        },
+        max: (context) => {
+          // Set the rightmost value to the current date
+          return new Date();
         },
       },
       y: {
         min: 0,
         max: 100,
         title: {
-          display: false,
+          display: true,
+          text: "Trip Safety Score", // Y-axis label
+          color: theme === "dark" ? "#ffffff" : "#000000",
+          font: {
+            size: 12,
+          },
         },
         grid: {
           display: false,
@@ -123,7 +142,7 @@ function RiskHistoryGraph() {
   };
 
   useEffect(() => {
-    // Fectch trip data every second
+    // Fetch trip data every second
     const fetchTripData = async () => {
       try {
         setError(null);
@@ -146,9 +165,9 @@ function RiskHistoryGraph() {
           throw new Error("Invalid response format");
         }
 
-        // Calculate date from one month ago
-        const oneMonthAgo = new Date();
-        oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+        // Calculate date from one week ago
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
         // Format and filter trips data for the chart
         const formattedTrips = data.trips
@@ -157,7 +176,7 @@ function RiskHistoryGraph() {
             if (!trip.end_time) return true;
 
             const tripDate = new Date(trip.end_time);
-            return tripDate >= oneMonthAgo;
+            return tripDate >= oneWeekAgo;
           })
           .map((trip) => ({
             tripId: trip.id,
@@ -219,7 +238,7 @@ function RiskHistoryGraph() {
         borderColor: primaryColor,
         backgroundColor: hexToRgba(primaryColor),
         borderWidth: 2,
-        tension: 0.5,
+        tension: 0,
         fill: true,
       },
     ],
