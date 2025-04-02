@@ -101,10 +101,14 @@ const WarningCount = ({ riskEvents }) => {
 
       for (const event of filteredEvents) {
         for (const [key, value] of Object.entries(event)) {
-          if (value === true && newCounts.hasOwnProperty(key)) {
-            newCounts[key] += 1;
+          if (newCounts.hasOwnProperty(key)) {
+            if (typeof value === "boolean" && value) {
+              newCounts[key] += 1;
+            } else if (typeof value === "number") {
+              newCounts[key] += value;
+            }
           }
-        }
+        }        
       }
 
       setWarningCounts(newCounts);

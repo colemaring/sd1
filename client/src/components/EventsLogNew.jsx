@@ -13,6 +13,19 @@ const EventsLogNew = ({ riskEvents }) => {
   const [events, setEvents] = useState([]);
   const [tripRiskScores, setTripRiskScores] = useState({});
 
+  const eventKeys = new Set([
+    "drinking",
+    "eating",
+    "phone",
+    "seatbelt_off",
+    "sleeping",
+    "smoking",
+    "out_of_lane",
+    "risky_drivers",
+    "unsafe_distance",
+    "hands_off_wheel",
+  ]);
+
   // For the table trip rows
   useEffect(() => {
     const interval = setInterval(() => {
@@ -52,14 +65,14 @@ const EventsLogNew = ({ riskEvents }) => {
     if (riskEvents && riskEvents.length > 0) {
       for (const event of riskEvents) {
         for (const [key, value] of Object.entries(event)) {
-          if (value === true && key !== "LastFlag") {
+          if (eventKeys.has(key) && (value === true || typeof value === "number")) {
             const tripId = event.trip_id || "";
             newEvents.push({
               date: new Date(event.timestamp).toLocaleString(),
               eventType: key
                 .replace(/_/g, " ")
                 .replace(/\b\w/g, (char) => char.toUpperCase()),
-              durationOrLocation: event.durationOrLocation || "...", // Unused?
+              durationOrLocation: event.durationOrLocation || "...",
               aiType: (["unsafe_distance", "out_of_lane", "risky_drivers"].includes(key) ? "Outside" : "Inside"),
               tripId: tripId,
               riskScore: tripRiskScores[tripId] || "N/A",
