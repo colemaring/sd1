@@ -65,7 +65,7 @@ const EventsLogNew = ({ riskEvents }) => {
     if (riskEvents && riskEvents.length > 0) {
       for (const event of riskEvents) {
         for (const [key, value] of Object.entries(event)) {
-          if (eventKeys.has(key) && (value === true || typeof value === "number")) {
+          if (eventKeys.has(key) && (value === true || (typeof value === "number" && value !== 0))) {
             const tripId = event.trip_id || "";
             newEvents.push({
               date: new Date(event.timestamp).toLocaleString(),

@@ -5,12 +5,53 @@ import { RiUserLocationLine } from "react-icons/ri";
 import { useTheme } from "../context/ThemeContext";
 import { useParams } from "react-router-dom";
 import { DriversContext } from "../context/DriversContext";
+import { useNavigate } from "react-router-dom"; 
+import { FaTrash } from "react-icons/fa";
+import { Modal, Button, Form } from "react-bootstrap";
 
 const DriverInfo = () => {
   const { theme } = useTheme();
   const { driverPhone } = useParams();
   const { drivers, isLoading } = useContext(DriversContext);
   const [driverData, setDriverData] = useState(null);
+  const navigate = useNavigate(); 
+  const [showModal, setShowModal] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (password) {
+      handleConfirmDelete();
+    }
+  };
+
+  const handleDelete = async (e) => {
+    e.stopPropagation();
+    setShowModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      const response = await fetch(`https://aifsd.xyz/api/drivers/${driverPhone}`, {
+        method: "DELETE",
+        headers: {
+          password: password,
+        },
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to delete driver");
+      }
+
+      setShowModal(false);
+      navigate(`/fleet`);
+    } catch (error) {
+      console.error("Error deleting driver:", error);
+      setError(error.message);
+    }
+  };
 
   useEffect(() => {
     if (drivers && drivers.length > 0) {
@@ -91,7 +132,7 @@ const DriverInfo = () => {
       <div className="border-l h-40 border-muted"></div>
 
       {/* Middle: Driver Name & Phone */}
-      <div className="flex flex-col w-3/5 pl-4">
+      <div className="flex flex-col w-2/5 pl-4">
         <span className="text-sm text-primary">Selected Driver</span>
         <h1 className="text-3xl font-bold mb-12">{driverData.name}</h1>
 
@@ -105,20 +146,87 @@ const DriverInfo = () => {
         <h2 className="text-sm text-primary">Contact Information</h2>
       </div>
 
-      {/* Right: Activity + Truck */}
-      <div className="relative w-1/5 flex items-end justify-end">
-        {/* “Active” Status Ping (top-right) */}
-        {driverData.active ? (
-          <>
-            <span className="absolute top-14 right-0 rounded-full bg-green-500 w-6 h-6 inline-flex animate-ping"></span>
-            <span className="absolute top-14 right-0 rounded-full bg-green-700 w-6 h-6"></span>
-          </>
-        ) : (
-          <span className="absolute top-14 right-0 rounded-full bg-red-500 w-6 h-6"></span>
-        )}
+      {/* Right: Activity + Delete */}
+      <div className="relative flex flex-col w-1/5 pl-4 h-40">
+        {/* Delete Driver Button (aligned to the bottom right) */}
+        <div className="flex justify-end">
+          <button
+            className="p-2 rounded-full hover:bg-destructive/10 text-destructive"
+            onClick={handleDelete}
+          >
+            <FaTrash size={16} />
+          </button>
+        </div>
 
-        {/* Truck image (bottom-right) */}
-        {/* <img src={truck} alt="Truck" className="h-max" /> */}
+        {/* Push Activity Status to Bottom */}
+        <div className="flex-grow"></div>
+
+        {/* Active Status Ping (aligned to the top right) */}
+        <div className="flex justify-end">
+          {driverData.active ? (
+            <div className="relative">
+              <span className="absolute rounded-full bg-green-500 w-6 h-6 animate-ping"></span>
+              <span className="rounded-full bg-green-700 w-6 h-6"></span>
+            </div>
+          ) : (
+            <span className="rounded-full bg-red-500 w-6 h-6"></span>
+          )}
+        </div>
+
+        <Modal
+          show={showModal}
+          onHide={() => {
+            setShowModal(false);
+            setError("");
+            setPassword("");
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm Driver Deletion</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Are you sure you want to delete driver {driverData.name}?</p>
+            <p className="text-sm text-muted-foreground mb-4">
+              This action cannot be undone. All associated trips and risk events
+              will also be deleted.
+            </p>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3">
+                <Form.Label>Enter Admin Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  isInvalid={!!error}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {error}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setShowModal(false);
+                setError("");
+                setPassword("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              onClick={handleConfirmDelete}
+              disabled={!password}
+            >
+              Delete Driver
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </div>
   );
