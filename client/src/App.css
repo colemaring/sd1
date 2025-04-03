@@ -71,8 +71,20 @@ body {
   height: 22.8vh;
 }
 
-.cardBorder{
+.cardBorder {
   height: 22.8vh;
+}
+
+@media (max-height: 830px) {
+  .cardBorder {
+    height: 25vh;
+  }
+}
+
+@media (max-height: 700px) {
+  .cardBorder {
+    height: 30vh;
+  }
 }
 
 .truck-info {

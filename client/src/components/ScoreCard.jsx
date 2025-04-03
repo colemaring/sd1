@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import { Modal, Button, Form } from "react-bootstrap";
 
 function ScoreCard({ style, name, phone, score, change, active }) {
-  const navigate = useNavigate(); 
-  const [activeDropdown, setActiveDropdown] = useState(null); 
+  const navigate = useNavigate();
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -64,7 +64,11 @@ function ScoreCard({ style, name, phone, score, change, active }) {
     <div className="flex flex-wrap justify-center gap-4 w-full">
       <div
         key={name}
-        className={`${style != null ? style : "relative cardBorder flex rounded-xl w-72 lg:h-[200px] p-4 bg-card text-foreground shadow-md cursor-pointer border transition-transform duration-300 ease-in-out hover:scale-[1.02]"}`}
+        className={`${
+          style != null
+            ? style
+            : "relative cardBorder flex rounded-xl w-72 lg:h-[200px] p-4 bg-card text-foreground shadow-md cursor-pointer border transition-transform duration-300 ease-in-out hover:scale-[1.02]"
+        }`}
         onClick={handleCardClick}
       >
         {/* Profile Picture */}
@@ -97,7 +101,8 @@ function ScoreCard({ style, name, phone, score, change, active }) {
               {getRiskLevel(score)}
             </h3>
             <h1 className="text-lg font-semibold truncate">
-              {name.length > 17 ? name.slice(0, 17) + "..." : name} {/* Truncate name if too long */}
+              {name.length > 17 ? name.slice(0, 17) + "..." : name}{" "}
+              {/* Truncate name if too long */}
             </h1>
             <h3 className="text-sm">
               {phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3")}
@@ -108,8 +113,20 @@ function ScoreCard({ style, name, phone, score, change, active }) {
           <div className="flex flex-col items-center pt-4">
             <div className="flex items-baseline">
               <h1 className="text-4xl font-bold">{score}</h1>
-              <h3 className={`text-sm font-medium pl-2 ${change < 0 ? 'text-destructive' : change > 0 ? 'text-green-500' : ''}`}>
-                {`${change === null ? '+0%' : `${change >= 0 ? '+' : ''}${change}%`}`}
+              <h3
+                className={`text-sm font-medium pl-2 ${
+                  change < 0
+                    ? "text-destructive"
+                    : change > 0
+                    ? "text-green-500"
+                    : ""
+                }`}
+              >
+                {`${
+                  change === null
+                    ? "+0%"
+                    : `${change >= 0 ? "+" : ""}${change}%`
+                }`}
               </h3>
             </div>
             <h3 className="text-xs text-muted-foreground">Safety Score</h3>
@@ -118,21 +135,21 @@ function ScoreCard({ style, name, phone, score, change, active }) {
             <div className="flex items-center w-full">
               {/* Unsafe Label */}
               <span className="text-xs text-muted-foreground">Unsafe</span>
-              
+
               {/* Safety Line */}
               <div className="relative flex-grow mx-2 bg-gray-300 rounded-full h-2">
                 <div
                   className={`h-full rounded-full ${
                     score > 80
-                      ? 'bg-green-500'
+                      ? "bg-green-500"
                       : score > 60
-                      ? 'bg-yellow-500'
-                      : 'bg-red-500'
+                      ? "bg-yellow-500"
+                      : "bg-red-500"
                   }`}
                   style={{ width: `${score}%` }}
                 ></div>
               </div>
-              
+
               {/* Safe Label */}
               <span className="text-xs text-muted-foreground">Safe</span>
             </div>

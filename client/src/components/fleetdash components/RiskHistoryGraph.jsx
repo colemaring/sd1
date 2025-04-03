@@ -224,8 +224,8 @@ function RiskHistoryGraph() {
 
   if (riskHistory.length === 0) {
     return (
-      <div className="border col-span-12 lg:col-span-4 bg-card shadow rounded-xl p-3 m-4">
-        No risk history available.
+      <div className="h-[215px] border col-span-12 lg:col-span-4 bg-card shadow rounded-xl p-3 m-4 flex items-center justify-center text-center">
+        No risk history available (No trip in the last 7 days).
       </div>
     );
   }

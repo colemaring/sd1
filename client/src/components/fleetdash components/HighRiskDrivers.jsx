@@ -26,7 +26,7 @@ function HighRiskDrivers() {
           </h2>
         </div>
       ) : (
-        <div className="flex flex-row justify-center items-center">
+        <div className="flex flex-row justify-start items-center overflow-x-auto overflow-y-hidden scrollbar-hide p-1">
           {filteredDrivers.map((driver) => (
             <ScoreCard
               style={
