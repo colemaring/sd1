@@ -6,7 +6,9 @@ const fs = require("fs");
 const WebSocket = require("ws");
 const path = require("path");
 const cors = require("cors");
+const compression = require("compression");
 app.use(cors());
+app.use(compression());
 
 const db = require("./db");
 const api = require("./api");
@@ -162,7 +164,6 @@ async function handleWebSocketsMessage(message) {
   }
 
   console.log("Parsed message:", parsedMessage); // For debugging
-
 
   const driverPhone = parsedMessage.Phone;
 
