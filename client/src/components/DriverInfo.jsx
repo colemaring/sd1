@@ -89,7 +89,9 @@ const DriverInfo = () => {
           </h1>
 
           <h2 className="text-sm">Safety Score</h2>
-          {driverData.percent_change != null ? (
+          {driverData.percent_change === null || driverData.percent_change == 0 ? (
+            <span className="font-bold">+0%</span>
+          ) : (
             <span
               className={`font-bold ${
                 driverData.percent_change > 0
@@ -99,12 +101,10 @@ const DriverInfo = () => {
                   : ""
               }`}
             >
-              {driverData.percent_change >= 0
+              {driverData.percent_change > 0
                 ? `+${driverData.percent_change}%`
                 : `${driverData.percent_change}%`}
             </span>
-          ) : (
-            <span className="font-bold">+0%</span>
           )}
 
           <div className="flex items-center w-full">

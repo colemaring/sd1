@@ -6,4 +6,3 @@ server/node_modules/
 .DS_Store
 
 *.env
-client_test_2.py

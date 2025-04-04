@@ -123,9 +123,9 @@ function ScoreCard({ style, name, phone, score, change, active }) {
                 }`}
               >
                 {`${
-                  change === null
+                  change === null || change == 0
                     ? "+0%"
-                    : `${change >= 0 ? "+" : ""}${change}%`
+                    : `${change > 0 ? "+" : ""}${change}%`
                 }`}
               </h3>
             </div>
