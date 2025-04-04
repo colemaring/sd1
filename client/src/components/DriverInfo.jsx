@@ -162,16 +162,17 @@ const DriverInfo = () => {
         <div className="flex-grow"></div>
 
         {/* Active Status Ping (aligned to the top right) */}
-        <div className="flex justify-end">
+        <div className="flex items-center justify-end">
           {driverData.active ? (
-            <div className="relative">
-              <span className="absolute rounded-full bg-green-500 w-6 h-6 animate-ping"></span>
-              <span className="rounded-full bg-green-700 w-6 h-6"></span>
+            <div className="relative w-6 h-6">
+              <span className="absolute rounded-full bg-green-500 w-6 h-6 inline-flex animate-ping"></span>
+              <span className="absolute rounded-full bg-green-700 w-6 h-6"></span>
             </div>
           ) : (
             <span className="rounded-full bg-red-500 w-6 h-6"></span>
           )}
         </div>
+
 
         <Modal
           show={showModal}
